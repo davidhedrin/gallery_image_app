@@ -10,7 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../generated/assets.dart';
+import '../generated/assets.dart';
 
 class AppPageBody extends StatefulWidget {
   const AppPageBody({Key? key}) : super(key: key);
@@ -37,10 +37,10 @@ class _AppPageBodyState extends State<AppPageBody> {
     });
   }
 
-  @override
-  void dispose(){
-    pageController.dispose();
-  }
+  // @override
+  // void dispose(){
+  //   pageController.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

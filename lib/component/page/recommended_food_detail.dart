@@ -1,5 +1,4 @@
 import 'package:delivery_food_app/halper/route_halper.dart';
-import 'package:delivery_food_app/pages/home/main_app_page.dart';
 import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/app_icon.dart';

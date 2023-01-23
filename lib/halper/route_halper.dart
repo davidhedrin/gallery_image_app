@@ -1,9 +1,8 @@
-import 'package:delivery_food_app/halper/function_convert.dart';
-import 'package:delivery_food_app/pages/food/popular_food_detail.dart';
-import 'package:delivery_food_app/pages/home/main_app_page.dart';
+import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:get/get.dart';
 
-import '../pages/food/recommended_food_detail.dart';
+import '../component/page/popular_image_detail.dart';
+import '../component/page/recommended_food_detail.dart';
 
 class RouteHalper{
   static int intId(String id){

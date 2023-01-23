@@ -1,5 +1,5 @@
 import 'package:delivery_food_app/halper/route_halper.dart';
-import 'package:delivery_food_app/pages/home/main_app_page.dart';
+import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,9 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       home: MainAppPage(),
-
-      // initialRoute: RouteHalper.initial,
-      getPages: RouteHalper.routes,
-    );
+        getPages: RouteHalper.routes,
+      );
   }
 }

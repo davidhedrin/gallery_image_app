@@ -4,7 +4,6 @@ class Dimentions{
   static double screenHeight = Get.context!.height;
   static double screenWidth = Get.context!.width;
 
-
   static double pageView= screenHeight/2.64;
   static double pageViewContainer = screenHeight/3.84;
   static double pageTextContainer = screenHeight/7.03;
@@ -33,6 +32,8 @@ class Dimentions{
   static double radius30 = screenHeight/28.13;
 
   // icons size
+  static double iconSize36 = screenHeight/23.0;
+  static double iconSize32 = screenHeight/27.0;
   static double iconSize24 = screenHeight/35.17;
   static double iconSize16 = screenHeight/42.75;
 
@@ -45,4 +46,7 @@ class Dimentions{
 
   // Bottom height
   static double bottomHeightbar = screenHeight/7.03;
+
+  // NotcMargin Navbar
+  static double notcMarginNavbar8 = screenHeight/97.60;
 }
