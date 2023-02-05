@@ -1,9 +1,12 @@
 import 'package:delivery_food_app/halper/route_halper.dart';
-import 'package:delivery_food_app/component/main_app_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Future<void> main() async {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
@@ -15,8 +18,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: MainAppPage(),
-        getPages: RouteHalper.routes,
-      );
+      initialRoute: RouteHalper.getsplashScreen(),
+      getPages: RouteHalper.routes,
+    );
   }
 }
+
+// ScreenHeight 781.0909090909091
+// ScreenWidth 392.7272727272727
