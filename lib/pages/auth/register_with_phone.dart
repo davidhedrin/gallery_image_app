@@ -1,13 +1,19 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
+import 'package:delivery_food_app/providers/auth_provider.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
+import 'package:delivery_food_app/utils/utils.dart';
 import 'package:delivery_food_app/widgets/app_bar_widget.dart';
 import 'package:delivery_food_app/widgets/auth_widget/text_widget.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class RegisterWithPhoneNumber extends StatefulWidget {
   const RegisterWithPhoneNumber({ Key? key }) : super(key: key);
@@ -20,7 +26,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController no_phoneController = TextEditingController();
   final TextEditingController namaController = TextEditingController();
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController co_passwordController = TextEditingController();
   bool _isLoading = false, _isIcon = false;
@@ -48,6 +54,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
         backgroundColor: Color(0xFF181A20),
         appBar: MyAppBar(
@@ -68,7 +75,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                 padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20),
                 child: Column(
                   children: [
-                    Image.asset(Assets.imageRegister, width: Dimentions.imageSize180,),
+                    Image.asset(Assets.imageRegister, width: Dimentions.imageSize170,),
                     SizedBox(height: Dimentions.height15,),
 
                     Text('REGISTER', style: TextStyle(fontWeight: FontWeight.bold, fontSize: Dimentions.font25, color: Colors.white),),
@@ -98,11 +105,14 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                           SizedBox(height: Dimentions.height15,),
 
                           MyTextFieldReg(
-                            controller: usernameController,
-                            hintText: "Masukkan Username",
+                            controller: emailController,
+                            hintText: "Masukkan Alamat Email",
                             validator: (value){
                               if(value!.isEmpty){
-                                return '*masukkan username';
+                                return '*masukkan alamat email';
+                              }
+                              if(!EmailValidator.validate(value)){
+                                return '*alamat email tidak sesuai';
                               }
                               return null;
                             },
@@ -226,19 +236,37 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
 
                     MaterialButton(
                       minWidth: double.infinity,
-                      onPressed: () {
+                      onPressed: () async {
                         if(_formKey.currentState!.validate()){
                           setState(() {
                             _isIcon = false;
                           });
 
-                          Get.toNamed(RouteHalper.getOtpPage(no_phoneController.text));
-
-                          namaController.clear();
-                          usernameController.clear();
-                          passwordController.clear();
-                          co_passwordController.clear();
-                          no_phoneController.clear();
+                          String number = "+${selectCountry.phoneCode}"+no_phoneController.text;
+                          await auth.verifyPhone(
+                            context: context,
+                            number: number,
+                            data: {
+                              "nama_lengkap" : namaController.text,
+                              "email" : emailController.text,
+                              "password" : passwordController.text,
+                              "phone" : number,
+                              "flag_active" : "N",
+                              "user_type" : "USR"
+                            },
+                          ).then((value){
+                            if(value){
+                              namaController.clear();
+                              emailController.clear();
+                              passwordController.clear();
+                              co_passwordController.clear();
+                              no_phoneController.clear();
+                            }else{
+                              no_phoneController.clear();
+                            }
+                          });
+                        }else{
+                          showAwsBar(context: context, contentType: ContentType.help, msg: "Lengkapi Semua Data", title: "");
                         }
                       },
                       color: Colors.black,

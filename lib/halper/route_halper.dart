@@ -5,6 +5,7 @@ import 'package:delivery_food_app/pages/auth/register_page.dart';
 import 'package:delivery_food_app/pages/auth/register_with_phone.dart';
 import 'package:delivery_food_app/splashScreen/on_board_screen.dart';
 import 'package:delivery_food_app/splashScreen/splash_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 import '../component/page/popular_image_detail.dart';
@@ -32,7 +33,7 @@ class RouteHalper{
   static String getLoginPage() => '$loginPage';
   static String getRegisterPage() => '$registerPage';
   static String getRegisterWithPhonePage() => '$registerWithPhonePage';
-  static String getOtpPage(String? passOtp) => '$otpPage?passOtp=$passOtp';
+  static String getOtpPage({String? verId}) => '$otpPage?verId=$verId';
 
   static String getPopularFood(int pageId) => '$popularFood?pageId=$pageId';
   static String getRecommendedFood() => '$recommendedFood';
@@ -40,7 +41,7 @@ class RouteHalper{
   static String getsplashScreen() => '$splashScreen';
 
   static List<GetPage> routes = [
-    GetPage(name: initial, page: () => MainAppPage(), transition: Transition.native),
+    GetPage(name: initial, transition: Transition.native, page: ()=> MainAppPage()),
     GetPage(name: splashScreen, page: () => SplashScerenApp(), transition: Transition.native),
     GetPage(name: onBoardScreen, page: () => OnBoardScreenApp(), transition: Transition.native),
 
@@ -48,9 +49,9 @@ class RouteHalper{
     GetPage(name: registerPage, page: () => RegisterPage()),
     GetPage(name: registerWithPhonePage, page: () => RegisterWithPhoneNumber()),
     GetPage(name: otpPage, page: () {
-      String? passOtp = Get.parameters['passOtp'].toString();
-      if(passOtp.isNotEmpty && passOtp != null){
-        return OtpPage();
+      String? verId = Get.parameters['verId'].toString();
+      if(verId.isNotEmpty && verId != null){
+        return OtpPage(verificationId: verId,);
       }else{
         return LoginPage();
       }
