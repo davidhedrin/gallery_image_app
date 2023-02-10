@@ -28,7 +28,7 @@ class RouteHalper{
   static const String onBoardScreen = "/on-board-screen";
   static const String splashScreen = "/splash-screen";
 
-  static String getInitial() => '$initial';
+  static String getInitial({String? uid}) => '$initial?uid=$uid';
 
   static String getLoginPage() => '$loginPage';
   static String getRegisterPage() => '$registerPage';
@@ -41,7 +41,11 @@ class RouteHalper{
   static String getsplashScreen() => '$splashScreen';
 
   static List<GetPage> routes = [
-    GetPage(name: initial, transition: Transition.native, page: ()=> MainAppPage()),
+    GetPage(name: initial, transition: Transition.native, page: (){
+      String? uid = Get.parameters['uid'].toString();
+      return MainAppPage(Userid: uid,);
+    }),
+
     GetPage(name: splashScreen, page: () => SplashScerenApp(), transition: Transition.native),
     GetPage(name: onBoardScreen, page: () => OnBoardScreenApp(), transition: Transition.native),
 

@@ -11,7 +11,8 @@ import '../pages/setting/setting_page.dart';
 import '../widgets/tab_button_navbar.dart';
 
 class MainAppPage extends StatefulWidget {
-  const MainAppPage({Key? key}) : super(key: key);
+  final String Userid;
+  const MainAppPage({Key? key, required this.Userid}) : super(key: key);
 
   @override
   State<MainAppPage> createState() => _MainAppPageState();
@@ -26,15 +27,15 @@ class _MainAppPageState extends State<MainAppPage> {
     });
   }
 
-  final pages = <Widget> [
-    HomePageMenu(),
-    MessagePageMenu(),
-    SettingPageMenu(),
-    AccountPageMenu()
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<Widget> pages = <Widget> [
+      HomePageMenu(uid: widget.Userid),
+      MessagePageMenu(),
+      SettingPageMenu(),
+      AccountPageMenu()
+    ];
+
     return Scaffold(
       body: pages[index],
       bottomNavigationBar: TabBarNavigationMaterial(

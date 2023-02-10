@@ -16,7 +16,8 @@ import '../../widgets/big_text.dart';
 import '../../widgets/small_text.dart';
 
 class HomePageMenu extends StatefulWidget {
-  const HomePageMenu({Key? key}) : super(key: key);
+  final String uid;
+  const HomePageMenu({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<HomePageMenu> createState() => _HomePageMenuState();
@@ -45,7 +46,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
           // Header search and name
           Container(
             child: Container(
-              margin: EdgeInsets.only(top: Dimentions.height45, bottom: Dimentions.height15),
+              margin: EdgeInsets.only(top: Dimentions.height40, bottom: Dimentions.height15),
               padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -53,21 +54,19 @@ class _HomePageMenuState extends State<HomePageMenu> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      FutureBuilder(
-                        future: getService.getDocUidByColumn(context: context, collection: "users", column: "uidEmail", param: userAuth.currentUser!.uid),
-                        builder: (context, snapshot){
-                          try{
-                            var data = snapshot.data;
-                            if (snapshot.hasData) {
-                              return Container(child: BigText(text: data!.get("nama_lengkap"), color: AppColors.mainColor,));
-                            } else {
-                              return Container(child: Center(child: CircularProgressIndicator(),),
-                              );
-                            }
-                          }catch(e){
+                      StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
+                        stream: _fbStore.collection("users").doc(widget.uid).snapshots(),
+                        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
+                          if (snapshot.connectionState == ConnectionState.waiting) {
                             return Container(child: BigText(text: "-", color: AppColors.mainColor,));
                           }
-                        },
+                          if (snapshot.hasData) {
+                            var document = snapshot.data;
+                            return Container(child: BigText(text: document!.get('nama_lengkap'), color: AppColors.mainColor,));
+                          }else{
+                            return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                          }
+                        }
                       ),
                       Row(
                         children: [
@@ -90,8 +89,8 @@ class _HomePageMenuState extends State<HomePageMenu> {
                     },
                     child: Center(
                       child: Container(
-                        width: Dimentions.height45,
-                        height: Dimentions.height45,
+                        width: Dimentions.height30,
+                        height: Dimentions.height30,
                         child: Icon(Icons.power_settings_new, color: Colors.white, size: Dimentions.iconSize24,),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(Dimentions.radius15),

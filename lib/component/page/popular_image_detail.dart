@@ -48,7 +48,7 @@ class PopularFoodDetail extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: (){
-                    Get.toNamed(RouteHalper.getInitial());
+                    Navigator.of(context).pop();
                   },
                   child: AppIcon(icon: Icons.arrow_back_ios_new),
                 ),

@@ -9,6 +9,7 @@ class Assets {
   static const String imageCika = 'assets/image/cika.png';
   static const String imageFacebook = 'assets/image/Facebook.png';
   static const String imageGoogle = 'assets/image/Google.png';
+  static const String imageLandscape = 'assets/image/Landscape.jpg';
   static const String imageMakanan = 'assets/image/Makanan.jpg';
   static const String imageRegister = 'assets/image/register.png';
   static const String imageSecurity = 'assets/image/security.png';

@@ -51,6 +51,7 @@ class AuthProvider extends ChangeNotifier{
           );
           result = true;
           Navigator.of(dialogcontext).pop();
+          showAwsBar(context: context, contentType: ContentType.success, msg: "Kode OTP telah dikirim", title: "Success OTP");
         }else{
           result = false;
           Navigator.of(dialogcontext).pop();
@@ -101,18 +102,18 @@ class AuthProvider extends ChangeNotifier{
       dataUser["uidPhone"] = uidPhone;
       dataUser["uidEmail"] = uidEmail;
 
-      await appProvider.createDataToDb(
+      appProvider.createDataToDb(
         values: dataUser,
         guid: guid,
         context: context,
         collection: "users",
-      ).then((value){
-        _isLoading = false;
-        dataUser.clear();
-        notifyListeners();
-        Navigator.of(dialogcontext).pop();
-        Get.toNamed(RouteHalper.getInitial());
-      });
+      );
+
+      _isLoading = false;
+      dataUser.clear();
+      notifyListeners();
+      Navigator.of(dialogcontext).pop();
+      Get.toNamed(RouteHalper.getInitial(uid: guid));
     } on FirebaseAuthException catch(e){
       showAwsBar(context: context, contentType: ContentType.failure, msg: "Kode OTP Tidak Sesuai", title: "");
       _isLoading = false;

@@ -12,7 +12,6 @@ import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/utils.dart';
@@ -196,12 +195,12 @@ class _LoginPageState extends State<LoginPage> {
                               final String pass = snap.docs.first.get('password').trim();
 
                               if(password == pass){
-                                await services.loginWithEmail(context, email, password).then((status){
-                                  if(status == "200"){
+                                await services.loginWithEmailRetMap(context, email, password).then((Map<String, dynamic> status){
+                                  if(status["status"] == "200"){
                                     no_phoneController.clear();
                                     passwordController.clear();
                                     Navigator.of(dialogcontext).pop();
-                                    Get.toNamed(RouteHalper.getInitial());
+                                    Get.toNamed(RouteHalper.getInitial(uid: status["uid"]));
                                   }else{
                                     Navigator.of(dialogcontext).pop();
                                     showAwsBar(context: context, contentType: ContentType.warning, msg: "Terjadi kesalahan. Ulangi beberapa saat lagi", title: "Login");

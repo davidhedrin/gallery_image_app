@@ -37,11 +37,6 @@ class _AppPageBodyState extends State<AppPageBody> {
     });
   }
 
-  // @override
-  // void dispose(){
-  //   pageController.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -70,7 +65,7 @@ class _AppPageBodyState extends State<AppPageBody> {
           ),
         ),
 
-        SizedBox(height: Dimentions.height15,),
+        SizedBox(height: Dimentions.height10,),
 
         // Text Populer Category
         Container(
@@ -204,7 +199,7 @@ class _AppPageBodyState extends State<AppPageBody> {
             alignment: Alignment.bottomCenter,
             child: Container(
               height: Dimentions.pageTextContainer,
-              margin: EdgeInsets.only(left: Dimentions.width30, right: Dimentions.width30, bottom: Dimentions.height30),
+              margin: EdgeInsets.only(left: Dimentions.width30, right: Dimentions.width30, bottom: Dimentions.height10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(Dimentions.radius20),
                 color: Colors.white,
