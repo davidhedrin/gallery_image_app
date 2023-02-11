@@ -1,24 +1,37 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/generated/assets.dart';
+import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
+import 'package:delivery_food_app/widgets/big_text.dart';
+import 'package:delivery_food_app/widgets/data_not_found.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../providers/app_services.dart';
 import '../../utils/utils.dart';
+import '../../widgets/app_icon.dart';
 
 class AccountPageMenu extends StatefulWidget {
-  const AccountPageMenu({Key? key}) : super(key: key);
+  final String uid;
+  const AccountPageMenu({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<AccountPageMenu> createState() => _AccountPageMenuState();
 }
 
 class _AccountPageMenuState extends State<AccountPageMenu> {
+  final FirebaseFirestore _fbStore = FirebaseFirestore.instance;
+  final FirebaseAuth userAuth = FirebaseAuth.instance;
+  final AppServices getService = AppServices();
+
   @override
   Widget build(BuildContext context) {
     double coverHeight = Dimentions.imageSize180;
-    double profileSize = Dimentions.screenHeight/13.84;
+    double profileSize = Dimentions.screenHeight/14.5;
 
     return WillPopScope(
       onWillPop: () async {
@@ -32,46 +45,90 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
         return check;
       },
       child: Scaffold(
-        body: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget> [
-            Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
-                  color: Colors.grey,
-                  child: Image.asset(
-                    Assets.imageLandscape,
-                    width: double.infinity,
-                    height: coverHeight,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+        body: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
+          stream: getService.streamBuilderGetDoc(collection: "users", docId: widget.uid),
+          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: Container(child: CircularProgressIndicator()));
+            }
+            if(!snapshot.hasData){
+              return DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
+            }
+            else{
+              var data = snapshot.data;
+              print(data!.data());
+              return ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget> [
+                  Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
+                        color: Colors.grey,
+                        child: Image.asset(
+                          Assets.imageBackgroundProfil,
+                          width: double.infinity,
+                          height: coverHeight,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
 
-                Positioned(
-                  top: coverHeight - profileSize,
-                  child: CircleAvatar(
-                    radius: profileSize + 5,
-                    backgroundColor: Colors.white,
-                    child: CircleAvatar(
-                      radius: profileSize,
-                      backgroundColor: Colors.grey.shade800,
-                      backgroundImage: AssetImage(Assets.imageMakanan),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                      // Icons Widget
+                      Positioned(
+                        top: Dimentions.height45,
+                        left: Dimentions.width20,
+                        right: Dimentions.width20,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            GestureDetector(
+                              onTap: (){
+                                Get.toNamed(RouteHalper.getEditAccountPage(uid: widget.uid));
+                              },
+                              child: AppIcon(icon: Icons.edit),
+                            ),
+                          ],
+                        ),
+                      ),
 
-            Column(
-              children: [
-                Text("David Simbolon", style: TextStyle(fontSize: Dimentions.font20, fontWeight: FontWeight.bold)),
-                SmallText(text: "+6282110863133", color: Colors.black87,)
-              ],
-            ),
-          ]
+                      Positioned(
+                        top: coverHeight - profileSize,
+                        child: CircleAvatar(
+                          radius: profileSize + 5,
+                          backgroundColor: Colors.white,
+                          child: InkWell(
+                            onTap: (){
+                              showDialog(
+                                  context: context,
+                                  builder: (context){
+                                    return Text("Select Image");
+                                  }
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: profileSize,
+                              backgroundColor: Colors.grey.shade800,
+                              backgroundImage: AssetImage(Assets.imagePrifil),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: Dimentions.height10,),
+                  Column(
+                    children: [
+                      Text(data!.get("nama_lengkap"), style: TextStyle(fontSize: Dimentions.font22, fontWeight: FontWeight.bold)),
+                      SmallText(text: data.get("phone"), color: Colors.black87, size: Dimentions.font16,),
+                      SizedBox(height: Dimentions.height15,),
+                    ],
+                  ),
+                ]
+              );
+            }
+          }
         ),
       ),
     );

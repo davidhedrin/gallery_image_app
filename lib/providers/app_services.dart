@@ -117,4 +117,8 @@ class AppServices{
     });
     return document;
   }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> streamBuilderGetDoc({required String collection, required String docId}){
+    return _fbStore.collection(collection).doc(docId).snapshots();
+  }
 }

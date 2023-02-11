@@ -1,4 +1,5 @@
 import 'package:delivery_food_app/component/main_app_page.dart';
+import 'package:delivery_food_app/pages/account/edit_accout_page.dart';
 import 'package:delivery_food_app/pages/auth/login_page.dart';
 import 'package:delivery_food_app/pages/auth/otp_page.dart';
 import 'package:delivery_food_app/pages/auth/register_page.dart';
@@ -22,6 +23,7 @@ class RouteHalper{
   static const String registerPage = "/register-page";
   static const String registerWithPhonePage = "/register-with-phone-page";
   static const String otpPage = "/otp-page";
+  static const String editAccountPage = "/edit-eccount-page";
 
   static const String popularFood = "/popular-food";
   static const String recommendedFood = "/recommended-food";
@@ -34,6 +36,7 @@ class RouteHalper{
   static String getRegisterPage() => '$registerPage';
   static String getRegisterWithPhonePage() => '$registerWithPhonePage';
   static String getOtpPage({String? verId}) => '$otpPage?verId=$verId';
+  static String getEditAccountPage({String? uid}) => '$editAccountPage?uid=$uid';
 
   static String getPopularFood(int pageId) => '$popularFood?pageId=$pageId';
   static String getRecommendedFood() => '$recommendedFood';
@@ -59,6 +62,10 @@ class RouteHalper{
       }else{
         return LoginPage();
       }
+    }),
+    GetPage(name: editAccountPage, page: (){
+      String uid = Get.parameters["uid"].toString();
+      return EditAccountPage(uid: uid);
     }),
 
     GetPage(name: popularFood, transition: Transition.fadeIn, page: (){

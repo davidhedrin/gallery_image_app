@@ -5,12 +5,14 @@ class Assets {
   static const String image2 = 'assets/image/2.png';
   static const String image3 = 'assets/image/3.png';
   static const String image4 = 'assets/image/4.png';
+  static const String imageBackgroundProfil = 'assets/image/backgroundProfil.png';
   static const String imageBg = 'assets/image/bg.jpg';
   static const String imageCika = 'assets/image/cika.png';
   static const String imageFacebook = 'assets/image/Facebook.png';
   static const String imageGoogle = 'assets/image/Google.png';
-  static const String imageLandscape = 'assets/image/Landscape.jpg';
   static const String imageMakanan = 'assets/image/Makanan.jpg';
+  static const String imageNotFound = 'assets/image/notFound.png';
+  static const String imagePrifil = 'assets/image/prifil.jpg';
   static const String imageRegister = 'assets/image/register.png';
   static const String imageSecurity = 'assets/image/security.png';
   static const String imageWelcomeCat = 'assets/image/welcome_cat.png';

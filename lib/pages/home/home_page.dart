@@ -55,16 +55,16 @@ class _HomePageMenuState extends State<HomePageMenu> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-                        stream: _fbStore.collection("users").doc(widget.uid).snapshots(),
+                        stream: getService.streamBuilderGetDoc(collection: "users", docId: widget.uid),
                         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return Container(child: BigText(text: "-", color: AppColors.mainColor,));
                           }
-                          if (snapshot.hasData) {
+                          if (!snapshot.hasData) {
+                            return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                          }else{
                             var document = snapshot.data;
                             return Container(child: BigText(text: document!.get('nama_lengkap'), color: AppColors.mainColor,));
-                          }else{
-                            return Container(child: BigText(text: "-", color: AppColors.mainColor,));
                           }
                         }
                       ),

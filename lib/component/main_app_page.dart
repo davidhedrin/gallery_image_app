@@ -33,7 +33,7 @@ class _MainAppPageState extends State<MainAppPage> {
       HomePageMenu(uid: widget.Userid),
       MessagePageMenu(),
       SettingPageMenu(),
-      AccountPageMenu()
+      AccountPageMenu(uid: widget.Userid)
     ];
 
     return Scaffold(
