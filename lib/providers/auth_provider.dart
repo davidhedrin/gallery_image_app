@@ -1,6 +1,7 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
+import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,14 +18,14 @@ class AuthProvider extends ChangeNotifier{
 
   late String smsOtp;
   late String verificationId;
-  late Map<String, dynamic> dataUser;
+  late UserModel _userModel;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   bool _isValidPhone = false;
   bool get isValidPhone => _isValidPhone;
 
-  Future<bool> verifyPhone({required BuildContext context, required String number, required Map<String, dynamic>data}) async {
+  Future<bool> verifyPhone({required BuildContext context, required String number, required UserModel data}) async {
     bool result = false;
     BuildContext dialogcontext = context;
     try {
@@ -35,7 +36,7 @@ class AuthProvider extends ChangeNotifier{
       if(existUser == false){
         bool checkUser = await checkNumberUser(context: context, number: number);
         if(checkUser){
-          dataUser = data;
+          _userModel = data;
           await _auth.verifyPhoneNumber(
             phoneNumber: number,
             verificationCompleted: (PhoneAuthCredential phoneAuthCredential) async {
@@ -86,9 +87,9 @@ class AuthProvider extends ChangeNotifier{
       showLoading(dialogcontext);
       PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verId, smsCode: otp);
 
-      String guid = "user-"+Uuid().v1();
-      String email = dataUser["email"];
-      String password = dataUser["password"];
+      String guid = "user-${AppServices().generateGuid()}";
+      String email = _userModel.email;
+      String password = _userModel.password;
 
       userPhone = await _auth.signInWithCredential(credential);
       String uidPhone = userPhone.user!.uid;
@@ -98,19 +99,18 @@ class AuthProvider extends ChangeNotifier{
       userEmail = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       String uidEmail = userEmail.user!.uid;
 
-      dataUser["id"] = guid;
-      dataUser["uidPhone"] = uidPhone;
-      dataUser["uidEmail"] = uidEmail;
+      _userModel.id = guid;
+      _userModel.uidPhone = uidPhone;
+      _userModel.uidEmail = uidEmail;
 
-      appProvider.createDataToDb(
-        values: dataUser,
+     appProvider.createDataToDb(
+        data: _userModel.toMap(),
         guid: guid,
         context: context,
         collection: "users",
       );
 
       _isLoading = false;
-      dataUser.clear();
       notifyListeners();
       Navigator.of(dialogcontext).pop();
       Get.toNamed(RouteHalper.getInitial(uid: guid));

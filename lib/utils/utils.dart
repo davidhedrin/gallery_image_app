@@ -5,7 +5,10 @@ import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 
 void showSnackBar(BuildContext context, String content) {
   ScaffoldMessenger.of(context).showSnackBar(
@@ -45,19 +48,82 @@ void showAwsBar({required BuildContext context, required ContentType contentType
   );
 }
 
-Future<File?> pickImage(BuildContext context) async {
+
+Future<File?> pickImageNoCrop(BuildContext context) async {
   File? image;
   try {
-    final pickedImage =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      image = File(pickedImage.path);
-    }
+    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    File? getCompress;
+    try{
+      getCompress = await customCompressedFile(context: context, image: File(pickedImage!.path));
+    } catch (e) {}
+
+    image = getCompress;
   } catch (e) {
     showSnackBar(context, e.toString());
   }
 
   return image;
+}
+
+Future<File?> pickImageCrop(BuildContext context) async {
+  File? image;
+  try {
+    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    CroppedFile? cropImage;
+    try{
+      cropImage = await ImageCropper().cropImage(
+        sourcePath: pickedImage!.path,
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1  ),
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Cropper Image',
+              toolbarColor: Colors.blueAccent,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: true
+          ),
+          IOSUiSettings(
+            title: 'Cropper Image',
+          ),
+          WebUiSettings(
+            context: context,
+          ),
+        ],
+      );
+    } catch (e) {}
+
+    // File? getCompress;
+    // try{
+    //   getCompress = await customCompressedFile(context: context, image: File(cropImage!.path));
+    // } catch (e) {}
+
+    image = File(cropImage!.path);
+  } catch (e) {
+    showSnackBar(context, e.toString());
+  }
+
+  return image;
+}
+
+Future<File?> customCompressedFile({required BuildContext context, required File image, int quality = 100, int percentage = 10}) async {
+  File? result;
+
+  try{
+    final pathImage = await FlutterNativeImage.compressImage(
+      image.absolute.path,
+      quality: quality,
+      percentage: percentage,
+    );
+    
+    result = pathImage;
+  } catch (e) {
+    showSnackBar(context, e.toString());
+  }
+
+  return result;
 }
 
 Future<bool> onBackButtonPressYesNo({required BuildContext context, required String text, required String desc,}) async {

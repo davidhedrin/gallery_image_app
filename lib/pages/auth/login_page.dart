@@ -107,7 +107,6 @@ class _LoginPageState extends State<LoginPage> {
                         maxLength: 11,
                         style: TextStyle(
                           fontSize: Dimentions.font20,
-                          fontWeight: FontWeight.bold,
                         ),
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(right: Dimentions.width15, top: Dimentions.height15, bottom: Dimentions.height15),
@@ -142,7 +141,6 @@ class _LoginPageState extends State<LoginPage> {
                                 "${selectCountry.flagEmoji} +${selectCountry.phoneCode}",
                                 style: TextStyle(
                                     fontSize: Dimentions.font20,
-                                    fontWeight: FontWeight.bold,
                                     color: Colors.black87
                                 ),
                               ),

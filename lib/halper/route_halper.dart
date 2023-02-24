@@ -1,3 +1,4 @@
+import 'package:delivery_food_app/component/add_new_posting.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/pages/account/edit_accout_page.dart';
 import 'package:delivery_food_app/pages/auth/login_page.dart';
@@ -6,7 +7,6 @@ import 'package:delivery_food_app/pages/auth/register_page.dart';
 import 'package:delivery_food_app/pages/auth/register_with_phone.dart';
 import 'package:delivery_food_app/splashScreen/on_board_screen.dart';
 import 'package:delivery_food_app/splashScreen/splash_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 import '../component/page/popular_image_detail.dart';
@@ -24,6 +24,7 @@ class RouteHalper{
   static const String registerWithPhonePage = "/register-with-phone-page";
   static const String otpPage = "/otp-page";
   static const String editAccountPage = "/edit-eccount-page";
+  static const String addNewPostingPage = "/add-new-posting-page";
 
   static const String popularFood = "/popular-food";
   static const String recommendedFood = "/recommended-food";
@@ -37,6 +38,7 @@ class RouteHalper{
   static String getRegisterWithPhonePage() => '$registerWithPhonePage';
   static String getOtpPage({String? verId}) => '$otpPage?verId=$verId';
   static String getEditAccountPage({String? uid}) => '$editAccountPage?uid=$uid';
+  static String getAddNewPostingPage({String? uid, String? groupId}) => '$addNewPostingPage?uid=$uid&groupId=$groupId';
 
   static String getPopularFood(int pageId) => '$popularFood?pageId=$pageId';
   static String getRecommendedFood() => '$recommendedFood';
@@ -66,6 +68,11 @@ class RouteHalper{
     GetPage(name: editAccountPage, page: (){
       String uid = Get.parameters["uid"].toString();
       return EditAccountPage(uid: uid);
+    }),
+    GetPage(name: addNewPostingPage, page: (){
+      String uid = Get.parameters["uid"].toString();
+      String groupId = Get.parameters["groupId"].toString();
+      return AddNewPostingPage(uid: uid, groupId: groupId,);
     }),
 
     GetPage(name: popularFood, transition: Transition.fadeIn, page: (){

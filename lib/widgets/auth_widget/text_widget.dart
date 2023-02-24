@@ -51,6 +51,9 @@ class MyTextFieldReg extends StatelessWidget {
   final String? hintText;
   final Widget? suffixIcon, prefixIcon;
   final bool? obscureText;
+  final int? maxLines;
+  final bool? enabled;
+  final bool? readOnly;
 
   const MyTextFieldReg({
     Key? key,
@@ -62,7 +65,10 @@ class MyTextFieldReg extends StatelessWidget {
     this.hintText,
     this.suffixIcon,
     this.prefixIcon,
-    this.obscureText = false
+    this.obscureText = false,
+    this.maxLines = 1,
+    this.enabled = true,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -75,11 +81,13 @@ class MyTextFieldReg extends StatelessWidget {
       obscureText: obscureText!,
       style: TextStyle(
         fontSize: Dimentions.font20,
-        fontWeight: FontWeight.bold,
       ),
       validator: validator,
+      maxLines: maxLines,
+      readOnly: readOnly!,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(left: Dimentions.width15, right: Dimentions.width15, top: Dimentions.height15, bottom: Dimentions.height15),
+        enabled: enabled!,
+        contentPadding: EdgeInsets.symmetric(vertical: Dimentions.height15, horizontal: Dimentions.width15),
         enabledBorder:  OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white),
         ),
@@ -92,6 +100,7 @@ class MyTextFieldReg extends StatelessWidget {
         hintStyle: TextStyle(color: Colors.grey[500], fontSize: Dimentions.font20),
         suffix: suffixIcon,
         prefixIcon: prefixIcon,
+        isDense: true,
       ),
     );
   }

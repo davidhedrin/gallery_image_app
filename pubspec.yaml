@@ -52,6 +52,9 @@ dependencies:
   uuid: ^3.0.7
   flutter_spinkit: ^5.1.0
   awesome_snackbar_content: ^0.1.0
+  flutter_native_image: ^0.0.6+1
+  image_cropper: ^3.0.1
+  smooth_page_indicator: ^1.0.1
 
 dev_dependencies:
   flutter_test:

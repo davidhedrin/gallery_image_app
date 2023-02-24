@@ -3,6 +3,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
+import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/providers/auth_provider.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/utils/utils.dart';
@@ -243,17 +244,18 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                           });
 
                           String number = "+${selectCountry.phoneCode}"+no_phoneController.text;
+                          var modelUser = UserModel(
+                            nama_lengkap: namaController.text,
+                            email: emailController.text,
+                            password: passwordController.text,
+                            phone: number,
+                            flag_active: "N",
+                            user_type: "USR"
+                          );
                           await auth.verifyPhone(
                             context: context,
                             number: number,
-                            data: {
-                              "nama_lengkap" : namaController.text,
-                              "email" : emailController.text,
-                              "password" : passwordController.text,
-                              "phone" : number,
-                              "flag_active" : "N",
-                              "user_type" : "USR"
-                            },
+                            data: modelUser,
                           ).then((value){
                             if(value){
                               namaController.clear();

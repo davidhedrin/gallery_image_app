@@ -10,7 +10,7 @@ class IconAndTextWidget extends StatelessWidget {
     Key? key,
     required this.icon,
     required this.text,
-    required this.iconColor
+    required this.iconColor,
   }) : super(key: key);
 
   @override
@@ -19,7 +19,7 @@ class IconAndTextWidget extends StatelessWidget {
       children: [
         Icon(icon, color: iconColor, size: Dimentions.iconSize24,),
         SizedBox(width: 5,),
-        SmallText(text: text,),
+        SmallText(text: text),
       ],
     );
   }

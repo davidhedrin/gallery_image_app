@@ -62,7 +62,7 @@ class PopularFoodDetail extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: 0,
-            top: Dimentions.popularFoodImgSize-20,
+            top: Dimentions.popularFoodImgSize-Dimentions.height70,
             child: Container(
               padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, top: Dimentions.height20),
               decoration: BoxDecoration(
@@ -75,7 +75,7 @@ class PopularFoodDetail extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppColumn(text: "Chinese Side",),
+                  AppColumn(),
                   SizedBox(height: Dimentions.height20,),
                   BigText(text: "Introduce"),
                   SizedBox(height: Dimentions.height20,),
