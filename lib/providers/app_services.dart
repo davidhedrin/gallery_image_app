@@ -62,7 +62,7 @@ class AppServices{
     return result;
   }
 
-  //create new user
+  //create new data coll
   void createDataToDb({
     required Map<String, dynamic>data,
     required BuildContext context,
@@ -73,6 +73,22 @@ class AppServices{
       await _fbStore.collection(collection).doc(guid).set(data);
     } on FirebaseException catch (e){
       showSnackBar(context, "CreateDataToDb | $e");
+    }
+  }
+
+  //create coll in coll
+  void createDataToDbInCollec({
+    required Map<String, dynamic>data,
+    required BuildContext context,
+    required String collection1,
+    required String collection2,
+    required String guid1,
+    required String guid2,
+  }) async {
+    try{
+      await _fbStore.collection(collection1).doc(guid1).collection(collection2).doc(guid2).set(data);
+    } on FirebaseException catch (e){
+      showSnackBar(context, "CreateDataToDbInCollec | $e");
     }
   }
 
@@ -201,5 +217,20 @@ class AppServices{
 
   Stream<QuerySnapshot<Object?>> streamGetCollecInColect({required String collection1, required String collection2, required String docId}) {
     return _fbStore.collection(collection1).doc(docId).collection(collection2).snapshots();
+  }
+
+  //delete doc coll in coll
+  void deleteDataCollecInCollec({
+    required BuildContext context,
+    required String collection1,
+    required String collection2,
+    required String guid1,
+    required String guid2,
+  }) async {
+    try{
+      await _fbStore.collection(collection1).doc(guid1).collection(collection2).doc(guid2).delete();
+    } on FirebaseException catch (e){
+      showSnackBar(context, "DeleteDataCollecInCollec | $e");
+    }
   }
 }

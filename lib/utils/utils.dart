@@ -69,13 +69,13 @@ Future<File?> pickImageNoCrop(BuildContext context) async {
 
 Future<File?> pickImageCrop(BuildContext context) async {
   File? image;
-  try {
-    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+  final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
 
-    CroppedFile? cropImage;
+  CroppedFile? cropImage;
+  if(pickedImage != null){
     try{
       cropImage = await ImageCropper().cropImage(
-        sourcePath: pickedImage!.path,
+        sourcePath: pickedImage.path,
         aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1  ),
         uiSettings: [
           AndroidUiSettings(
@@ -95,14 +95,9 @@ Future<File?> pickImageCrop(BuildContext context) async {
       );
     } catch (e) {}
 
-    // File? getCompress;
-    // try{
-    //   getCompress = await customCompressedFile(context: context, image: File(cropImage!.path));
-    // } catch (e) {}
-
-    image = File(cropImage!.path);
-  } catch (e) {
-    showSnackBar(context, e.toString());
+    if(cropImage != null){
+      image = File(cropImage.path);
+    }
   }
 
   return image;

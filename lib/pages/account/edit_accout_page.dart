@@ -15,6 +15,7 @@ import '../../utils/dimentions.dart';
 import '../../widgets/app_icon.dart';
 import '../../widgets/auth_widget/text_widget.dart';
 import '../../widgets/data_not_found.dart';
+import '../../widgets/loading_progres.dart';
 
 class EditAccountPage extends StatefulWidget {
   final String uid;
@@ -62,30 +63,50 @@ class _EditAccountPageState extends State<EditAccountPage> {
                       clipBehavior: Clip.none,
                       alignment: Alignment.center,
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
-                          color: Colors.grey,
-                          child: imageCover != null ? Image.file(
-                            imageCover!,
-                            width: double.infinity,
-                            height: coverHeight,
-                            fit: BoxFit.cover,
-                          ) : data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? Image.network(
-                            data.get("img_cover_url"),
-                            width: double.infinity,
-                            height: coverHeight,
-                            fit: BoxFit.cover,
-                          ) : Image.asset(
-                            Assets.imageBackgroundProfil,
-                            width: double.infinity,
-                            height: coverHeight,
-                            fit: BoxFit.cover,
-                          ) : Image.asset(
-                            Assets.imageBackgroundProfil,
-                            width: double.infinity,
-                            height: coverHeight,
-                            fit: BoxFit.cover,
-                          ),
+                        Stack(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
+                              color: Colors.grey,
+                              child: imageCover != null ? Image.file(
+                                imageCover!,
+                                width: double.infinity,
+                                height: coverHeight,
+                                fit: BoxFit.cover,
+                              ) : data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? Image.network(
+                                data.get("img_cover_url"),
+                                width: double.infinity,
+                                height: coverHeight,
+                                fit: BoxFit.cover,
+                              ) : Image.asset(
+                                Assets.imageBackgroundProfil,
+                                width: double.infinity,
+                                height: coverHeight,
+                                fit: BoxFit.cover,
+                              ) : Image.asset(
+                                Assets.imageBackgroundProfil,
+                                width: double.infinity,
+                                height: coverHeight,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              left: Dimentions.heightSize130,
+                              top: Dimentions.height40,
+                              child: Center(
+                                child: FutureBuilder(
+                                    future: precacheImage(NetworkImage(data.get("img_cover_url"),), context),
+                                    builder: (BuildContext context, AsyncSnapshot snapshot){
+                                      if (snapshot.connectionState == ConnectionState.done) {
+                                        return const SizedBox.shrink();
+                                      } else {
+                                        return const LoadingProgress();
+                                      }
+                                    }
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
 
                         // Icons Widget

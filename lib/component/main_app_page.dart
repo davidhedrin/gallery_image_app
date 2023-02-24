@@ -33,6 +33,7 @@ class _MainAppPageState extends State<MainAppPage> {
 
   @override
   Widget build(BuildContext context) {
+    MainAppPage.setUserId = widget.Userid;
     List<Widget> pages = <Widget> [
       HomePageMenu(uid: widget.Userid),
       MessagePageMenu(),

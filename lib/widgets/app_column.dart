@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
+import 'package:delivery_food_app/models/likes_model.dart';
+import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +31,9 @@ class _AppColumnState extends State<AppColumn> {
   Widget build(BuildContext context) {
     var month = DateFormat('MMMM').format(widget.dataImage.isNull ? DateTime.now() : widget.dataImage!.tanggal!);
     var setDiffDate = widget.dataImage.isNull ? DateTime.now().difference(DateTime.now()) : DateTime.now().difference(widget.dataImage!.uploadDate!);
+    var diffMin = setDiffDate.inMinutes < 60 ? "${setDiffDate.inMinutes}min" : "";
     var diffDayUpload = setDiffDate.inDays.toString() != "0" ? "${setDiffDate.inDays}h" : "";
-    var difference = widget.dataImage.isNull ? "-" : "$diffDayUpload ${setDiffDate.inHours}j";
+    var difference = widget.dataImage.isNull ? "-" : "$diffDayUpload ${setDiffDate.inHours}j $diffMin";
 
     bool containsDocId(List<QueryDocumentSnapshot<Object?>> querySnapshot) {
       for (QueryDocumentSnapshot docSnapshot in querySnapshot) {
@@ -67,10 +70,24 @@ class _AppColumnState extends State<AppColumn> {
                         BigText(text: likeData.length.toString(), color: Colors.black45,),
                         SizedBox(width: Dimentions.height2,),
                         InkWell(
-                          onTap: (){
-                            setState(() {
-
+                          onTap: () async {
+                            UserModel getUserClick = await getService.getDocDataByDocId(context: context, collection: "users", docId: MainAppPage.setUserId).then((value){
+                              Map<String, dynamic> getMap = value!.data() as Map<String, dynamic>;
+                              return UserModel.fromMap(getMap);
                             });
+
+                            LikesModel likeData = LikesModel(
+                              id: MainAppPage.setUserId,
+                              by: getUserClick.nama_lengkap,
+                            );
+
+                            if(idLikeExists == true){
+                              getService.deleteDataCollecInCollec(context: context, collection1: widget.groupName!.toLowerCase(), collection2: "likes", guid1: widget.dataImage!.imageId, guid2: MainAppPage.setUserId);
+                            }else{
+                              getService.createDataToDbInCollec(data: likeData.toMapUpload(), context: context, collection1: widget.groupName!.toLowerCase(), collection2: "likes", guid1: widget.dataImage!.imageId, guid2: MainAppPage.setUserId);
+                            }
+
+                            setState(() {});
                           },
                           child: Icon(Icons.thumb_up, color: idLikeExists == true ? Colors.blue : Colors.grey,)
                         ),
