@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
+import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class AuthProvider extends ChangeNotifier{
       _isLoading = true;
       showLoading(dialogcontext);
 
-      bool existUser = await getDataDocumentByColumn(context: context, collection: "users", column: "phone", param: number);
+      bool existUser = await getDataDocumentByColumn(context: context, collection: Collections.users, column: "phone", param: number);
       if(existUser == false){
         bool checkUser = await checkNumberUser(context: context, number: number);
         if(checkUser){
@@ -107,7 +108,7 @@ class AuthProvider extends ChangeNotifier{
         data: _userModel.toMap(),
         guid: guid,
         context: context,
-        collection: "users",
+        collection: Collections.users,
       );
 
       _isLoading = false;
@@ -126,7 +127,7 @@ class AuthProvider extends ChangeNotifier{
     bool result = false;
 
     try{
-      DocumentSnapshot  snapshot = await _fbStore.collection("user-master").doc(number).get();
+      DocumentSnapshot  snapshot = await _fbStore.collection(Collections.usermaster).doc(number).get();
       if(snapshot.exists){
         result = true;
       }
@@ -142,7 +143,7 @@ class AuthProvider extends ChangeNotifier{
     bool result = false;
 
     try{
-      DocumentSnapshot snapshot = await _fbStore.collection("users").doc(uid).get();
+      DocumentSnapshot snapshot = await _fbStore.collection(Collections.users).doc(uid).get();
 
       if(snapshot.exists){
         result = true;

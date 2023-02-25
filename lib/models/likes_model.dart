@@ -17,4 +17,17 @@ class LikesModel{
       "id" : id,
     };
   }
+
+  factory LikesModel.fromMapBook(Map<String, dynamic> map){
+    return LikesModel(
+      by: map["groupBy"] ?? "",
+      id: map["imageId"] ?? "",
+    );
+  }
+  Map<String, dynamic> toMapBookmark(){
+    return {
+      "groupBy" : by,
+      "imageId" : id,
+    };
+  }
 }

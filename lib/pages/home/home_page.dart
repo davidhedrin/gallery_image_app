@@ -4,13 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/user_group.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
+import 'package:delivery_food_app/utils/collections.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../component/app_page_body.dart';
-import '../../generated/assets.dart';
 import '../../utils/colors.dart';
 import '../../utils/dimentions.dart';
 import '../../utils/utils.dart';
@@ -54,7 +54,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-                    stream: getService.streamBuilderGetDoc(collection: "users", docId: widget.uid),
+                    stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
                     builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Container(child: BigText(text: "-", color: AppColors.mainColor,));
@@ -68,7 +68,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                           children: [
                             Container(child: BigText(text: document!.get('nama_lengkap'), color: AppColors.mainColor,)),
                             StreamBuilder(
-                                stream: getService.streamBuilderGetDoc(collection: "user-master", docId: document.get("phone")),
+                                stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: document.get("phone")),
                                 builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup){
                                   if (snapshotGroup.connectionState == ConnectionState.waiting) {
                                     return Container(child: BigText(text: "-", color: AppColors.mainColor,));
@@ -120,27 +120,33 @@ class _HomePageMenuState extends State<HomePageMenu> {
                       }
                     }
                 ),
-                GestureDetector(
-                  onTap: () async {
-                    bool check = false;
-                    await onBackButtonPressYesNo(context: context, text: "Putuskan Koneksi!", desc: "Yakin ingin memutuskan koneksi?").then((value){
-                      check = value;
-                    });
-                    if(check){
-                      FirebaseAuth.instance.signOut();
-                      Get.toNamed(RouteHalper.getLoginPage());
-                    }
-                  },
-                  child: Center(
-                    child: Container(
-                      width: Dimentions.height30,
-                      height: Dimentions.height30,
-                      child: Icon(Icons.power_settings_new, color: Colors.white, size: Dimentions.iconSize24,),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Dimentions.radius15),
-                        color: Colors.redAccent,
+                Center(
+                  child: Row(
+                    children: [
+                      Icon(Icons.bookmark, color: AppColors.mainColor, size: Dimentions.iconSize32,),
+                      SizedBox(width: Dimentions.width5,),
+                      GestureDetector(
+                        onTap: () async {
+                          bool check = false;
+                          await onBackButtonPressYesNo(context: context, text: "Putuskan Koneksi!", desc: "Yakin ingin memutuskan koneksi?").then((value){
+                            check = value;
+                          });
+                          if(check){
+                            FirebaseAuth.instance.signOut();
+                            Get.toNamed(RouteHalper.getLoginPage());
+                          }
+                        },
+                        child: Container(
+                          width: Dimentions.height30,
+                          height: Dimentions.height30,
+                          child: Icon(Icons.power_settings_new, color: Colors.white, size: Dimentions.iconSize24,),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(Dimentions.radius15),
+                            color: Colors.redAccent,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 )
               ],
@@ -151,7 +157,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
           Expanded(
             child: SingleChildScrollView(
               child: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-                  stream: getService.streamBuilderGetDoc(collection: "users", docId: widget.uid),
+                  stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
                   builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator();
@@ -161,7 +167,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                     }else{
                       var document = snapshot.data;
                       return StreamBuilder(
-                            stream: getService.streamBuilderGetDoc(collection: "user-master", docId: document!.get("phone")),
+                            stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: document!.get("phone")),
                             builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup){
                               if (snapshotGroup.connectionState == ConnectionState.waiting) {
                                 return CircularProgressIndicator();

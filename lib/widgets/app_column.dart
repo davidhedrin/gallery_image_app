@@ -86,8 +86,6 @@ class _AppColumnState extends State<AppColumn> {
                             }else{
                               getService.createDataToDbInCollec(data: likeData.toMapUpload(), context: context, collection1: widget.groupName!.toLowerCase(), collection2: "likes", guid1: widget.dataImage!.imageId, guid2: MainAppPage.setUserId);
                             }
-
-                            setState(() {});
                           },
                           child: Icon(Icons.thumb_up, color: idLikeExists == true ? Colors.blue : Colors.grey,)
                         ),

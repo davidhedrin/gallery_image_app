@@ -4,6 +4,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/models/user_model.dart';
+import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/utils.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:email_validator/email_validator.dart';
@@ -46,7 +47,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
     return Scaffold(
       body: FadeInDown(
         child: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-          stream: getService.streamBuilderGetDoc(collection: "users", docId: widget.uid),
+          stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
           builder: (context, snapshot){
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: Container(child: CircularProgressIndicator()));
@@ -303,7 +304,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                         img_cover_url: imgCoverUrl,
                                       );
 
-                                      getService.updateDataDb(data: userModel.toMapUpdate(), context: context, collection: "users", guid: widget.uid);
+                                      getService.updateDataDb(data: userModel.toMapUpdate(), context: context, collection: Collections.users, guid: widget.uid);
 
                                       Navigator.of(dialogcontext).pop();
                                       showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil memperbaharui data", title: "Update");

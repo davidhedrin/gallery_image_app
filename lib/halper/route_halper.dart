@@ -26,7 +26,7 @@ class RouteHalper{
   static const String editAccountPage = "/edit-eccount-page";
   static const String addNewPostingPage = "/add-new-posting-page";
 
-  static const String popularFood = "/popular-food";
+  static const String detailImage = "/detail-image";
   static const String recommendedFood = "/recommended-food";
   static const String onBoardScreen = "/on-board-screen";
   static const String splashScreen = "/splash-screen";
@@ -40,7 +40,7 @@ class RouteHalper{
   static String getEditAccountPage({String? uid}) => '$editAccountPage?uid=$uid';
   static String getAddNewPostingPage({String? uid, String? groupId}) => '$addNewPostingPage?uid=$uid&groupId=$groupId';
 
-  static String getPopularFood(int pageId) => '$popularFood?pageId=$pageId';
+  static String getDetailImage(String imageId, String groupName) => '$detailImage?imageId=$imageId&group=$groupName';
   static String getRecommendedFood() => '$recommendedFood';
   static String getOnBoardScreen() => '$onBoardScreen';
   static String getsplashScreen() => '$splashScreen';
@@ -75,9 +75,10 @@ class RouteHalper{
       return AddNewPostingPage(uid: uid, groupId: groupId,);
     }),
 
-    GetPage(name: popularFood, transition: Transition.fadeIn, page: (){
-      int id = intId(Get.parameters['pageId'].toString()) ;
-      return PopularFoodDetail(id: id);
+    GetPage(name: detailImage, transition: Transition.fadeIn, page: (){
+      String id = Get.parameters['imageId'].toString() ;
+      String group = Get.parameters['group'].toString() ;
+      return DetailImagePage(id: id, groupName: group,);
     }),
     GetPage(name: recommendedFood, transition: Transition.fadeIn, page: (){
       return RecommendedFoodDetail();

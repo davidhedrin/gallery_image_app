@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
+import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/data_not_found.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
@@ -48,7 +49,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
         body: Column(
             children: <Widget> [
               StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-                  stream: getService.streamBuilderGetDoc(collection: "users", docId: widget.uid),
+                  stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: Container(child: CircularProgressIndicator()));

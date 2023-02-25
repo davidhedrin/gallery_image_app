@@ -8,6 +8,7 @@ import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/providers/auth_provider.dart';
+import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -186,9 +187,9 @@ class _LoginPageState extends State<LoginPage> {
                           final String phone = "+${selectCountry.phoneCode}"+no_phoneController.text;
                           final String password = passwordController.text.trim();
 
-                          await _app.getDataDocumentByColumn(context: context, collection: "users", column: "phone", param: phone).then((result) async {
+                          await _app.getDataDocumentByColumn(context: context, collection: Collections.users, column: "phone", param: phone).then((result) async {
                             if(result){
-                              QuerySnapshot snap = await FirebaseFirestore.instance.collection("users").where("phone", isEqualTo: phone).get();
+                              QuerySnapshot snap = await FirebaseFirestore.instance.collection(Collections.users).where("phone", isEqualTo: phone).get();
                               final String email = snap.docs.first.get('email');
                               final String pass = snap.docs.first.get('password').trim();
 

@@ -1,6 +1,10 @@
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:delivery_food_app/utils/collections.dart';
+import 'package:dio/dio.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +19,7 @@ class AppServices{
   final FirebaseFirestore _fbStore = FirebaseFirestore.instance;
   final FirebaseStorage _fbStorage = FirebaseStorage.instance;
 
-  CollectionReference userCollec = FirebaseFirestore.instance.collection('users');
+  CollectionReference userCollec = FirebaseFirestore.instance.collection(Collections.users);
 
   void loading(BuildContext context){
     showDialog(
@@ -50,7 +54,7 @@ class AppServices{
       UserCredential userEmail = await _auth.signInWithEmailAndPassword(email: email, password: password);
       String uidEm = userEmail.user!.uid;
 
-      DocumentSnapshot docUser = await getDocumentByColumn("users", "uidEmail", uidEm);
+      DocumentSnapshot docUser = await getDocumentByColumn(Collections.users, "uidEmail", uidEm);
       String uid = docUser.id;
 
       result["status"] = "200";
@@ -192,6 +196,36 @@ class AppServices{
     }
 
     return result;
+  }
+
+  Future<bool> downloadFile(Reference refStorage, String fileName, BuildContext context) async {
+    bool finish = false;
+
+    final tempDir = await getTemporaryDirectory();
+    final path = "${tempDir.path}/$fileName.jpg";
+
+    try{
+      String imageUrl = await refStorage.getDownloadURL();
+      await Dio().download(
+          imageUrl,
+          path,
+          onReceiveProgress: (reciv, total){
+            double progress = reciv/total;
+            if(progress == 1.0){
+              finish = true;
+            }
+          }
+      );
+    }catch(e){
+      finish == false;
+    }
+
+    if(finish == false){
+      showSnackBar(context, "downloadFile | Terjadi kesalahan, Ulangi beberapa saat lagi!");
+    }
+    await GallerySaver.saveImage(path, toDcim: true);
+
+    return finish;
   }
 
   void deleteFileStorage({required BuildContext context, required String imagePath}) async {

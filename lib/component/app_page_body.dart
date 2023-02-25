@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
+import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/app_column.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/icon_and_text_widget.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,7 +32,6 @@ class AppPageBody extends StatefulWidget {
 class _AppPageBodyState extends State<AppPageBody> {
   final AppServices getService = AppServices();
   PageController pageController = PageController();
-  int _currPageValue = 0;
 
   bool containsDocId(List<QueryDocumentSnapshot<Object?>> querySnapshot) {
     for (QueryDocumentSnapshot docSnapshot in querySnapshot) {
@@ -173,7 +172,7 @@ class _AppPageBodyState extends State<AppPageBody> {
 
                     return GestureDetector(
                       onTap: (){
-                        Get.toNamed(RouteHalper.getPopularFood(index));
+                        Get.toNamed(RouteHalper.getDetailImage(getData.imageId, widget.groupImage));
                       },
                       child: Container(
                         margin: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, bottom: Dimentions.height15),
@@ -251,7 +250,7 @@ class _AppPageBodyState extends State<AppPageBody> {
                                                     SizedBox(width: Dimentions.height2,),
                                                     InkWell(
                                                       onTap: () async {
-                                                        UserModel getUserClick = await getService.getDocDataByDocId(context: context, collection: "users", docId: MainAppPage.setUserId).then((value){
+                                                        UserModel getUserClick = await getService.getDocDataByDocId(context: context, collection: Collections.users, docId: MainAppPage.setUserId).then((value){
                                                           Map<String, dynamic> getMap = value!.data() as Map<String, dynamic>;
                                                           return UserModel.fromMap(getMap);
                                                         });
@@ -262,12 +261,10 @@ class _AppPageBodyState extends State<AppPageBody> {
                                                         );
 
                                                         if(idLikeExists == true){
-                                                          getService.deleteDataCollecInCollec(context: context, collection1: widget.groupImage.toLowerCase(), collection2: "likes", guid1: getData.imageId, guid2: MainAppPage.setUserId);
+                                                          getService.deleteDataCollecInCollec(context: context, collection1: widget.groupImage.toLowerCase(), collection2: Collections.likes, guid1: getData.imageId, guid2: MainAppPage.setUserId);
                                                         }else{
-                                                          getService.createDataToDbInCollec(data: likeData.toMapUpload(), context: context, collection1: widget.groupImage.toLowerCase(), collection2: "likes", guid1: getData.imageId, guid2: MainAppPage.setUserId);
+                                                          getService.createDataToDbInCollec(data: likeData.toMapUpload(), context: context, collection1: widget.groupImage.toLowerCase(), collection2: Collections.likes, guid1: getData.imageId, guid2: MainAppPage.setUserId);
                                                         }
-
-                                                        setState(() {});
                                                       },
                                                       child: Icon(Icons.thumb_up, color: idLikeExists == true ? Colors.blue : Colors.grey,)
                                                     ),
@@ -319,7 +316,7 @@ class _AppPageBodyState extends State<AppPageBody> {
       children: [
         GestureDetector(
           onTap: (){
-            Get.toNamed(RouteHalper.getPopularFood(index));
+            Get.toNamed(RouteHalper.getDetailImage(docImage.imageId, widget.groupImage));
           },
           child: Stack(
             children: [
