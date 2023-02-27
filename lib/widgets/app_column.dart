@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/models/likes_model.dart';
 import 'package:delivery_food_app/models/user_model.dart';
+import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,7 @@ class _AppColumnState extends State<AppColumn> {
             widget.dataImage.isNull ? BigText(
               text: "-", color: Colors.black45,
             ) : StreamBuilder<QuerySnapshot>(
-                stream: getService.streamGetCollecInColect(collection1: widget.groupName!, collection2: "likes", docId: widget.dataImage!.imageId),
+                stream: getService.streamGetCollecInColect(collection1: widget.groupName!, collection2: Collections.likes, docId: widget.dataImage!.imageId),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return BigText(text: "-", color: Colors.black45,);
@@ -82,9 +83,9 @@ class _AppColumnState extends State<AppColumn> {
                             );
 
                             if(idLikeExists == true){
-                              getService.deleteDataCollecInCollec(context: context, collection1: widget.groupName!.toLowerCase(), collection2: "likes", guid1: widget.dataImage!.imageId, guid2: MainAppPage.setUserId);
+                              getService.deleteDataCollecInCollec(context: context, collection1: widget.groupName!.toLowerCase(), collection2: Collections.likes, guid1: widget.dataImage!.imageId, guid2: MainAppPage.setUserId);
                             }else{
-                              getService.createDataToDbInCollec(data: likeData.toMapUpload(), context: context, collection1: widget.groupName!.toLowerCase(), collection2: "likes", guid1: widget.dataImage!.imageId, guid2: MainAppPage.setUserId);
+                              getService.createDataToDbInCollec(data: likeData.toMapUpload(), context: context, collection1: widget.groupName!.toLowerCase(), collection2: Collections.likes, guid1: widget.dataImage!.imageId, guid2: MainAppPage.setUserId);
                             }
                           },
                           child: Icon(Icons.thumb_up, color: idLikeExists == true ? Colors.blue : Colors.grey,)
@@ -106,6 +107,7 @@ class _AppColumnState extends State<AppColumn> {
             //   }),
             // ),
             SizedBox(width: Dimentions.height6,),
+            SmallText(text: "Tanggal Foto: "),
             SmallText(text: widget.dataImage.isNull ? "upload date" : "${widget.dataImage!.tanggal!.day} $month ${widget.dataImage!.tanggal!.year}"),
             // SizedBox(width: Dimentions.height10,),
             // SmallText(text: "1287"),

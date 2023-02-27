@@ -16,6 +16,7 @@ class MainAppPage extends StatefulWidget {
   final String Userid;
   static String? groupCodeId = "";
   static String setUserId = "";
+  static String groupNameGet = "";
   const MainAppPage({Key? key, required this.Userid}) : super(key: key);
 
   @override

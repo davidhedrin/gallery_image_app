@@ -52,7 +52,7 @@ class _AppPageBodyState extends State<AppPageBody> {
           // color: Colors.redAccent,
           height: Dimentions.pageView,
           child: StreamBuilder<QuerySnapshot>(
-            stream: getService.streamObjGetCollection(collection: widget.groupImage.toLowerCase()),
+            stream: getService.streamObjGetCollection(collection: widget.groupImage.toLowerCase()).take(6),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return noImageBanner();
@@ -87,7 +87,7 @@ class _AppPageBodyState extends State<AppPageBody> {
         SizedBox(height: Dimentions.width8,),
 
         StreamBuilder<QuerySnapshot>(
-          stream: getService.streamObjGetCollection(collection: widget.groupImage.toLowerCase()),
+          stream: getService.streamObjGetCollection(collection: widget.groupImage.toLowerCase()).take(6),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text("");
@@ -276,7 +276,12 @@ class _AppPageBodyState extends State<AppPageBody> {
                                         ],
                                       ),
                                       SizedBox(height: Dimentions.height10,),
-                                      SmallText(text: "${getData.tanggal!.day} $month ${getData.tanggal!.year}"),
+                                      Row(
+                                        children: [
+                                          SmallText(text: "Tanggal Foto: "),
+                                          SmallText(text: "${getData.tanggal!.day} $month ${getData.tanggal!.year}"),
+                                        ],
+                                      ),
                                       SizedBox(height: Dimentions.height10,),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -123,7 +123,12 @@ class _HomePageMenuState extends State<HomePageMenu> {
                 Center(
                   child: Row(
                     children: [
-                      Icon(Icons.bookmark, color: AppColors.mainColor, size: Dimentions.iconSize32,),
+                      GestureDetector(
+                        onTap: (){
+                          Get.toNamed(RouteHalper.getBookmarkPage());
+                        },
+                        child: Icon(Icons.bookmark, color: AppColors.mainColor, size: Dimentions.iconSize32,)
+                      ),
                       SizedBox(width: Dimentions.width5,),
                       GestureDetector(
                         onTap: () async {
@@ -185,6 +190,10 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                 UserGroupModel getSelectedGroup = UserGroupModel();
                                 if(_selectedItemChane!.isNotEmpty){
                                   getSelectedGroup = toModelGroup.firstWhere((group) => group.id == _selectedItemChane);
+
+                                  MainAppPage.groupNameGet = getSelectedGroup.nama_group.toLowerCase();
+                                }else{
+                                  MainAppPage.groupNameGet = toModelGroup.first.nama_group.toLowerCase();
                                 }
 
                                 return AppPageBody(

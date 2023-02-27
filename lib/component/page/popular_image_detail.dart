@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/models/posting_image.dart';
+import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/utils/utils.dart';
@@ -23,9 +24,9 @@ import '../../widgets/loading_progres.dart';
 import '../main_app_page.dart';
 
 class DetailImagePage extends StatefulWidget {
-  final String id;
+  final String imageId;
   final String? groupName;
-  const DetailImagePage({Key? key, required this.id, this.groupName}) : super(key: key);
+  const DetailImagePage({Key? key, required this.imageId, this.groupName}) : super(key: key);
 
   @override
   State<DetailImagePage> createState() => _DetailImagePageState();
@@ -35,12 +36,21 @@ class _DetailImagePageState extends State<DetailImagePage> {
   final FirebaseStorage storage = FirebaseStorage.instance;
   final AppServices getService = AppServices();
 
+  bool containsDocId(List<QueryDocumentSnapshot<Object?>> querySnapshot) {
+    for (QueryDocumentSnapshot docSnapshot in querySnapshot) {
+      if (docSnapshot.id == widget.imageId) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-        stream: getService.streamBuilderGetDoc(collection: widget.groupName!, docId: widget.id),
+        stream: getService.streamBuilderGetDoc(collection: widget.groupName!, docId: widget.imageId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: Container(child: CircularProgressIndicator()));
@@ -102,29 +112,47 @@ class _DetailImagePageState extends State<DetailImagePage> {
                         },
                         child: AppIcon(icon: Icons.arrow_back_ios_new),
                       ),
-                      GestureDetector(
-                        onTap: () async {
-                          UserModel getUserClick = await getService.getDocDataByDocId(context: context, collection: "users", docId: MainAppPage.setUserId).then((value){
-                            Map<String, dynamic> getMap = value!.data() as Map<String, dynamic>;
-                            return UserModel.fromMap(getMap);
-                          });
+                      StreamBuilder<QuerySnapshot>(
+                          stream: getService.streamGetCollecInColect(collection1: Collections.users, collection2: Collections.bookmark, docId: MainAppPage.setUserId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return BigText(text: "-", color: Colors.black45,);
+                            }
+                            if (!snapshot.hasData) {
+                              return BigText(text: "-", color: Colors.black45,);
+                            }else{
+                              var likeData = snapshot.data!.docs;
+                              bool idLikeExists = containsDocId(likeData);
+                              return GestureDetector(
+                                onTap: () async {
+                                  UserModel getUserClick = await getService.getDocDataByDocId(context: context, collection: "users", docId: MainAppPage.setUserId).then((value){
+                                    Map<String, dynamic> getMap = value!.data() as Map<String, dynamic>;
+                                    return UserModel.fromMap(getMap);
+                                  });
 
-                          LikesModel likeData = LikesModel(
-                            id: getData.imageId,
-                            by: getUserClick.nama_lengkap,
-                          );
-                          //
-                          // getService.createDataToDbInCollec(data: likeData.toMapBookmark(), context: context, collection1: "users", collection2: "bookmark", guid1: MainAppPage.setUserId, guid2: getData.imageId);
-                        },
-                        child: Container(
-                          width: Dimentions.height40,
-                          height: Dimentions.height40,
-                          child: Icon(Icons.bookmark_add, color: Colors.white, size: Dimentions.iconSize24,),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(Dimentions.radius50),
-                            color: AppColors.mainColor,
-                          ),
-                        ),
+                                  LikesModel likeData = LikesModel(
+                                    id: getData.imageId,
+                                    by: widget.groupName!.toLowerCase(),
+                                  );
+
+                                  if(idLikeExists == true){
+                                    getService.deleteDataCollecInCollec(context: context, collection1: Collections.users, collection2: Collections.bookmark, guid1: MainAppPage.setUserId, guid2: getData.imageId);
+                                  }else{
+                                    getService.createDataToDbInCollec(data: likeData.toMapBookmark(), context: context, collection1: Collections.users, collection2: Collections.bookmark, guid1: MainAppPage.setUserId, guid2: getData.imageId);
+                                  }
+                                },
+                                child: Container(
+                                    width: Dimentions.height40,
+                                    height: Dimentions.height40,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(Dimentions.radius50),
+                                      color: idLikeExists == true ? AppColors.mainColor : Colors.grey,
+                                    ),
+                                    child: idLikeExists == true ? Icon(Icons.bookmark_added, color: Colors.white, size: Dimentions.iconSize24,) : Icon(Icons.bookmark_add, color: Colors.white, size: Dimentions.iconSize24,)
+                                ),
+                              );
+                            }
+                          }
                       ),
                     ],
                   ),
@@ -186,7 +214,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
               onTap: () async {
                 getService.loading(context);
 
-                Reference refStorage = storage.ref().child("${widget.groupName!.toLowerCase()}/${widget.id}");
+                Reference refStorage = storage.ref().child("${widget.groupName!.toLowerCase()}/${widget.imageId}");
                 bool finishDown = await getService.downloadFile(refStorage, "${widget.groupName!}-${DateTime.now().millisecond}", context);
 
                 Navigator.of(context).pop();

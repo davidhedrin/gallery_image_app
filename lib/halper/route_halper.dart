@@ -1,4 +1,5 @@
 import 'package:delivery_food_app/component/add_new_posting.dart';
+import 'package:delivery_food_app/component/bookmark_page.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/pages/account/edit_accout_page.dart';
 import 'package:delivery_food_app/pages/auth/login_page.dart';
@@ -25,6 +26,7 @@ class RouteHalper{
   static const String otpPage = "/otp-page";
   static const String editAccountPage = "/edit-eccount-page";
   static const String addNewPostingPage = "/add-new-posting-page";
+  static const String bookmarkPage = "/bookmark-page";
 
   static const String detailImage = "/detail-image";
   static const String recommendedFood = "/recommended-food";
@@ -39,6 +41,7 @@ class RouteHalper{
   static String getOtpPage({String? verId}) => '$otpPage?verId=$verId';
   static String getEditAccountPage({String? uid}) => '$editAccountPage?uid=$uid';
   static String getAddNewPostingPage({String? uid, String? groupId}) => '$addNewPostingPage?uid=$uid&groupId=$groupId';
+  static String getBookmarkPage() => '$bookmarkPage';
 
   static String getDetailImage(String imageId, String groupName) => '$detailImage?imageId=$imageId&group=$groupName';
   static String getRecommendedFood() => '$recommendedFood';
@@ -74,11 +77,12 @@ class RouteHalper{
       String groupId = Get.parameters["groupId"].toString();
       return AddNewPostingPage(uid: uid, groupId: groupId,);
     }),
+    GetPage(name: bookmarkPage, page: () => BookmarkPage()),
 
     GetPage(name: detailImage, transition: Transition.fadeIn, page: (){
       String id = Get.parameters['imageId'].toString() ;
       String group = Get.parameters['group'].toString() ;
-      return DetailImagePage(id: id, groupName: group,);
+      return DetailImagePage(imageId: id, groupName: group,);
     }),
     GetPage(name: recommendedFood, transition: Transition.fadeIn, page: (){
       return RecommendedFoodDetail();
