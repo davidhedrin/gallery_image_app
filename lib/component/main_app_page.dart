@@ -38,7 +38,7 @@ class _MainAppPageState extends State<MainAppPage> {
     List<Widget> pages = <Widget> [
       HomePageMenu(uid: widget.Userid),
       MessagePageMenu(),
-      SettingPageMenu(),
+      SettingPageMenu(uid: widget.Userid),
       AccountPageMenu(uid: widget.Userid)
     ];
 

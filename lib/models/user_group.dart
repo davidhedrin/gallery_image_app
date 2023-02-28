@@ -1,8 +1,10 @@
 class UserGroupModel{
+  String status;
   String nama_group;
   String id;
 
   UserGroupModel({
+    this.status = "",
     this.nama_group = "",
     this.id = "",
   });
@@ -11,6 +13,7 @@ class UserGroupModel{
     return UserGroupModel(
       id: map['id'] ?? '',
       nama_group: map['nama_group'] ?? '',
+      status: map['status'] ?? '',
     );
   }
 

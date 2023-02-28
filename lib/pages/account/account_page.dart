@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
-import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/data_not_found.dart';
@@ -31,23 +30,6 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
   final FirebaseFirestore _fbStore = FirebaseFirestore.instance;
   final FirebaseAuth userAuth = FirebaseAuth.instance;
   final AppServices getService = AppServices();
-
-  // Future<List<dynamic>>? imagesPost;
-  //
-  // void getUserGroups() async {
-  //   var getUser = await getService.getDocDataByDocId(context: context, collection: Collections.users, docId: widget.uid);
-  //   UserModel user = UserModel.fromMap(getUser!.data() as Map<String, dynamic>);
-  //
-  //   var getUserMaster = await getService.getDocDataByDocId(context: context, collection: Collections.usermaster, docId: user.phone);
-  //   List<Map<String, dynamic>> groupArray = List.from(getUserMaster!.get("group"));
-  //   List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
-  //     UserGroupModel getGroup = UserGroupModel.fromMap(res);
-  //     return getGroup;
-  //   }).toList();
-  //
-  //   imagesPost = getService.getAllDocFromListColl(toModelGroup);
-  // }
-
 
   @override
   Widget build(BuildContext context) {
