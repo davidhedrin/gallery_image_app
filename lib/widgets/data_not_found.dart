@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class DataNotFoundWidget extends StatelessWidget {
   final String msgTop;
-  const DataNotFoundWidget({Key? key, required this.msgTop}) : super(key: key);
+  final String? msgButton;
+  const DataNotFoundWidget({Key? key, required this.msgTop, this.msgButton}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class DataNotFoundWidget extends StatelessWidget {
               Image.asset(Assets.imageNotFound, width: Dimentions.imageSize190,),
               SizedBox(height: Dimentions.height10,),
               Text(
-                "$msgTop, \n Ulangi beberapa saat lagi!",
+                "$msgTop, \n ${msgButton!.isEmpty ? "Ulangi beberapa saat lagi!" : msgButton}",
                 style: TextStyle(fontSize: Dimentions.font16),
                 textAlign: TextAlign.center,
               ),

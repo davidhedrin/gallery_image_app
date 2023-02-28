@@ -395,6 +395,7 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                           uploadDate: DateTime.now(),
                           userByName: userModel.nama_lengkap,
                           userById: userModel.id,
+                          imageGroup: collectionImage,
                         );
 
                         getService.createDataToDb(data: imageModel.toMapUpload(), context: context, collection: collectionImage, guid: guid);

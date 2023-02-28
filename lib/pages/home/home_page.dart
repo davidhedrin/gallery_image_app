@@ -92,16 +92,25 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                       MainAppPage.groupCodeId = _selectedItem;
                                     }
 
+                                    if(MainAppPage.groupNameGet.isEmpty){
+                                      MainAppPage.groupNameGet = toModelGroup.first.nama_group.toLowerCase();
+                                    }else{
+                                      UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.id == _selectedItem);
+                                      MainAppPage.groupNameGet = getGroup.nama_group.toLowerCase();
+                                    }
+
                                     return DropdownButtonHideUnderline(
                                       child: DropdownButton(
                                         isDense: true,
                                         value: _selectedItem,
                                         icon: Icon(Icons.arrow_drop_down),
                                         onChanged: (value) {
+                                          UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.id == _selectedItem);
                                           setState(() {
                                             _selectedItem = value;
-                                            MainAppPage.groupCodeId = value;
                                             _selectedItemChane = value;
+                                            MainAppPage.groupCodeId = value;
+                                            MainAppPage.groupNameGet = getGroup.nama_group.toLowerCase();
                                           });
                                         },
                                         items: toModelGroup.map((value) {
@@ -162,48 +171,30 @@ class _HomePageMenuState extends State<HomePageMenu> {
           Expanded(
             child: SingleChildScrollView(
               child: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-                  stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
-                  builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    }
-                    if (!snapshot.hasData) {
-                      return CircularProgressIndicator();
-                    }else{
-                      var document = snapshot.data;
-                      return StreamBuilder(
-                            stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: document!.get("phone")),
-                            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup){
-                              if (snapshotGroup.connectionState == ConnectionState.waiting) {
-                                return CircularProgressIndicator();
-                              }
-                              if (!snapshotGroup.hasData) {
-                                return CircularProgressIndicator();
-                              }else{
-                                var dataGroup = snapshotGroup.data!.data();
-                                List<Map<String, dynamic>> groupArray = List.from(snapshotGroup.data!.get("group"));
-                                List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
-                                  UserGroupModel getGroup = UserGroupModel.fromMap(res);
-                                  return getGroup;
-                                }).toList();
-
-                                UserGroupModel getSelectedGroup = UserGroupModel();
-                                if(_selectedItemChane!.isNotEmpty){
-                                  getSelectedGroup = toModelGroup.firstWhere((group) => group.id == _selectedItemChane);
-
-                                  MainAppPage.groupNameGet = getSelectedGroup.nama_group.toLowerCase();
-                                }else{
-                                  MainAppPage.groupNameGet = toModelGroup.first.nama_group.toLowerCase();
-                                }
-
-                                return AppPageBody(
-                                  groupImage: _selectedItemChane!.isEmpty ? toModelGroup.first.nama_group.toLowerCase() : getSelectedGroup.nama_group.toLowerCase(),
-                                );
-                              }
-                            }
-                        );
-                    }
+                stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
+                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
                   }
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }else{
+                    var document = snapshot.data;
+                    return StreamBuilder(
+                      stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: document!.get("phone")),
+                      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup){
+                        if (snapshotGroup.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        }
+                        if (!snapshotGroup.hasData) {
+                          return CircularProgressIndicator();
+                        }else{
+                          return AppPageBody(groupImage: MainAppPage.groupNameGet.toLowerCase(),);
+                        }
+                      }
+                    );
+                  }
+                }
               ),
             ),
           ),

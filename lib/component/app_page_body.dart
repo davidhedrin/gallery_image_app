@@ -172,7 +172,7 @@ class _AppPageBodyState extends State<AppPageBody> {
 
                     return GestureDetector(
                       onTap: (){
-                        Get.toNamed(RouteHalper.getDetailImage(getData.imageId, widget.groupImage));
+                        Get.toNamed(RouteHalper.getDetailImage(getData.imageId, getData.imageGroup));
                       },
                       child: Container(
                         margin: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, bottom: Dimentions.height15),
@@ -321,7 +321,7 @@ class _AppPageBodyState extends State<AppPageBody> {
       children: [
         GestureDetector(
           onTap: (){
-            Get.toNamed(RouteHalper.getDetailImage(docImage.imageId, widget.groupImage));
+            Get.toNamed(RouteHalper.getDetailImage(docImage.imageId, docImage.imageGroup));
           },
           child: Stack(
             children: [

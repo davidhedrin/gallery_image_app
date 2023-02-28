@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:delivery_food_app/models/posting_image.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:dio/dio.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -12,6 +13,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/user_group.dart';
 import '../widgets/loading_progres.dart';
 
 class AppServices{
@@ -266,5 +268,28 @@ class AppServices{
     } on FirebaseException catch (e){
       showSnackBar(context, "DeleteDataCollecInCollec | $e");
     }
+  }
+
+  Future<QuerySnapshot<Object?>> getAllDocuments(String collection) async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection(collection).get();
+    return snapshot;
+  }
+
+  Future<List<PostingImageModel>> getAllDocFromListColl(List<dynamic> models) async {
+    List<Future<QuerySnapshot>> futures = models.map((model) {
+      return FirebaseFirestore.instance.collection(model.nama_group.toLowerCase()).get();
+    }).toList();
+
+    List<QuerySnapshot> snapshots = await Future.wait(futures);
+
+    List<PostingImageModel> documents = snapshots.expand((snapshot) {
+      return snapshot.docs.map((doc) {
+        Map<String, dynamic> getMap = doc.data() as Map<String, dynamic>;
+        PostingImageModel fromMap = PostingImageModel.fromMap(getMap);
+        return fromMap;
+      });
+    }).toList();
+
+    return documents;
   }
 }

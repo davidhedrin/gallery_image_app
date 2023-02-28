@@ -8,6 +8,7 @@ class PostingImageModel{
   DateTime? uploadDate;
   String? keterangan;
   String imageUrl;
+  String imageGroup;
 
   PostingImageModel({
     this.imageId = "",
@@ -19,6 +20,7 @@ class PostingImageModel{
     this.tanggal,
     this.uploadDate,
     this.keterangan,
+    this.imageGroup = "",
   });
 
   factory PostingImageModel.fromMap(Map<String, dynamic> map) {
@@ -32,6 +34,7 @@ class PostingImageModel{
       tanggal: map['tanggal'].toDate() ?? '',
       uploadDate: map['uploadDate'].toDate() ?? '',
       keterangan: map['keterangan'] ?? '',
+      imageGroup: map['imageGroup'] ?? '',
     );
   }
 
@@ -46,6 +49,7 @@ class PostingImageModel{
       "tanggal" : tanggal,
       "uploadDate" : uploadDate,
       "keterangan" : keterangan,
+      "imageGroup" : imageGroup,
     };
   }
 }
