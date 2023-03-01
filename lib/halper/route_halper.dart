@@ -8,6 +8,7 @@ import 'package:delivery_food_app/pages/auth/register_page.dart';
 import 'package:delivery_food_app/pages/auth/register_with_phone.dart';
 import 'package:delivery_food_app/pages/setting/menus/group_page.dart';
 import 'package:delivery_food_app/pages/setting/menus/group_panel_manage.dart';
+import 'package:delivery_food_app/pages/setting/menus/user_page.dart';
 import 'package:delivery_food_app/splashScreen/on_board_screen.dart';
 import 'package:delivery_food_app/splashScreen/splash_screen.dart';
 import 'package:get/get.dart';
@@ -36,6 +37,7 @@ class RouteHalper{
   static const String splashScreen = "/splash-screen";
 
   static const String groupSettingPage = "/group-setting-page";
+  static const String userSettingPage = "/user-setting-page";
   // static const String groupPanelManage = "/group-panel-manage";
 
   static String getInitial({String? uid}) => '$initial?uid=$uid';
@@ -54,6 +56,7 @@ class RouteHalper{
   static String getsplashScreen() => '$splashScreen';
 
   static String getGroupSettingPage() => '$groupSettingPage';
+  static String getUserSettingPage() => '$userSettingPage';
   // static String getGroupPanelManage() => '$groupPanelManage';
 
   static List<GetPage> routes = [
@@ -97,6 +100,7 @@ class RouteHalper{
     }),
 
     GetPage(name: groupSettingPage, page: () => GroupSettingPage()),
+    GetPage(name: userSettingPage, page: () => UserSettingPage()),
     // GetPage(name: groupPanelManage, page: () => GroupPanelManage()),
   ];
 }

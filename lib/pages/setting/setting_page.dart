@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/pages/setting/menus/group_panel_manage.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../halper/function_halpers.dart';
 import '../../models/user_group.dart';
 import '../../models/user_group_master_model.dart';
 import '../../providers/app_services.dart';
@@ -32,6 +34,7 @@ class SettingPageMenu extends StatefulWidget {
 class _SettingPageMenuState extends State<SettingPageMenu> {
   final FirebaseAuth userAuth = FirebaseAuth.instance;
   final AppServices getService = AppServices();
+  final FunHelp getHelp = FunHelp();
 
   Color generateRandomColor() {
     Random random = Random();
@@ -69,15 +72,21 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                 Map<String, dynamic> userMap = data!.data() as Map<String, dynamic>;
                 UserModel getUser = UserModel.fromMap(userMap);
                 String userType = getUser.user_type.toLowerCase();
-                int setType = userType == "mdm" ? 1 : userType == "adm" ? 2 : 3;
+                int setType = getHelp.checkStatusUser(userType);
 
                 return Column(
                   children: [
                     ListTile(
                       contentPadding: EdgeInsets.only(top: Dimentions.height15, left: Dimentions.height20, right: Dimentions.height20),
-                      leading: CircleAvatar(
+                      leading: data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? CircleAvatar(
                         radius: Dimentions.radius30,
                         backgroundImage: NetworkImage(getUser.img_profil_url),
+                      ) : CircleAvatar(
+                        radius: Dimentions.radius30,
+                        backgroundImage: const AssetImage(Assets.imageBackgroundProfil),
+                      ) : CircleAvatar(
+                        radius: Dimentions.radius30,
+                        backgroundImage: const AssetImage(Assets.imageBackgroundProfil),
                       ),
                       title: BigText(text: getUser.nama_lengkap, size: Dimentions.font20),
                       subtitle: Text(getUser.phone),
@@ -269,7 +278,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
               boxColor: Colors.orangeAccent,
               text: "User",
               action: (){
-
+                Get.toNamed(RouteHalper.getUserSettingPage());
               }
           ),
         ],

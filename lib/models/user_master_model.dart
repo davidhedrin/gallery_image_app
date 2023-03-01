@@ -2,6 +2,7 @@ class UserMasterModel{
   String nama;
   String phone;
   List<GroupModel>? group;
+  List<Map<String, dynamic>>? groupMap;
   DateTime? create_date;
 
   UserMasterModel({
@@ -9,6 +10,7 @@ class UserMasterModel{
     this.phone = "",
     this.group,
     this.create_date,
+    this.groupMap,
   });
 
   factory UserMasterModel.fromMap(Map<String, dynamic> map){
@@ -30,7 +32,8 @@ class UserMasterModel{
     return {
       "nama": nama,
       "phone": phone,
-      "group": group,
+      "group": groupMap,
+      "create_date": create_date
     };
   }
 }
@@ -48,5 +51,13 @@ class GroupModel{
       nama_group : map["nama_group"] ?? "",
       status : map["status"] ?? "",
     );
+  }
+
+  Map<String, dynamic> toMapUpload(){
+    return{
+      "group_id": group_id,
+      "nama_group": nama_group,
+      "status": status,
+    };
   }
 }

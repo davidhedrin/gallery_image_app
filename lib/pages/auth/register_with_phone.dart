@@ -249,8 +249,9 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             email: emailController.text,
                             password: passwordController.text,
                             phone: number,
-                            flag_active: "N",
-                            user_type: "USR"
+                            flag_active: "Y",
+                            user_type: "USR",
+                            create_date: DateTime.now(),
                           );
                           await auth.verifyPhone(
                             context: context,

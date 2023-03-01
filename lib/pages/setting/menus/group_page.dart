@@ -7,7 +7,6 @@ import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/data_not_found.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 
 import '../../../models/user_group_master_model.dart';
