@@ -10,6 +10,7 @@ class UserModel{
   String user_type;
   String img_profil_url;
   String img_cover_url;
+  DateTime? create_date;
 
   UserModel({
     this.email = "",
@@ -23,6 +24,7 @@ class UserModel{
     this.user_type = "",
     this.img_profil_url = "",
     this.img_cover_url = "",
+    this.create_date,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map){
@@ -38,6 +40,7 @@ class UserModel{
       user_type : map['user_type'] ?? '',
       img_profil_url : map['img_profil_url'] ?? '',
       img_cover_url : map['img_cover_url'] ?? '',
+      create_date: map['create_date'].toDate(),
     );
   }
 
@@ -51,7 +54,8 @@ class UserModel{
       "phone": phone,
       "uidEmail": uidEmail,
       "uidPhone": uidPhone,
-      "user_type": user_type
+      "user_type": user_type,
+      "create_date": create_date,
     };
   }
 

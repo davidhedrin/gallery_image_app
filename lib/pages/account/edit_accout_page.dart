@@ -91,7 +91,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            Positioned(
+                            data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? Positioned(
                               left: Dimentions.heightSize130,
                               top: Dimentions.height40,
                               child: Center(
@@ -106,7 +106,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                     }
                                 ),
                               ),
-                            ),
+                            ) : const Text("") : const Text(""),
                           ],
                         ),
 

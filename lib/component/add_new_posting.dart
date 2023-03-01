@@ -164,7 +164,7 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                                           },
                                           items: toModelGroup.map((value) {
                                             return DropdownMenuItem(
-                                                value: value.id.toString(),
+                                                value: value.group_id.toString(),
                                                 child: BigText(
                                                   text: value.nama_group.toString(),
                                                   size: Dimentions.font20,
@@ -378,10 +378,10 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                         getService.loading(dialogcontext);
 
                         String guid = getService.generateGuid();
-                        UserGroupModel getGroup = toModelGroupList.firstWhere((group) => group.id == _selectedItem);
+                        UserGroupModel getGroup = toModelGroupList.firstWhere((group) => group.group_id == _selectedItem);
                         String collectionImage = getGroup.nama_group.toLowerCase();
 
-                        UserGroupModel getGroupFilter = toModelGroupList.firstWhere((group) => group.id == _selectedItem);
+                        UserGroupModel getGroupFilter = toModelGroupList.firstWhere((group) => group.group_id == _selectedItem);
                         String imgUrl = await getService.uploadImageToStorage(ref: "$collectionImage/$guid", file: image!, context: context);
                         String getImgUrl = imgUrl;
 

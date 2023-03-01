@@ -2,14 +2,17 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:delivery_food_app/generated/assets.dart';
+import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/user_model.dart';
+import 'package:delivery_food_app/pages/setting/menus/group_panel_manage.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../models/user_group.dart';
+import '../../models/user_group_master_model.dart';
 import '../../providers/app_services.dart';
 import '../../utils/collections.dart';
 import '../../utils/colors.dart';
@@ -96,7 +99,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                     ),
 
                     Padding(
-                      padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20),
+                      padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, top: Dimentions.height10),
                       child: Divider(thickness: 1.5, height: Dimentions.height6,),
                     ),
 
@@ -127,9 +130,16 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                   iconColor: Colors.redAccent,
                                   boxColor: Colors.deepPurple,
                                   text: "Keluar",
-                                  action: (){
-
-                                  }
+                                  action: () async {
+                                    bool check = false;
+                                    await onBackButtonPressYesNo(context: context, text: "Putuskan Koneksi!", desc: "Yakin ingin memutuskan koneksi?").then((value){
+                                      check = value;
+                                    });
+                                    if(check){
+                                      FirebaseAuth.instance.signOut();
+                                      Get.toNamed(RouteHalper.getLoginPage());
+                                    }
+                                  },
                               ),
 
                               SizedBox(height: Dimentions.height25,),
@@ -142,7 +152,48 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                 child: Divider(thickness: 1.5, height: Dimentions.height6,),
                               ),
 
-                              StreamBuilder<DocumentSnapshot>(
+                              setType == 1 ? StreamBuilder<QuerySnapshot>(
+                                  stream: getService.streamObjGetCollection(collection: Collections.usergroup),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return const Center(child: CircularProgressIndicator());
+                                    }
+                                    if (!snapshot.hasData) {
+                                      return const DataNotFoundWidget(msgTop: "Group Tidak Ditemukan");
+                                    }else{
+                                      var groupsDoc = snapshot.data!.docs;
+                                      List<UserGroupMasterModel> getListGroup = groupsDoc.map((e){
+                                        Map<String, dynamic> getMap = e.data() as Map<String, dynamic>;
+                                        UserGroupMasterModel group = UserGroupMasterModel.fromMap(getMap);
+                                        return group;
+                                      }).toList();
+
+                                      if(getListGroup.isNotEmpty){
+                                        return Column(
+                                          children: getListGroup.map((UserGroupMasterModel group) {
+                                            UserGroupModel setGroupMaster = UserGroupModel(
+                                              group_id: group.group_id,
+                                              nama_group: group.nama_group,
+                                              status: 'ADM'
+                                            );
+
+                                            return iconTitle(
+                                                icon: Icons.group,
+                                                iconColor: generateRandomColor(),
+                                                boxColor: generateRandomColor(),
+                                                text: setGroupMaster.nama_group,
+                                                action: (){
+                                                  Get.to(() => GroupPanelManage(groupModel: setGroupMaster));
+                                                }
+                                            );
+                                          }).toList(),
+                                        );
+                                      }else{
+                                        return const DataNotFoundWidget(msgTop: "Group Tidak Ditemukan");
+                                      }
+                                    }
+                                  }
+                              ) : StreamBuilder<DocumentSnapshot>(
                                 stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: getUser.phone),
                                 builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup){
                                   if (snapshotGroup.connectionState == ConnectionState.waiting) {
@@ -164,7 +215,9 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                             iconColor: generateRandomColor(),
                                             boxColor: generateRandomColor(),
                                             text: group.nama_group,
-                                            action: (){}
+                                            action: (){
+                                              Get.to(() => GroupPanelManage(groupModel: group));
+                                            }
                                         );
                                       }).toList(),
                                     );
@@ -187,6 +240,45 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
     );
   }
 
+  Widget setAdmMaster(int type){
+    if(type ==  1){
+      return Column(
+        children: [
+          SizedBox(height: Dimentions.height25,),
+          Padding(
+            padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, bottom: Dimentions.height2),
+            child: Align(alignment: Alignment.centerLeft, child: SmallText(text: "Master Panel", color: Colors.black54,)),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20),
+            child: Divider(thickness: 1.5, height: Dimentions.height6,),
+          ),
+
+          iconTitle(
+              icon: Icons.supervised_user_circle_sharp,
+              iconColor: Colors.black87,
+              boxColor: Colors.purple,
+              text: "Group",
+              action: (){
+                Get.toNamed(RouteHalper.getGroupSettingPage());
+              }
+          ),
+          iconTitle(
+              icon: Icons.people_alt_outlined,
+              iconColor: Colors.black87,
+              boxColor: Colors.orangeAccent,
+              text: "User",
+              action: (){
+
+              }
+          ),
+        ],
+      );
+    }else{
+      return const Text("");
+    }
+  }
+
   Widget iconTitle({required IconData icon, required Color boxColor, required Color iconColor, required String text, void Function()? action}){
     return GestureDetector(
       onTap: action,
@@ -205,44 +297,5 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
         trailing: Icon(Icons.arrow_forward_ios, color: Colors.black87, size: Dimentions.font20,),
       ),
     );
-  }
-
-  Widget setAdmMaster(int type){
-    if(type ==  1){
-      return Column(
-        children: [
-          SizedBox(height: Dimentions.height25,),
-          Padding(
-            padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, bottom: Dimentions.height2),
-            child: Align(alignment: Alignment.centerLeft, child: SmallText(text: "Master Panel", color: Colors.black54,)),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20),
-            child: Divider(thickness: 1.5, height: Dimentions.height6,),
-          ),
-
-          iconTitle(
-              icon: Icons.playlist_add_check_circle_outlined,
-              iconColor: Colors.black87,
-              boxColor: Colors.purple,
-              text: "Group",
-              action: (){
-
-              }
-          ),
-          iconTitle(
-              icon: Icons.supervised_user_circle_sharp,
-              iconColor: Colors.black87,
-              boxColor: Colors.orangeAccent,
-              text: "User",
-              action: (){
-
-              }
-          ),
-        ],
-      );
-    }else{
-      return const Text("");
-    }
   }
 }

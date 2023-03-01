@@ -4,19 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../generated/assets.dart';
-import '../halper/route_halper.dart';
-import '../models/posting_image.dart';
-import '../providers/app_services.dart';
-import '../utils/collections.dart';
-import '../utils/colors.dart';
-import '../utils/dimentions.dart';
-import '../widgets/auth_widget/text_widget.dart';
-import '../widgets/big_text.dart';
-import '../widgets/icon_and_text_widget.dart';
-import '../widgets/loading_progres.dart';
-import '../widgets/small_text.dart';
-import 'main_app_page.dart';
+import '../../generated/assets.dart';
+import '../../halper/route_halper.dart';
+import '../../models/posting_image.dart';
+import '../../providers/app_services.dart';
+import '../../utils/collections.dart';
+import '../../utils/colors.dart';
+import '../../utils/dimentions.dart';
+import '../../widgets/auth_widget/text_widget.dart';
+import '../../widgets/big_text.dart';
+import '../../widgets/icon_and_text_widget.dart';
+import '../../widgets/loading_progres.dart';
+import '../../widgets/small_text.dart';
+import '../../component/main_app_page.dart';
 
 class BookmarkPage extends StatefulWidget {
   const BookmarkPage({Key? key}) : super(key: key);

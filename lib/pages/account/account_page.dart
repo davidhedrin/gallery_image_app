@@ -56,8 +56,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
               }
               if(!snapshot.hasData){
                 return DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
-              }
-              else{
+              }else{
                 var data = snapshot.data;
 
                 Future<List<PostingImageModel>> getAllDocuments() async {
@@ -82,7 +81,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                     });
                   }).toList();
 
-                  return documents;
+                  return documents.where((item) => item.userById == widget.uid).toList();
                 }
 
                 return Column(
@@ -113,7 +112,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            Positioned(
+                            data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? Positioned(
                               left: Dimentions.heightSize130,
                               top: Dimentions.height40,
                               child: Center(
@@ -128,7 +127,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                                     }
                                 ),
                               ),
-                            ),
+                            ) : const Text("") : const Text(""),
                           ],
                         ),
 

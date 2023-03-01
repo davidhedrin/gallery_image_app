@@ -1,11 +1,13 @@
 import 'package:delivery_food_app/component/add_new_posting.dart';
-import 'package:delivery_food_app/component/bookmark_page.dart';
+import 'package:delivery_food_app/pages/home/bookmark_page.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/pages/account/edit_accout_page.dart';
 import 'package:delivery_food_app/pages/auth/login_page.dart';
 import 'package:delivery_food_app/pages/auth/otp_page.dart';
 import 'package:delivery_food_app/pages/auth/register_page.dart';
 import 'package:delivery_food_app/pages/auth/register_with_phone.dart';
+import 'package:delivery_food_app/pages/setting/menus/group_page.dart';
+import 'package:delivery_food_app/pages/setting/menus/group_panel_manage.dart';
 import 'package:delivery_food_app/splashScreen/on_board_screen.dart';
 import 'package:delivery_food_app/splashScreen/splash_screen.dart';
 import 'package:get/get.dart';
@@ -33,6 +35,9 @@ class RouteHalper{
   static const String onBoardScreen = "/on-board-screen";
   static const String splashScreen = "/splash-screen";
 
+  static const String groupSettingPage = "/group-setting-page";
+  // static const String groupPanelManage = "/group-panel-manage";
+
   static String getInitial({String? uid}) => '$initial?uid=$uid';
 
   static String getLoginPage() => '$loginPage';
@@ -47,6 +52,9 @@ class RouteHalper{
   static String getRecommendedFood() => '$recommendedFood';
   static String getOnBoardScreen() => '$onBoardScreen';
   static String getsplashScreen() => '$splashScreen';
+
+  static String getGroupSettingPage() => '$groupSettingPage';
+  // static String getGroupPanelManage() => '$groupPanelManage';
 
   static List<GetPage> routes = [
     GetPage(name: initial, transition: Transition.native, page: (){
@@ -87,5 +95,8 @@ class RouteHalper{
     GetPage(name: recommendedFood, transition: Transition.fadeIn, page: (){
       return RecommendedFoodDetail();
     }),
+
+    GetPage(name: groupSettingPage, page: () => GroupSettingPage()),
+    // GetPage(name: groupPanelManage, page: () => GroupPanelManage()),
   ];
 }

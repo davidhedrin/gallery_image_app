@@ -255,6 +255,10 @@ class AppServices{
     return _fbStore.collection(collection1).doc(docId).collection(collection2).snapshots();
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> streamGetDocByColumn({required String collection, required String collName, required String value}){
+    return _fbStore.collection(collection).where(collName, isEqualTo: value).snapshots();
+  }
+
   //delete doc coll in coll
   void deleteDataCollecInCollec({
     required BuildContext context,

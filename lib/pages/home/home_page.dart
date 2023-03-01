@@ -87,7 +87,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                       if(MainAppPage.groupCodeId!.isNotEmpty){
                                         _selectedItem = MainAppPage.groupCodeId;
                                       }else{
-                                        _selectedItem = toModelGroup.first.id.toString();
+                                        _selectedItem = toModelGroup.first.group_id.toString();
                                       }
                                       MainAppPage.groupCodeId = _selectedItem;
                                     }
@@ -95,7 +95,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                     if(MainAppPage.groupNameGet.isEmpty){
                                       MainAppPage.groupNameGet = toModelGroup.first.nama_group.toLowerCase();
                                     }else{
-                                      UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.id == _selectedItem);
+                                      UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.group_id == _selectedItem);
                                       MainAppPage.groupNameGet = getGroup.nama_group.toLowerCase();
                                     }
 
@@ -105,7 +105,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                         value: _selectedItem,
                                         icon: Icon(Icons.arrow_drop_down),
                                         onChanged: (value) {
-                                          UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.id == _selectedItem);
+                                          UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.group_id == _selectedItem);
                                           setState(() {
                                             _selectedItem = value;
                                             _selectedItemChane = value;
@@ -115,7 +115,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                         },
                                         items: toModelGroup.map((value) {
                                           return DropdownMenuItem(
-                                            value: value.id.toString(),
+                                            value: value.group_id.toString(),
                                             child: Text(value.nama_group.toString()),
                                           );
                                         }).toList(),
