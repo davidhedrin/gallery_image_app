@@ -3,8 +3,10 @@ import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/function_halpers.dart';
 import 'package:delivery_food_app/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../component/page/user_detail.dart';
 import '../../../providers/app_services.dart';
 import '../../../utils/collections.dart';
 import '../../../utils/colors.dart';
@@ -41,19 +43,6 @@ class _UserSettingPageState extends State<UserSettingPage> {
             icon: const Icon(Icons.arrow_back, color: Colors.black87,),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.add, color: Colors.black87, size: Dimentions.iconSize32,),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context){
-                      return Text("data");
-                    }
-                );
-              },
-            ),
-          ],
         ),
         body: Column(
           children: [
@@ -68,33 +57,37 @@ class _UserSettingPageState extends State<UserSettingPage> {
 
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                  stream: getService.streamObjGetCollection(collection: Collections.users),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (!snapshot.hasData) {
-                      return const DataNotFoundWidget(msgTop: "Group Tidak Ditemukan");
-                    }else{
-                      var groupsDoc = snapshot.data!.docs;
-                      List<UserModel> getListUser = groupsDoc.map((e){
-                        Map<String, dynamic> getMap = e.data() as Map<String, dynamic>;
-                        UserModel group = UserModel.fromMap(getMap);
-                        return group;
-                      }).toList();
+                stream: getService.streamObjGetCollection(collection: Collections.users),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData) {
+                    return const DataNotFoundWidget(msgTop: "User Tidak Ditemukan");
+                  }else{
+                    var groupsDoc = snapshot.data!.docs;
+                    List<UserModel> getListUser = groupsDoc.map((e){
+                      Map<String, dynamic> getMap = e.data() as Map<String, dynamic>;
+                      UserModel group = UserModel.fromMap(getMap);
+                      return group;
+                    }).toList();
 
-                      if(getListUser.isNotEmpty){
-                        return ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: getListUser.length,
-                            itemBuilder: (context, index){
-                              UserModel getUser = getListUser[index];
-                              String userType = getUser.user_type.toLowerCase();
-                              int setType = getHelp.checkStatusUser(userType);
+                    if(getListUser.isNotEmpty){
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: getListUser.length,
+                          itemBuilder: (context, index){
+                            UserModel getUser = getListUser[index];
+                            String userType = getUser.user_type.toLowerCase();
+                            int setType = getHelp.checkStatusUser(userType);
 
-                              var month = DateFormat('MMMM').format(getUser.create_date!);
+                            var month = DateFormat('MMMM').format(getUser.create_date!);
 
-                              return Container(
+                            return GestureDetector(
+                              onTap: (){
+                                Get.to(() => UserDetailPage(userModel: getUser, userSee: 1,));
+                              },
+                              child: Container(
                                 margin: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, bottom: Dimentions.height15),
                                 child: Row(
                                   children: [
@@ -124,7 +117,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                                   if (snapshot.connectionState == ConnectionState.done) {
                                                     return const SizedBox.shrink();
                                                   } else {
-                                                    return LoadingProgress(size: Dimentions.height15,);
+                                                    return LoadingProgress(size: Dimentions.height10,);
                                                   }
                                                 }
                                             ),
@@ -195,14 +188,15 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                     ),
                                   ],
                                 ),
-                              );
-                            }
-                        );
-                      }else{
-                        return const DataNotFoundWidget(msgTop: "Group Tidak Ditemukan");
-                      }
+                              ),
+                            );
+                          }
+                      );
+                    }else{
+                      return const DataNotFoundWidget(msgTop: "User Tidak Ditemukan");
                     }
                   }
+                }
               ),
             ),
           ],

@@ -91,7 +91,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                       title: BigText(text: getUser.nama_lengkap, size: Dimentions.font20),
                       subtitle: Text(getUser.phone),
                       trailing: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        padding: EdgeInsets.symmetric(horizontal: Dimentions.width8, vertical: Dimentions.width5),
                         decoration: BoxDecoration(
                           color: Colors.blue,
                           borderRadius: BorderRadius.circular(10.0),
@@ -183,7 +183,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                             UserGroupModel setGroupMaster = UserGroupModel(
                                               group_id: group.group_id,
                                               nama_group: group.nama_group,
-                                              status: 'ADM'
+                                              status: 'MDM'
                                             );
 
                                             return iconTitle(
@@ -192,7 +192,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                                 boxColor: generateRandomColor(),
                                                 text: setGroupMaster.nama_group,
                                                 action: (){
-                                                  Get.to(() => GroupPanelManage(groupModel: setGroupMaster));
+                                                  Get.to(() => GroupPanelManage(groupModel: setGroupMaster, currentUser: getUser,));
                                                 }
                                             );
                                           }).toList(),
@@ -225,7 +225,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                             boxColor: generateRandomColor(),
                                             text: group.nama_group,
                                             action: (){
-                                              Get.to(() => GroupPanelManage(groupModel: group));
+                                              Get.to(() => GroupPanelManage(groupModel: group, currentUser: getUser));
                                             }
                                         );
                                       }).toList(),

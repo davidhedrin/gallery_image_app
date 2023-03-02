@@ -56,8 +56,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
               return DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
             }else{
               var data = snapshot.data;
-              namaController.text = data!.get("nama_lengkap");
-              emailController.text = data.get("email");
+              Map<String, dynamic> getMap = data!.data() as Map<String, dynamic>;
+              UserModel userModel = UserModel.fromMap(getMap);
+              namaController.text = userModel.nama_lengkap;
+              emailController.text = userModel.email;
               return Column(
                   children: <Widget> [
                     Stack(
@@ -74,8 +76,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                 width: double.infinity,
                                 height: coverHeight,
                                 fit: BoxFit.cover,
-                              ) : data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? Image.network(
-                                data.get("img_cover_url"),
+                              ) : data.data()!.containsKey("img_cover_url") ? userModel.img_cover_url.isNotEmpty ? Image.network(
+                                userModel.img_cover_url,
                                 width: double.infinity,
                                 height: coverHeight,
                                 fit: BoxFit.cover,
@@ -91,12 +93,12 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? Positioned(
+                            data.data()!.containsKey("img_cover_url") ? userModel.img_cover_url.isNotEmpty ? Positioned(
                               left: Dimentions.heightSize130,
                               top: Dimentions.height40,
                               child: Center(
                                 child: FutureBuilder(
-                                    future: precacheImage(NetworkImage(data.get("img_cover_url"),), context),
+                                    future: precacheImage(NetworkImage(userModel.img_cover_url,), context),
                                     builder: (BuildContext context, AsyncSnapshot snapshot){
                                       if (snapshot.connectionState == ConnectionState.done) {
                                         return const SizedBox.shrink();
@@ -150,10 +152,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                   radius: profileSize,
                                   backgroundColor: Colors.grey.shade800,
                                   backgroundImage: FileImage(imageProfile!),
-                                ) : data.data()!.containsKey("img_profil_url") ?  data.get("img_profil_url").toString().isNotEmpty ? CircleAvatar(
+                                ) : data.data()!.containsKey("img_profil_url") ? userModel.img_profil_url.isNotEmpty ? CircleAvatar(
                                   radius: profileSize,
                                   backgroundColor: Colors.grey.shade800,
-                                  backgroundImage: NetworkImage(data.get("img_profil_url")),
+                                  backgroundImage: NetworkImage(userModel.img_profil_url),
                                 ) : CircleAvatar(
                                   radius: profileSize,
                                   backgroundColor: Colors.grey.shade800,
@@ -188,7 +190,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                       ],
                     ),
 
-                    SmallText(text: data.get("phone"), color: Colors.black87, size: Dimentions.font17,),
+                    SmallText(text: userModel.phone, color: Colors.black87, size: Dimentions.font17,),
 
                     Expanded(
                       child: Form(
@@ -313,7 +315,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                   if(passwordController.text.isEmpty && newpasswordController.text.isEmpty && newco_passwordController.text.isEmpty){
                                     hitUpdate();
                                   }else{
-                                    if(passwordController.text == data.get("password")){
+                                    if(passwordController.text == userModel.password){
                                       if(newpasswordController.text.isNotEmpty && newco_passwordController.text.isNotEmpty){
                                         if(newpasswordController.text == newco_passwordController.text){
                                           hitUpdate();

@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../component/main_app_page.dart';
 import '../../utils/utils.dart';
 import '../../widgets/auth_widget/button_widget.dart';
 import '../../widgets/auth_widget/text_widget.dart';
@@ -184,6 +185,10 @@ class _LoginPageState extends State<LoginPage> {
 
                         if(no_phoneController.text.isNotEmpty && passwordController.text.isNotEmpty){
                           services.loading(dialogcontext);
+                          MainAppPage.groupNameGet = "";
+                          MainAppPage.groupCodeId = "";
+                          MainAppPage.setUserId = "";
+
                           final String phone = "+${selectCountry.phoneCode}"+no_phoneController.text;
                           final String password = passwordController.text.trim();
 

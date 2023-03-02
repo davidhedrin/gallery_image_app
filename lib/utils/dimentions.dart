@@ -101,6 +101,7 @@ class Dimentions{
   static double heightSize500 = screenHeight/1.56;
   static double heightSize400 = screenHeight/1.95;
   static double heightSize300 = screenHeight/2.60;
+  static double heightSize270 = screenHeight/2.89;
   static double heightSize250 = screenHeight/3.12;
   static double heightSize230 = screenHeight/3.39;
   static double heightSize200 = screenHeight/3.90;

@@ -24,6 +24,7 @@ class UserMasterModel{
       nama : map["nama"] ?? "",
       phone : map["phone"] ?? "",
       group : groupList,
+      groupMap: data,
       create_date : map["create_date"].toDate(),
     );
   }

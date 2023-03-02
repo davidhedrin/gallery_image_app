@@ -21,6 +21,8 @@ class AppServices{
   final FirebaseFirestore _fbStore = FirebaseFirestore.instance;
   final FirebaseStorage _fbStorage = FirebaseStorage.instance;
 
+  FirebaseFirestore get fbStore => _fbStore;
+
   CollectionReference userCollec = FirebaseFirestore.instance.collection(Collections.users);
 
   void loading(BuildContext context){
@@ -295,5 +297,21 @@ class AppServices{
     }).toList();
 
     return documents;
+  }
+
+  Future<bool> checkExistDocById({required String collection, required String uid}) async {
+    bool result = false;
+
+    try{
+      DocumentSnapshot snapshot = await _fbStore.collection(collection).doc(uid).get();
+
+      if(snapshot.exists){
+        result = true;
+      }
+    } on FirebaseException catch (e){
+      print(e.message);
+    }
+
+    return result;
   }
 }

@@ -4,4 +4,6 @@ class Collections{
   static const String usergroup = "user-group";
   static const String likes = "likes";
   static const String bookmark = "bookmark";
+
+  static const String collColumnGroup = "group";
 }
