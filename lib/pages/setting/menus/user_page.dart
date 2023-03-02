@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/function_halpers.dart';
 import 'package:delivery_food_app/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -106,13 +107,16 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                           decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(Dimentions.radius30),
                                               color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
-                                              image: DecorationImage(
+                                              image: getUser.img_profil_url.isNotEmpty ? DecorationImage(
                                                 fit: BoxFit.cover,
                                                 image: NetworkImage(getUser.img_profil_url,),
-                                              )
+                                              ) : const DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: AssetImage(Assets.imageBackgroundProfil)
+                                              ),
                                           ),
                                         ),
-                                        Positioned.fill(
+                                        getUser.img_profil_url.isNotEmpty ? Positioned.fill(
                                           child: Center(
                                             child: FutureBuilder(
                                                 future: precacheImage(NetworkImage(getUser.img_profil_url,), context),
@@ -125,7 +129,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                                 }
                                             ),
                                           ),
-                                        ),
+                                        ) : const Text(""),
                                       ],
                                     ),
 

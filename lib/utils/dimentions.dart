@@ -9,6 +9,8 @@ class Dimentions{
   static double pageTextContainer = screenHeight/8.00;
 
   // dynemic height padding and margin
+  static double height1kom2 = screenHeight/650.9;
+  static double height1kom9 = screenHeight/411.10;
   static double height2 = screenHeight/390.54;
   static double height6 = screenHeight/130.2;
   static double height10 = screenHeight/84.4;
@@ -27,6 +29,7 @@ class Dimentions{
   static double height70 = screenHeight/11.15;
 
   // dynemic width padding and margin
+  static double width3 = screenHeight/260.3;
   static double width5 = screenHeight/156.21;
   static double width8 = screenHeight/97.63;
   static double width10 = screenHeight/84.4;
@@ -49,6 +52,7 @@ class Dimentions{
   static double font26 = screenHeight/30.04;
   static double font30 = screenHeight/26.03;
   static double font32 = screenHeight/24.40;
+  static double font50 = screenHeight/15.62;
 
   // radius size
   static double radius12 = screenHeight/65.09;
@@ -63,6 +67,7 @@ class Dimentions{
   static double iconSize32 = screenHeight/27.0;
   static double iconSize24 = screenHeight/35.17;
   static double iconSize16 = screenHeight/42.75;
+  static double iconSize15 = screenHeight/52.07;
 
   // List view size 390
   static double listViewImgSize = screenWidth/3.25;

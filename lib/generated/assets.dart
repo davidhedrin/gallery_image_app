@@ -16,5 +16,9 @@ class Assets {
   static const String imageRegister = 'assets/image/register.png';
   static const String imageSecurity = 'assets/image/security.png';
   static const String imageWelcomeCat = 'assets/image/welcome_cat.png';
+  static const String onBoard1 = 'assets/image/on_board/1.jpg';
+  static const String onBoard2 = 'assets/image/on_board/2.jpg';
+  static const String onBoard3 = 'assets/image/on_board/3.jpg';
+  static const String onBoard4 = 'assets/image/on_board/4.jpg';
 
 }

@@ -1,13 +1,11 @@
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
-import 'package:delivery_food_app/widgets/big_text.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 
 import '../generated/assets.dart';
-import '../widgets/small_text.dart';
+import '../splashScreen//fade_animation.dart';
 
 class OnBoardScreenApp extends StatefulWidget {
   const OnBoardScreenApp({Key? key}) : super(key: key);
@@ -18,168 +16,173 @@ class OnBoardScreenApp extends StatefulWidget {
 
 class _OnBoardScreenAppState extends State<OnBoardScreenApp> {
   final store = GetStorage();
-  double scrollerPosition = 0;
+  late PageController _pageController = PageController();
+  int totalPage = 4;
+
+  void _onScroll() {
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    _pageController = PageController(
+      initialPage: 0,
+    )..addListener(_onScroll);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-          body: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: const AssetImage(Assets.imageBg),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.darken),
-              ),
-            ),
-            child: Stack(
-              children: [
-                PageView(
-                  onPageChanged: (val){
-                    setState(() {
-                      scrollerPosition = val.toDouble();
-                    });
-                  },
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        children: <Widget>[
+          makePage(
+              page: 1,
+              image: Assets.onBoard1,
+              title: 'Selamat Datang DiFamilly Gallery',
+              description: 'Hal terbaik mengenai sebuah gambar adalah gambar itu tidak pernah berubah, bahkan ketika orang-orang yang ada di dalamnya sudah berubah. Akan selalu ada suka atau tidak suka dalam fotografi, tetapi tidak akan pernah ada benar atau salah dalam fotografi'
+          ),
+          makePage(
+              page: 2,
+              image: Assets.onBoard2,
+              title: 'Kenangan Besar Tersayang',
+              description: 'Cahaya membuat apa yang tidak terlihat menjadi terlihat dan gambar memberikan apa yang orang lain inginkan untuk dilihat. Dan dibalik sebuah foto, mengajarkan kita bahwa selamanya senyuman itu indah dan marah itu buruk'
+          ),
+          makePage(
+              page: 3,
+              image: Assets.onBoard3,
+              title: 'Memori Yang Tersimpan',
+              description: "Kita tidak dapat memaksakan semua orang untuk menyukai hasil karya kita. Yang dapat kita lakukan adalah menyukai karya foto yang telah kita buat. Sebuah foto adalah rahasia tentang rahasia. Semakin ia memberitahu Anda makin sedikit Anda tahu."
+          ),
+          makePage(
+              page: 4,
+              image: Assets.onBoard4,
+              title: 'Tersenyumlah Bersama',
+              description: "Gambar-gambar yang terbaik adalah gambar yang dapat mempertahankan kekuatannya dan memiliki dampak selama bertahun-tahun, terlepas dari berapa kali gambar itu dilihat. Sebab foto adalah cara di mana kita merasa, menyentuh, dan mencintai."
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget makePage({image, title, description, page}) {
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage(image),
+              fit: BoxFit.cover
+          )
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.bottomRight,
+                stops: const [0.3, 0.9],
+                colors: [
+                  Colors.black.withOpacity(.9),
+                  Colors.black.withOpacity(.2),
+                ]
+            )
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, bottom: Dimentions.height20),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: Dimentions.height40,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    OnBoardPage(
-                      boardColumn: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Welcome',
-                            style: TextStyle(color: Colors.white, fontSize: Dimentions.screenHeight/16.03, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          Text(
-                            'U\'Gallery Image',
-                            style: TextStyle(color: Colors.white, fontSize: Dimentions.screenHeight/32.03, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: Dimentions.height10,),
-                          //Image.asset('assets/images/1.png', width: 220,),
-                        ],
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.wallet_membership_sharp,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: Dimentions.width5,),
+                        Text("Gallery", style: TextStyle(color: Colors.white, fontSize: Dimentions.font15),),
+                      ],
                     ),
-                    OnBoardPage(
-                      boardColumn: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(Assets.image2, width: Dimentions.imageSize230,),
-                          SizedBox(height: Dimentions.height10,),
-                          Text(
-                            'Dokumentasikan Kenangan',
-                            style: TextStyle(color: Colors.white, fontSize: Dimentions.font25, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          Text('Kapanpun dan Dimanapun Itu.', style: TextStyle(color: Colors.white, fontSize: Dimentions.font16,),),
-                        ],
-                      ),
-                    ),
-                    OnBoardPage(
-                      boardColumn: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(Assets.image3, width: Dimentions.imageSize220,),
-                          SizedBox(height: Dimentions.height10,),
-                          Text(
-                            'Manajemen Berkulitas',
-                            style: TextStyle(color: Colors.white, fontSize: Dimentions.font25, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          Text('Dengan kenyamanan dan kemudahan', style: TextStyle(color: Colors.white, fontSize: Dimentions.font16,),),
-                        ],
-                      ),
-                    ),
-                    OnBoardPage(
-                      boardColumn: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(Assets.image4, width: Dimentions.imageSize240,),
-                          SizedBox(height: Dimentions.height10,),
-                          Text(
-                            'Selamat bergabung',
-                            style: TextStyle(color: Colors.white, fontSize: Dimentions.font25, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          Text('Daftarkan galeri anda segera!', style: TextStyle(color: Colors.white, fontSize: Dimentions.font16,),),
-                        ],
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: <Widget>[
+                        FadeAnimation(0.3, Text(page.toString(), style: TextStyle(color: Colors.white, fontSize: Dimentions.font30, fontWeight: FontWeight.bold),)),
+                        Text('/$totalPage', style: TextStyle(color: Colors.white, fontSize: Dimentions.font15),)
+                      ],
                     ),
                   ],
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
+                Expanded(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Visibility(
-                        visible: scrollerPosition == 3 ? false : true,
-                        child: Text('Swipe To Login >>', style: TextStyle(color: Colors.white70),),
-                      ),
-                      SizedBox(height: Dimentions.height10,),
-                      DotsIndicator(
-                        dotsCount: 4,
-                        position: scrollerPosition,
-                        decorator: DotsDecorator(
-                          activeColor: Colors.white,
-                        ),
-                      ),
-                      scrollerPosition == 3 ? Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: ElevatedButton(
-                              child: Text('Login Now', style: TextStyle(fontSize: Dimentions.font17),),
-                              onPressed: (){
-                                Get.toNamed(RouteHalper.loginPage);
-                                store.write('onBoarding', true);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: Dimentions.screenHeight/80.18,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SmallText(text: "Belum memiliki akun? ", color: Colors.white, size: Dimentions.font14,),
-                              GestureDetector(
-                                onTap: (){
-                                  Get.toNamed(RouteHalper.getRegisterWithPhonePage());
-                                  store.write('onBoarding', true);
-                                },
-                                child: Text("Daftar disini", style: TextStyle(color: Colors.blueAccent, fontSize: Dimentions.font14, decoration: TextDecoration.underline),)
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                        ],
-                      ) : TextButton(
-                        child: Text('SKIP TO LOGIN', style: TextStyle(color: Colors.blue, fontSize: Dimentions.font17, fontWeight: FontWeight.bold),),
-                        onPressed: (){
-                          Get.toNamed(RouteHalper.loginPage);
-                          store.write('onBoarding', true);
-                        },
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      FadeAnimation(1,
+                          Text(title, style: TextStyle(color: Colors.white, fontSize: Dimentions.font50, height: Dimentions.height1kom2, fontWeight: FontWeight.bold),)
                       ),
                       SizedBox(height: Dimentions.height20,),
+                      FadeAnimation(1.5, Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(right: Dimentions.width3),
+                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: Dimentions.width3),
+                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: Dimentions.width3),
+                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: Dimentions.width3),
+                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: Dimentions.width5),
+                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                          ),
+                          Text('5.0', style: TextStyle(color: Colors.white70),),
+                        ],
+                      )),
+                      SizedBox(height: Dimentions.height10,),
+                      FadeAnimation(2, Padding(
+                        padding: const EdgeInsets.only(right: 50),
+                        child: Text(description, style: TextStyle(color: Colors.white.withOpacity(.7), height: Dimentions.height1kom9, fontSize: Dimentions.font15),),
+                      )),
+                      SizedBox(height: Dimentions.height15,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(page == 4 ? "Lanjutkan -->" : "Geser berikutnya >>", style: TextStyle(color: Colors.white, fontSize: Dimentions.font15),),
+                          page == 4 ? ElevatedButton(
+                            onPressed: (){
+                              Get.toNamed(RouteHalper.loginPage);
+                              store.write('onBoarding', true);
+                            },
+                            child: Text('Login', style: TextStyle(color: Colors.white, fontSize: Dimentions.font15),),
+                          ) : const Text(""),
+                        ],
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
+                )
+              ]
           ),
         ),
+      ),
     );
-  }
-}
-
-class OnBoardPage extends StatelessWidget {
-  const OnBoardPage({Key? key, this.boardColumn}) : super(key: key);
-  final Column? boardColumn;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: boardColumn);
   }
 }
