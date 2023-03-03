@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/user_model.dart';
+import 'package:delivery_food_app/pages/setting/menus/group_page.dart';
 import 'package:delivery_food_app/pages/setting/menus/group_panel_manage.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,6 +36,8 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
   final FirebaseAuth userAuth = FirebaseAuth.instance;
   final AppServices getService = AppServices();
   final FunHelp getHelp = FunHelp();
+
+  late UserModel lateCurrentUser = UserModel();
 
   Color generateRandomColor() {
     Random random = Random();
@@ -73,6 +76,8 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                 UserModel getUser = UserModel.fromMap(userMap);
                 String userType = getUser.user_type.toLowerCase();
                 int setType = getHelp.checkStatusUser(userType);
+
+                lateCurrentUser = getUser;
 
                 return Column(
                   children: [
@@ -145,8 +150,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                       check = value;
                                     });
                                     if(check){
-                                      FirebaseAuth.instance.signOut();
-                                      Get.toNamed(RouteHalper.getLoginPage());
+                                      getService.logout();
                                     }
                                   },
                               ),
@@ -269,7 +273,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
               boxColor: Colors.purple,
               text: "Group",
               action: (){
-                Get.toNamed(RouteHalper.getGroupSettingPage());
+                Get.to(() => GroupSettingPage(currentUser: lateCurrentUser));
               }
           ),
           iconTitle(
@@ -278,7 +282,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
               boxColor: Colors.orangeAccent,
               text: "User",
               action: (){
-                Get.toNamed(RouteHalper.getUserSettingPage());
+                Get.to(() => GroupSettingPage(currentUser: lateCurrentUser));
               }
           ),
         ],

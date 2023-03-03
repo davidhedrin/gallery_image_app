@@ -99,7 +99,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                           height: Dimentions.heightSize90,
                                           decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(Dimentions.radius30),
-                                              color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                                              color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
                                               image: getUser.img_profil_url.isNotEmpty ? DecorationImage(
                                                 fit: BoxFit.cover,
                                                 image: NetworkImage(getUser.img_profil_url,),

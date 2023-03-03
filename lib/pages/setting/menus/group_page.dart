@@ -7,17 +7,23 @@ import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/data_not_found.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../models/user_group.dart';
 import '../../../models/user_group_master_model.dart';
 import '../../../models/user_master_model.dart';
+import '../../../models/user_model.dart';
 import '../../../providers/app_services.dart';
 import '../../../utils/dimentions.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/auth_widget/text_widget.dart';
+import 'group_panel_manage.dart';
 
 class GroupSettingPage extends StatefulWidget {
-  const GroupSettingPage({Key? key}) : super(key: key);
+  final UserModel currentUser;
+
+  const GroupSettingPage({Key? key, required this.currentUser}) : super(key: key);
 
   @override
   State<GroupSettingPage> createState() => _GroupSettingPageState();
@@ -37,6 +43,8 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    UserModel curUser = widget.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -114,6 +122,12 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
 
                                 var getCount = getListGroup.expand((parent) => parent.group!).where((child) => child.group_id == getGroup.group_id).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
 
+                                UserGroupModel groupModel = UserGroupModel(
+                                  group_id: getGroup.group_id,
+                                  nama_group: getGroup.nama_group,
+                                  status: 'MDM'
+                                );
+
                                 return iconTitle(
                                     icon: Icons.supervised_user_circle_sharp,
                                     iconColor: generateRandomColor(),
@@ -121,7 +135,9 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
                                     text: getGroup.nama_group,
                                     count: getCount.length.toString(),
                                     subText: "${getGroup.create_date!.day} $month ${getGroup.create_date!.year}",
-                                    action: (){}
+                                    action: (){
+                                      Get.to(() => GroupPanelManage(groupModel: groupModel, currentUser: curUser,));
+                                    }
                                 );
                               }
                             }

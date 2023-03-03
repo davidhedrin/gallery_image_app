@@ -146,8 +146,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                             check = value;
                           });
                           if(check){
-                            FirebaseAuth.instance.signOut();
-                            Get.toNamed(RouteHalper.getLoginPage());
+                            getService.logout();
                           }
                         },
                         child: Container(

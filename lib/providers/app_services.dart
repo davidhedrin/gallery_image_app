@@ -1,10 +1,11 @@
 import 'dart:io';
 
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:delivery_food_app/models/posting_image.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:dio/dio.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/utils/utils.dart';
@@ -13,6 +14,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import '../component/main_app_page.dart';
+import '../halper/route_halper.dart';
 import '../models/user_group.dart';
 import '../widgets/loading_progres.dart';
 
@@ -34,6 +37,15 @@ class AppServices{
           return const LoadingProgress();
         }
     );
+  }
+
+  void logout(){
+    MainAppPage.groupNameGet = "";
+    MainAppPage.groupCodeId = "";
+    MainAppPage.setUserId = "";
+
+    FirebaseAuth.instance.signOut();
+    Get.toNamed(RouteHalper.getLoginPage());
   }
 
   String generateGuid(){

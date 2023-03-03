@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
+import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/data_not_found.dart';
@@ -58,9 +59,11 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                 return DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
               }else{
                 var data = snapshot.data;
+                Map<String, dynamic> getMapUser = data!.data() as Map<String, dynamic>;
+                UserModel getUser = UserModel.fromMap(getMapUser);
 
                 Future<List<PostingImageModel>> getAllDocuments() async {
-                  var getUserMaster = await getService.getDocDataByDocId(context: context, collection: Collections.usermaster, docId: data!.get("phone"));
+                  var getUserMaster = await getService.getDocDataByDocId(context: context, collection: Collections.usermaster, docId: getUser.phone);
                   List<Map<String, dynamic>> groupArray = List.from(getUserMaster!.get("group"));
                   List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
                     UserGroupModel getGroup = UserGroupModel.fromMap(res);
@@ -95,8 +98,8 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                             Container(
                               margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
                               color: Colors.grey,
-                              child: data!.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? Image.network(
-                                data.get("img_cover_url"),
+                              child: data.data()!.containsKey("img_cover_url") ? getUser.img_cover_url.isNotEmpty ? Image.network(
+                                getUser.img_cover_url,
                                 width: double.infinity,
                                 height: coverHeight,
                                 fit: BoxFit.cover,
@@ -112,12 +115,12 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? Positioned(
+                            data.data()!.containsKey("img_cover_url") ? getUser.img_cover_url.isNotEmpty ? Positioned(
                               left: Dimentions.heightSize130,
                               top: Dimentions.height40,
                               child: Center(
                                 child: FutureBuilder(
-                                    future: precacheImage(NetworkImage(data.get("img_cover_url"),), context),
+                                    future: precacheImage(NetworkImage(getUser.img_cover_url,), context),
                                     builder: (BuildContext context, AsyncSnapshot snapshot){
                                       if (snapshot.connectionState == ConnectionState.done) {
                                         return const SizedBox.shrink();
@@ -154,10 +157,10 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                           child: CircleAvatar(
                             radius: profileSize + 5,
                             backgroundColor: Colors.white,
-                            child: data.data()!.containsKey("img_profil_url") ? data.get("img_profil_url").toString().isNotEmpty ? CircleAvatar(
+                            child: data.data()!.containsKey("img_profil_url") ? getUser.img_profil_url.isNotEmpty ? CircleAvatar(
                               radius: profileSize,
                               backgroundColor: Colors.grey.shade800,
-                              backgroundImage: NetworkImage(data.get("img_profil_url")),
+                              backgroundImage: NetworkImage(getUser.img_profil_url),
                             ) : CircleAvatar(
                               radius: profileSize,
                               backgroundColor: Colors.grey.shade800,
@@ -172,8 +175,8 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                       ],
                     ),
                     SizedBox(height: Dimentions.height10,),
-                    Text(data.get("nama_lengkap"), style: TextStyle(fontSize: Dimentions.font22, fontWeight: FontWeight.bold)),
-                    SmallText(text: data.get("phone"), color: Colors.black87, size: Dimentions.font16,),
+                    Text(getUser.nama_lengkap, style: TextStyle(fontSize: Dimentions.font22, fontWeight: FontWeight.bold)),
+                    SmallText(text: getUser.phone, color: Colors.black87, size: Dimentions.font16,),
 
                     Expanded(
                       child: Padding(

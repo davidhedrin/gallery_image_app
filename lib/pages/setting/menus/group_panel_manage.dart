@@ -47,7 +47,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
     UserGroupModel getGroup = widget.groupModel;
     UserModel curUser = widget.currentUser;
     lateCurrentUser = curUser;
-    int _status = getHelp.checkStatusUser(getGroup.status);
+    int status = getHelp.checkStatusUser(getGroup.status);
 
     return SafeArea(
       child: Scaffold(
@@ -61,7 +61,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           actions: [
-            _status < 3 ? IconButton(
+            status < 3 ? IconButton(
               icon: Icon(Icons.add, color: Colors.black87, size: Dimentions.iconSize32,),
               onPressed: () {
                 showDialog(
@@ -113,7 +113,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                         }else{
                           return ListView.builder(
                               padding: EdgeInsets.only(top: Dimentions.height15),
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: getUser.length,
                               itemBuilder: (context, index){
@@ -138,14 +138,14 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                                             UserModel userModel = UserModel.fromMap(getMap);
                                             userModel.user_type = getCurrentGroup.status;
 
-                                            return generateUserCard(index, userModel);
+                                            return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
                                           }else{
                                             UserModel userModel = UserModel(
                                               nama_lengkap: getDataUser.nama,
                                               phone: getDataUser.phone,
                                               user_type: getCurrentGroup.status
                                             );
-                                            return generateUserCard(index, userModel);
+                                            return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
                                           }
                                         }
                                       }
@@ -165,7 +165,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
     );
   }
 
-  Widget generateUserCard(int index, UserModel? usrModel){
+  Widget generateUserCard({required int index, UserModel? usrModel, UserGroupModel? groupModel}){
     UserModel userModel = usrModel!;
     String? userType = userModel.user_type.isNotEmpty ? userModel.user_type.toLowerCase() : "";
     int? setType = userType.isNotEmpty ? getHelp.checkStatusUser(userType) : 0;
@@ -175,7 +175,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
 
     return GestureDetector(
       onTap: (){
-        Get.to(() => UserDetailPage(userModel: userModel, userSee: currentUser,));
+        Get.to(() => UserDetailPage(userModel: userModel, userSee: currentUser, groupModel: groupModel,));
       },
       child: Container(
         margin: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, bottom: Dimentions.height15),
@@ -189,11 +189,11 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                   height: Dimentions.heightSize90,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(Dimentions.radius30),
-                      color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                      color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
                       image: userModel.img_profil_url.isNotEmpty ? DecorationImage(
                         fit: BoxFit.cover,
                         image: NetworkImage(userModel.img_profil_url,),
-                      ) : DecorationImage(
+                      ) : const DecorationImage(
                         fit: BoxFit.cover,
                         image: AssetImage(Assets.imageBackgroundProfil),
                       ),
@@ -205,7 +205,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                         future: precacheImage(NetworkImage(userModel.img_profil_url,), context),
                         builder: (BuildContext context, AsyncSnapshot snapshot){
                           if (snapshot.connectionState == ConnectionState.done) {
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                           } else {
                             return LoadingProgress(size: Dimentions.height10,);
                           }
@@ -305,7 +305,7 @@ class _AddNewUserState extends State<AddNewUser> {
   final AppServices getService = AppServices();
   final FunHelp getHalp = FunHelp();
   final TextEditingController namaUserController = TextEditingController();
-  final TextEditingController no_phoneController = TextEditingController();
+  final TextEditingController noPhoneController = TextEditingController();
   final PageController pageController = PageController();
 
   int indexPage = 0;
@@ -334,14 +334,14 @@ class _AddNewUserState extends State<AddNewUser> {
   List<UserModel> userFor = [];
   String _selectedUser = "";
 
-  List<ModelStatus> StatusFor = [];
+  List<ModelStatus> statusFor = [];
   String _selectedStatus = "";
   _AddNewUserState(){
-    StatusFor = [
+    statusFor = [
       ModelStatus(id: "USR", value: "User"),
       ModelStatus(id: "ADM", value: "Admin"),
     ];
-    _selectedStatus = StatusFor[0].id;
+    _selectedStatus = statusFor[0].id;
   }
 
   @override
@@ -354,7 +354,7 @@ class _AddNewUserState extends State<AddNewUser> {
     return AlertDialog(
       title: const Text("Tambah Group Baru", textAlign: TextAlign.center,),
       icon: Icon(Icons.person, size: Dimentions.height45, color: generateRandomColor()),
-      content: setType == 1 ? Container(
+      content: setType == 1 ? SizedBox(
         width: Dimentions.heightSize300,
         height: indexPage == 0 ? Dimentions.heightSize270 : Dimentions.heightSize200,
         child: PageView(
@@ -390,7 +390,7 @@ class _AddNewUserState extends State<AddNewUser> {
                         filled: true,
                         isDense: true,
                       ),
-                      items: StatusFor.map((e) {
+                      items: statusFor.map((e) {
                         return DropdownMenuItem(
                           value: e.id,
                           child: Text(e.value, style: TextStyle(fontSize: Dimentions.font20),),
@@ -418,7 +418,7 @@ class _AddNewUserState extends State<AddNewUser> {
                   ),
                   SizedBox(height: Dimentions.height15,),
                   TextFormField(
-                    controller: no_phoneController,
+                    controller: noPhoneController,
                     validator: (value){
                       if(value!.isEmpty){
                         return '*masukkan nomor ponsel';
@@ -493,7 +493,7 @@ class _AddNewUserState extends State<AddNewUser> {
                         if(_formKey.currentState!.validate()){
                           getService.loading(context);
 
-                          String number = "+${selectCountry.phoneCode}"+no_phoneController.text;
+                          String number = "+${selectCountry.phoneCode}${noPhoneController.text}";
 
                           List<Map<String, dynamic>> listGroupUser = [
                             GroupModel(status: _selectedStatus, nama_group: getGroup.nama_group, group_id: getGroup.group_id).toMapUpload(),
@@ -531,13 +531,13 @@ class _AddNewUserState extends State<AddNewUser> {
                   DropdownButtonFormField(
                       value: _selectedStatus,
                       isDense: true,
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.arrow_drop_down_circle,
                         color: Colors.cyan,
                       ),
                       decoration: InputDecoration(
                         prefixIcon: Icon(_selectedStatus == "1" ? Icons.people_outline : Icons.lock),
-                        enabledBorder:  OutlineInputBorder(
+                        enabledBorder:  const OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -547,7 +547,7 @@ class _AddNewUserState extends State<AddNewUser> {
                         filled: true,
                         isDense: true,
                       ),
-                      items: StatusFor.map((e) {
+                      items: statusFor.map((e) {
                         return DropdownMenuItem(
                           value: e.id,
                           child: Text(e.value, style: TextStyle(fontSize: Dimentions.font20),),
@@ -660,7 +660,7 @@ class _AddNewUserState extends State<AddNewUser> {
 
                             final documentRef = getService.fbStore.collection(Collections.usermaster).doc(number);
                             documentRef.update({
-                              Collections.collColumnGroup : FieldValue.arrayUnion(listGroupUser),
+                              Collections.collColumngroup : FieldValue.arrayUnion(listGroupUser),
                             });
                           }
 
@@ -705,7 +705,7 @@ class _AddNewUserState extends State<AddNewUser> {
                     filled: true,
                     isDense: true,
                   ),
-                  items: StatusFor.map((e) {
+                  items: statusFor.map((e) {
                     return DropdownMenuItem(
                       value: e.id,
                       child: Text(e.value, style: TextStyle(fontSize: Dimentions.font20),),
@@ -733,7 +733,7 @@ class _AddNewUserState extends State<AddNewUser> {
               ),
               SizedBox(height: Dimentions.height15,),
               TextFormField(
-                controller: no_phoneController,
+                controller: noPhoneController,
                 validator: (value){
                   if(value!.isEmpty){
                     return '*masukkan nomor ponsel';
@@ -808,7 +808,7 @@ class _AddNewUserState extends State<AddNewUser> {
                     if(_formKey.currentState!.validate()){
                       getService.loading(context);
 
-                      String number = "+${selectCountry.phoneCode}"+no_phoneController.text;
+                      String number = "+${selectCountry.phoneCode}${noPhoneController.text}";
 
                       List<Map<String, dynamic>> listGroupUser = [
                         GroupModel(status: _selectedStatus, nama_group: getGroup.nama_group, group_id: getGroup.group_id).toMapUpload(),

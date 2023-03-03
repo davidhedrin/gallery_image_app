@@ -185,9 +185,6 @@ class _LoginPageState extends State<LoginPage> {
 
                         if(no_phoneController.text.isNotEmpty && passwordController.text.isNotEmpty){
                           services.loading(dialogcontext);
-                          MainAppPage.groupNameGet = "";
-                          MainAppPage.groupCodeId = "";
-                          MainAppPage.setUserId = "";
 
                           final String phone = "+${selectCountry.phoneCode}"+no_phoneController.text;
                           final String password = passwordController.text.trim();

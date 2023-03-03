@@ -36,9 +36,7 @@ class RouteHalper{
   static const String onBoardScreen = "/on-board-screen";
   static const String splashScreen = "/splash-screen";
 
-  static const String groupSettingPage = "/group-setting-page";
   static const String userSettingPage = "/user-setting-page";
-  // static const String groupPanelManage = "/group-panel-manage";
 
   static String getInitial({String? uid}) => '$initial?uid=$uid';
 
@@ -55,9 +53,7 @@ class RouteHalper{
   static String getOnBoardScreen() => '$onBoardScreen';
   static String getsplashScreen() => '$splashScreen';
 
-  static String getGroupSettingPage() => '$groupSettingPage';
   static String getUserSettingPage() => '$userSettingPage';
-  // static String getGroupPanelManage() => '$groupPanelManage';
 
   static List<GetPage> routes = [
     GetPage(name: initial, transition: Transition.native, page: (){
@@ -99,8 +95,6 @@ class RouteHalper{
       return RecommendedFoodDetail();
     }),
 
-    GetPage(name: groupSettingPage, page: () => GroupSettingPage()),
     GetPage(name: userSettingPage, page: () => UserSettingPage()),
-    // GetPage(name: groupPanelManage, page: () => GroupPanelManage()),
   ];
 }
