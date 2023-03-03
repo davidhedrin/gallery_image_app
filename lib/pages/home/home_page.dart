@@ -130,36 +130,11 @@ class _HomePageMenuState extends State<HomePageMenu> {
                     }
                 ),
                 Center(
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: (){
-                          Get.toNamed(RouteHalper.getBookmarkPage());
-                        },
-                        child: Icon(Icons.bookmark, color: AppColors.mainColor, size: Dimentions.iconSize32,)
-                      ),
-                      SizedBox(width: Dimentions.width5,),
-                      GestureDetector(
-                        onTap: () async {
-                          bool check = false;
-                          await onBackButtonPressYesNo(context: context, text: "Putuskan Koneksi!", desc: "Yakin ingin memutuskan koneksi?").then((value){
-                            check = value;
-                          });
-                          if(check){
-                            getService.logout();
-                          }
-                        },
-                        child: Container(
-                          width: Dimentions.height30,
-                          height: Dimentions.height30,
-                          child: Icon(Icons.power_settings_new, color: Colors.white, size: Dimentions.iconSize24,),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(Dimentions.radius15),
-                            color: Colors.redAccent,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: GestureDetector(
+                      onTap: (){
+                        Get.toNamed(RouteHalper.getBookmarkPage());
+                      },
+                      child: Icon(Icons.bookmark, color: AppColors.mainColor, size: Dimentions.iconSize32,)
                   ),
                 )
               ],

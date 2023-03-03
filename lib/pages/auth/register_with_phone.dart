@@ -14,26 +14,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 class RegisterWithPhoneNumber extends StatefulWidget {
   const RegisterWithPhoneNumber({ Key? key }) : super(key: key);
 
   @override
-  _RegisterWithPhoneNumberState createState() => _RegisterWithPhoneNumberState();
+  _RegisterWithPhoneNumberState createState() {
+    return _RegisterWithPhoneNumberState();
+  }
 }
 
 class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController no_phoneController = TextEditingController();
+  final TextEditingController noPhoneController = TextEditingController();
   final TextEditingController namaController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController co_passwordController = TextEditingController();
-  bool _isLoading = false, _isIcon = false;
+  final TextEditingController coPasswordController = TextEditingController();
+  final bool _isLoading = false;
+  bool _isIcon = false;
 
   void setFormatNumber(){
-    if(no_phoneController.text.length >= 10){
+    if(noPhoneController.text.length >= 10){
       _isIcon = true;
     }else{
       _isIcon = false;
@@ -57,7 +59,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
-        backgroundColor: Color(0xFF181A20),
+        backgroundColor: const Color(0xFF181A20),
         appBar: MyAppBar(
           appBar: AppBar(),
           leading:  GestureDetector(
@@ -140,7 +142,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                           SizedBox(height: Dimentions.height15,),
 
                           MyTextFieldReg(
-                            controller: co_passwordController,
+                            controller: coPasswordController,
                             hintText: "Konfirmasi Password",
                             typeInput: TextInputType.visiblePassword,
                             obscureText: true,
@@ -151,7 +153,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                               if(value.length<6){
                                 return '*minimal 6 karakter';
                               }
-                              if(passwordController.text != co_passwordController.text){
+                              if(passwordController.text != coPasswordController.text){
                                 return '*password tidak cocok';
                               }
                               return null;
@@ -161,7 +163,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                           SizedBox(height: Dimentions.height15,),
 
                           TextFormField(
-                            controller: no_phoneController,
+                            controller: noPhoneController,
                             validator: (value){
                               if(value!.isEmpty){
                                 return '*masukkan nomor ponsel';
@@ -192,7 +194,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             ),
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.only(right: Dimentions.width15, top: Dimentions.height15, bottom: Dimentions.height15),
-                              enabledBorder:  OutlineInputBorder(
+                              enabledBorder:  const OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -202,7 +204,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                               filled: true,
                               hintText: "812-xxxx-xxxx",
                               hintStyle: TextStyle(color: Colors.grey[500], fontSize: Dimentions.font20),
-                              suffixIcon: !_isIcon ? Icon(Icons.phone_android) : Icon(Icons.check_circle,color: Colors.green,),
+                              suffixIcon: !_isIcon ? const Icon(Icons.phone_android) : const Icon(Icons.check_circle,color: Colors.green,),
                               prefixIcon: Padding(
                                 padding: EdgeInsets.only(left: Dimentions.width15, top: Dimentions.screenHeight/62, right: Dimentions.width5),
                                 child: InkWell(
@@ -243,7 +245,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             _isIcon = false;
                           });
 
-                          String number = "+${selectCountry.phoneCode}"+no_phoneController.text;
+                          String number = "+${selectCountry.phoneCode}${noPhoneController.text}";
                           var modelUser = UserModel(
                             nama_lengkap: namaController.text,
                             email: emailController.text,
@@ -262,10 +264,10 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                               namaController.clear();
                               emailController.clear();
                               passwordController.clear();
-                              co_passwordController.clear();
-                              no_phoneController.clear();
+                              coPasswordController.clear();
+                              noPhoneController.clear();
                             }else{
-                              no_phoneController.clear();
+                              noPhoneController.clear();
                             }
                           });
                         }else{
@@ -277,10 +279,10 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                           borderRadius: BorderRadius.circular(Dimentions.screenHeight/156.21)
                       ),
                       padding: EdgeInsets.symmetric(vertical: Dimentions.height20, horizontal: Dimentions.width30),
-                      child: _isLoading  ? Container(
+                      child: _isLoading  ? SizedBox(
                         width: Dimentions.width20,
                         height: Dimentions.height20,
-                        child: CircularProgressIndicator(
+                        child: const CircularProgressIndicator(
                           backgroundColor: Colors.white,
                           color: Colors.black,
                           strokeWidth: 2,

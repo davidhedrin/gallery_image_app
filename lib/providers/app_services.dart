@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:delivery_food_app/models/posting_image.dart';
+import 'package:delivery_food_app/models/user_master_model.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:dio/dio.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -123,6 +124,46 @@ class AppServices{
     } on FirebaseException catch (e){
       showSnackBar(context, "UpdateDataDb | $e");
     }
+  }
+
+  void deleteFullUserAccount({required String uid, required String phone}) async {
+    DocumentReference<Map<String, dynamic>> getUser = fbStore.collection(Collections.users).doc(uid);
+    DocumentReference<Map<String, dynamic>> getUserMaster = fbStore.collection(Collections.usermaster).doc(phone);
+
+    DocumentSnapshot<Map<String, dynamic>> getUM = await getUserMaster.get();
+
+    // Start delete posted image
+    Map<String, dynamic> mapUserMaster = getUM.data() as Map<String, dynamic>;
+    UserMasterModel fromMapUM = UserMasterModel.fromMap(mapUserMaster);
+
+    List<Map<String, dynamic>> groupArray = fromMapUM.groupMap!;
+    List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
+      UserGroupModel getGroup = UserGroupModel.fromMap(res);
+      return getGroup;
+    }).toList();
+
+    List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
+      return fbStore.collection(model.nama_group.toLowerCase()).get();
+    }).toList();
+
+    List<QuerySnapshot> snapshots = await Future.wait(futures);
+
+    for (var snapshot in snapshots){
+      var docsSnap = snapshot.docs.where((item) => item.get(Collections.collColumnuserById) == uid);
+      if(docsSnap.isNotEmpty){
+        for(var element in docsSnap){
+          Map<String, dynamic> getMapImage = element.data() as Map<String, dynamic>;
+          PostingImageModel fromMapImage = PostingImageModel.fromMap(getMapImage);
+
+          await _fbStorage.ref().child("${fromMapImage.imageGroup}/${fromMapImage.imageId}").delete();
+          await element.reference.delete();
+        }
+      }
+    }
+    // End delete posted image
+
+    await getUserMaster.delete();
+    await getUser.delete();
   }
 
   Future<DocumentSnapshot?> getDocUidByColumn({

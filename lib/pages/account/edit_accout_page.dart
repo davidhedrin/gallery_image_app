@@ -287,17 +287,17 @@ class _EditAccountPageState extends State<EditAccountPage> {
 
                                       if(imageProfile != null){
                                         if(data.data()!.containsKey("img_profil_url")){
-                                          getService.deleteFileStorage(context: context, imagePath: "imageProfile/${widget.uid}");
+                                          getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageProfile}/${widget.uid}");
                                         }
                                       }
                                       if(imageCover != null){
                                         if(data.data()!.containsKey("img_cover_url")){
-                                          getService.deleteFileStorage(context: context, imagePath: "imageCover/${widget.uid}");
+                                          getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageCover}/${widget.uid}");
                                         }
                                       }
 
-                                      String imgProfileUrl = imageProfile != null ? await getService.uploadImageToStorage(ref: "imageProfile/${widget.uid}", file: imageProfile!, context: context) : data.get("img_profil_url");
-                                      String imgCoverUrl = imageCover != null ? await getService.uploadImageToStorage(ref: "imageCover/${widget.uid}", file: imageCover!, context: context) : data.get("img_cover_url");
+                                      String imgProfileUrl = imageProfile != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageProfile}/${widget.uid}", file: imageProfile!, context: context) : data.get("img_profil_url");
+                                      String imgCoverUrl = imageCover != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageCover}/${widget.uid}", file: imageCover!, context: context) : data.get("img_cover_url");
                                       var userModel = UserModel(
                                         nama_lengkap: namaController.text,
                                         email: emailController.text,

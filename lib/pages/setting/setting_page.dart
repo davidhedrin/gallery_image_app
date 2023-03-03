@@ -66,10 +66,10 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
             stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: Container(child: CircularProgressIndicator()));
+                return const Center(child: CircularProgressIndicator());
               }
               if(!snapshot.hasData){
-                return DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
+                return const DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
               }else{
                 var data = snapshot.data;
                 Map<String, dynamic> userMap = data!.data() as Map<String, dynamic>;
@@ -282,7 +282,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
               boxColor: Colors.orangeAccent,
               text: "User",
               action: (){
-                Get.to(() => GroupSettingPage(currentUser: lateCurrentUser));
+                Get.toNamed(RouteHalper.getUserSettingPage());
               }
           ),
         ],

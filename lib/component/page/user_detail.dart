@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/halper/function_halpers.dart';
 import 'package:delivery_food_app/utils/collections.dart';
@@ -46,7 +47,6 @@ class _UserDetailPageState extends State<UserDetailPage> {
 
     int setType = getHelp.checkStatusUser(user.user_type);
 
-    print(widget.userSee);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -65,9 +65,49 @@ class _UserDetailPageState extends State<UserDetailPage> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           actions: [
-            widget.userSee < 3 ? IconButton(
+            widget.userSee < 3 ? user.id.isEmpty ? IconButton(
               icon: Icon(Icons.delete_forever, color: Colors.redAccent, size: Dimentions.iconSize32,),
-              onPressed: () {
+              onPressed: () async { //Kalau belum terdaftar
+                bool check = false;
+                await onBackButtonPressYesNo(context: context, text: "Hapus User", desc: "Yakin ingin menghapus user dari aplikasi?").then((value){
+                  check = value;
+                });
+                if(check){
+                  getService.loading(context);
+
+                  getService.fbStore.collection(Collections.usermaster).doc(user.phone).delete();
+
+                  Navigator.of(context).pop();
+                  Navigator.pop(context);
+                  showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menghapus user", title: "Delete User");
+                }
+              },
+            ) : IconButton(
+              icon: Icon(Icons.delete_forever, color: Colors.redAccent, size: Dimentions.iconSize32,),
+              onPressed: () async { //Kalau sudah terdaftar
+                bool check = false;
+                await onBackButtonPressYesNo(context: context, text: "Hapus User", desc: "Yakin ingin menghapus user dari aplikasi?").then((value){
+                  check = value;
+                });
+                if(check){
+                  getService.loading(context);
+
+                  try{
+                    getService.deleteFullUserAccount(uid: user.id, phone: user.phone);
+                    if(user.img_profil_url.isNotEmpty){
+                      getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageProfile}/${user.id}");
+                    }
+                    if(user.img_cover_url.isNotEmpty){
+                      getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageCover}/${user.id}");
+                    }
+                    showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menghapus user", title: "Delete User");
+                  }catch(e){
+                    showAwsBar(context: context, contentType: ContentType.warning, msg: "Gagal menghapus user. Hubungi admin", title: "Delete User");
+                  }
+
+                  Navigator.of(context).pop();
+                  Navigator.pop(context);
+                }
               },
             ) : const Text(""),
           ],

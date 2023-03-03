@@ -1,4 +1,7 @@
 class Collections{
+  static const String strgImageCover = "imageCover";
+  static const String strgImageProfile = "imageProfile";
+
   static const String users = "users";
   static const String usermaster = "user-master";
   static const String usergroup = "user-group";

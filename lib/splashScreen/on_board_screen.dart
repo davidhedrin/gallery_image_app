@@ -1,4 +1,5 @@
 import 'package:delivery_food_app/halper/route_halper.dart';
+import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -169,8 +170,8 @@ class _OnBoardScreenAppState extends State<OnBoardScreenApp> {
                           Text(page == 4 ? "Lanjutkan -->" : "Geser berikutnya >>", style: TextStyle(color: Colors.white, fontSize: Dimentions.font15),),
                           page == 4 ? ElevatedButton(
                             onPressed: (){
-                              Get.toNamed(RouteHalper.loginPage);
                               store.write('onBoarding', true);
+                              Get.toNamed(RouteHalper.loginPage);
                             },
                             child: Text('Login', style: TextStyle(color: Colors.white, fontSize: Dimentions.font15),),
                           ) : const Text(""),

@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/providers/auth_provider.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../generated/assets.dart';
@@ -50,36 +52,16 @@ class _OtpPageState extends State<OtpPage> {
     return WillPopScope(
       onWillPop: () async {
         bool check = false;
-        await onBackButtonPressYesNo(context: context, text: "Keluar Aplikasi!", desc: "Yakin ingin keluar dari aplikasi?").then((value){
+        await onBackButtonPressYesNo(context: context, text: "Batalkan Verifikasi", desc: "Yakin ingin membatakan verifikasi?").then((value){
           check = value;
         });
         if(check){
-          exit(0);
+          Get.toNamed(RouteHalper.getLoginPage());
         }
         return check;
       },
       child: Scaffold(
-        backgroundColor: Color(0xFF181A20),
-        // Komen App Bar
-        // appBar: MyAppBar(
-        //   appBar: AppBar(),
-        //   leading:  GestureDetector(
-        //     onTap: () async {
-        //       bool check = false;
-        //       await onBackButtonPressYesNo(context: context, text: "Keluar Aplikasi!", desc: "Yakin ingin keluar dari aplikasi?").then((value){
-        //         check = value;
-        //       });
-        //       if(check){
-        //         exit(0);
-        //       }
-        //     },
-        //     child: Icon(
-        //       Icons.arrow_back,
-        //       size: Dimentions.font30,
-        //       color: Colors.white,
-        //     ),
-        //   ),
-        // ),
+        backgroundColor: const Color(0xFF181A20),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(

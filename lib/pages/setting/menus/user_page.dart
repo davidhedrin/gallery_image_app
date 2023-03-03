@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../component/page/user_detail.dart';
+import '../../../models/user_group.dart';
 import '../../../providers/app_services.dart';
 import '../../../utils/collections.dart';
 import '../../../utils/colors.dart';
@@ -32,6 +33,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    UserGroupModel getGroup = UserGroupModel();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -85,7 +87,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
 
                             return GestureDetector(
                               onTap: (){
-                                Get.to(() => UserDetailPage(userModel: getUser, userSee: 1,));
+                                Get.to(() => UserDetailPage(userModel: getUser, userSee: 1, groupModel: getGroup,));
                               },
                               child: Container(
                                 margin: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, bottom: Dimentions.height15),
