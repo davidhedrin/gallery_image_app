@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.delivery_food_app">
    <application
-        android:label="delivery_food_app"
+        android:label="We'Gallery"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
