@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
@@ -16,16 +18,16 @@ class IconBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.buttonBackgroundColor,
-      borderRadius: BorderRadius.circular(6),
+      borderRadius: BorderRadius.circular(Dimentions.radius6),
       child: InkWell(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(Dimentions.radius6),
         splashColor: AppColors.secondary,
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(6),
+          padding: EdgeInsets.all(Dimentions.height6),
           child: Icon(
             icon,
-            size: 22,
+            size: Dimentions.iconSize22,
             color: Colors.black,
           ),
         ),
@@ -42,25 +44,25 @@ class Avatar extends StatelessWidget {
     this.onTap,
   }) : super(key: key);
 
-  const Avatar.small({
+  Avatar.small({
     Key? key,
     this.url,
     this.onTap,
-  })  : radius = 18,
+  })  : radius = Dimentions.radius18,
         super(key: key);
 
-  const Avatar.medium({
+  Avatar.medium({
     Key? key,
     this.url,
     this.onTap,
-  })  : radius = 26,
+  })  : radius = Dimentions.radius26,
         super(key: key);
 
-  const Avatar.large({
+  Avatar.large({
     Key? key,
     this.url,
     this.onTap,
-  })  : radius = 34,
+  })  : radius = Dimentions.radius34,
         super(key: key);
 
   final double radius;
@@ -79,7 +81,7 @@ class Avatar extends StatelessWidget {
     if (url != null) {
       return CircleAvatar(
         radius: radius,
-        backgroundImage: NetworkImage(url!),
+        backgroundImage: CachedNetworkImageProvider(url!),
         backgroundColor: Theme.of(context).cardColor,
       );
     } else {

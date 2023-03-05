@@ -12,7 +12,9 @@ class Dimentions{
   static double height1kom2 = screenHeight/650.9;
   static double height1kom9 = screenHeight/411.10;
   static double height2 = screenHeight/390.54;
+  static double height4 = screenHeight/195.27;
   static double height6 = screenHeight/130.2;
+  static double height8 = screenHeight/97.63;
   static double height10 = screenHeight/84.4;
   static double height12 = screenHeight/65.09;
   static double height13 = screenHeight/60.08;
@@ -27,6 +29,7 @@ class Dimentions{
   static double height50 = screenHeight/15.62;
   static double height60 = screenHeight/13.01;
   static double height70 = screenHeight/11.15;
+  static double height80 = screenHeight/9.76;
 
   // dynemic width padding and margin
   static double width3 = screenHeight/260.3;
@@ -40,6 +43,7 @@ class Dimentions{
   static double width30 = screenHeight/28.13;
 
   // fonts size
+  static double font11 = screenHeight/71.00;
   static double font12 = screenHeight/65.09;
   static double font13 = screenHeight/60.08;
   static double font14 = screenHeight/55.79;
@@ -55,17 +59,22 @@ class Dimentions{
   static double font50 = screenHeight/15.62;
 
   // radius size
+  static double radius6 = screenHeight/130.1;
   static double radius12 = screenHeight/65.09;
   static double radius15 = screenHeight/56.27;
+  static double radius18 = screenHeight/43.39;
   static double radius20 = screenHeight/42.2;
   static double radius24 = screenHeight/32.54;
+  static double radius26 = screenHeight/30.04;
   static double radius30 = screenHeight/28.13;
+  static double radius34 = screenHeight/22.97;
   static double radius50 = screenHeight/15.62;
 
   // icons size
   static double iconSize36 = screenHeight/23.0;
   static double iconSize32 = screenHeight/27.0;
   static double iconSize24 = screenHeight/35.17;
+  static double iconSize22 = screenHeight/35.50;
   static double iconSize16 = screenHeight/42.75;
   static double iconSize15 = screenHeight/52.07;
 
