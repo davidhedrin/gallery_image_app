@@ -5,11 +5,13 @@ class SmallText extends StatelessWidget {
   final String text;
   double size;
   double height;
+  FontWeight? fontWeight;
   SmallText({
     Key? key,
     this.color = const Color(0xFFccc7c5),
     this.size = 12,
     this.height = 1.2,
+    this.fontWeight = FontWeight.normal,
     required this.text,
   }) : super(key: key);
 
@@ -22,6 +24,7 @@ class SmallText extends StatelessWidget {
         color: color,
         fontSize: size,
         height: height,
+        fontWeight: fontWeight
       ),
     );
   }

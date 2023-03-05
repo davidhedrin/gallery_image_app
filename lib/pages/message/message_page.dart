@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery_food_app/models/message_data.dart';
+import 'package:delivery_food_app/pages/message/chat_page.dart';
 import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
@@ -10,6 +11,7 @@ import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../utils/utils.dart';
@@ -69,6 +71,7 @@ class _MessagePageMenuState extends State<MessagePageMenu> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
+            heroTag: "newChat",
             onPressed: () {
             },
             backgroundColor: Colors.blue,
@@ -103,71 +106,76 @@ class _MessageTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: Dimentions.height80,
-      margin: EdgeInsets.symmetric(horizontal: Dimentions.width8),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor,
-            width: 0.5,
+    return InkWell(
+      onTap: (){
+        Get.to(() => ChatMessagePage(messageData: messageData));
+      },
+      child: Container(
+        height: Dimentions.height80,
+        margin: EdgeInsets.symmetric(horizontal: Dimentions.width8),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).dividerColor,
+              width: 0.5,
+            ),
           ),
         ),
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(Dimentions.height10),
-            child: Avatar.medium(url: messageData.profilePicture,),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: Dimentions.height4),
-                  child: BigText(text: messageData.senderName),
-                ),
-                SizedBox(
-                  height: Dimentions.height15,
-                  child: SmallTextOvr(text: messageData.message, size: Dimentions.font13,)
-                ),
-              ],
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(Dimentions.height10),
+              child: Avatar.medium(url: messageData.profilePicture,),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: Dimentions.width20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                SizedBox(height: Dimentions.height4,),
-                Text(
-                  messageData.dateMessage.toUpperCase(),
-                  style: TextStyle(
-                    fontSize: Dimentions.font11,
-                    letterSpacing: -0.2,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: Dimentions.height4),
+                    child: BigText(text: messageData.senderName),
                   ),
-                ),
-                SizedBox(height: Dimentions.height8,),
-                Container(
-                  width: 18,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary,
-                    shape: BoxShape.circle,
+                  SizedBox(
+                    height: Dimentions.height15,
+                    child: SmallTextOvr(text: messageData.message, size: Dimentions.font13,)
                   ),
-                  child: Center(
-                    child: Text("1", style: TextStyle(fontSize: Dimentions.height10, color: Colors.white),),
-                  )
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.only(right: Dimentions.width20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(height: Dimentions.height4,),
+                  Text(
+                    messageData.dateMessage.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: Dimentions.font11,
+                      letterSpacing: -0.2,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey
+                    ),
+                  ),
+                  SizedBox(height: Dimentions.height8,),
+                  Container(
+                    width: 18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: AppColors.secondary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text("1", style: TextStyle(fontSize: Dimentions.height10, color: Colors.white),),
+                    )
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

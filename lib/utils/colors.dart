@@ -15,5 +15,10 @@ class AppColors{
   static final Color mainBlackColor = const Color(0xFF332d2d);
   static final Color yellowColor = const Color(0xFFffd379);
   static final Color grayColor = const Color(0xFFfcf4e4);
+
   static final Color secondary = const Color(0xFF3B76F6);
+  static final Color textFaded = const Color(0xFF9899A5);
+  static final Color textLigth = const Color(0xFFF5F5F5);
+  static final Color cardLight = const Color(0xFFF9FAFE);
+  static final Color accent = const Color(0xFFD6755B);
 }
