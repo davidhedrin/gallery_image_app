@@ -1,6 +1,7 @@
-import 'dart:io';
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/models/posting_image.dart';
 import 'package:delivery_food_app/utils/collections.dart';
@@ -12,8 +13,8 @@ import 'package:delivery_food_app/widgets/expandable_text_widget.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
+import '../../generated/assets.dart';
 import '../../models/likes_model.dart';
 import '../../models/user_model.dart';
 import '../../providers/app_services.dart';
@@ -53,52 +54,49 @@ class _DetailImagePageState extends State<DetailImagePage> {
         stream: getService.streamBuilderGetDoc(collection: widget.groupName!, docId: widget.imageId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: Container(child: CircularProgressIndicator()));
+            return const Center(child: CircularProgressIndicator());
           }
           if(!snapshot.hasData){
-            return DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
+            return const DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
           }else{
             var data = snapshot.data;
             Map<String, dynamic> mapData = data!.data() as Map<String, dynamic>;
             PostingImageModel getData = PostingImageModel.fromMap(mapData);
             return Stack(
               children: [
-                // Background Image
                 Positioned(
                   left: 0,
                   right: 0,
-                  child: Stack(
-                    children: [
-                      Container(
+                  child: CachedNetworkImage(
+                    imageUrl: getData.imageUrl,
+                    placeholder: (context, url) => const LoadingProgress(),
+                    errorWidget: (context, url, error){
+                      return Container(
                         width: double.maxFinite,
                         height: Dimentions.popularFoodImgSize,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFF69c5df),
                           image: DecorationImage(
+                            image: AssetImage(Assets.imageBackgroundProfil),
                             fit: BoxFit.cover,
-                            image: NetworkImage(getData.imageUrl,),
                           ),
                         ),
-                      ),
-                      Positioned.fill(
-                        child: Center(
-                          child: FutureBuilder(
-                              future: precacheImage(NetworkImage(getData.imageUrl,), context),
-                              builder: (BuildContext context, AsyncSnapshot snapshot){
-                                if (snapshot.connectionState == ConnectionState.done) {
-                                  return SizedBox.shrink();
-                                } else {
-                                  return LoadingProgress();
-                                }
-                              }
-                          ),
+                      );
+                    },
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: double.maxFinite,
+                      height: Dimentions.popularFoodImgSize,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF69c5df),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
 
-                // Icons Widget
                 Positioned(
                   top: Dimentions.height45,
                   left: Dimentions.width20,
@@ -246,7 +244,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
               child: Row(
                 children: [
                   BigText(text: "Share", color: Colors.white,),
-                  Icon(Icons.share, color: Colors.white,)
+                  const Icon(Icons.share, color: Colors.white,)
                 ],
               ),
             )

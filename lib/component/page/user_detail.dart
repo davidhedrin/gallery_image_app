@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/halper/function_halpers.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -93,7 +95,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                   getService.loading(context);
 
                   try{
-                    getService.deleteFullUserAccount(uid: user.id, phone: user.phone);
+                    getService.deleteFullUserAccount(context: context, uid: user.id, phone: user.phone);
                     if(user.img_profil_url.isNotEmpty){
                       getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageProfile}/${user.id}");
                     }
@@ -102,7 +104,10 @@ class _UserDetailPageState extends State<UserDetailPage> {
                     }
                     showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menghapus user", title: "Delete User");
                   }catch(e){
-                    showAwsBar(context: context, contentType: ContentType.warning, msg: "Gagal menghapus user. Hubungi admin", title: "Delete User");
+                    if (kDebugMode) {
+                      print(e.toString());
+                    }
+                    return;
                   }
 
                   Navigator.of(context).pop();
@@ -118,45 +123,36 @@ class _UserDetailPageState extends State<UserDetailPage> {
                 clipBehavior: Clip.none,
                 alignment: Alignment.center,
                 children: [
-                  Stack(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
-                        color: Colors.grey,
-                        child: imageCover != null ? Image.file(
-                          imageCover!,
-                          width: double.infinity,
-                          height: coverHeight,
-                          fit: BoxFit.cover,
-                        ) : user.img_cover_url.isNotEmpty ? Image.network(
-                          user.img_cover_url,
-                          width: double.infinity,
-                          height: coverHeight,
-                          fit: BoxFit.cover,
-                        ) : Image.asset(
+                  Container(
+                    margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
+                    color: Colors.grey,
+                    child: imageCover != null ? Image.file(
+                      imageCover!,
+                      width: double.infinity,
+                      height: coverHeight,
+                      fit: BoxFit.cover,
+                    ) : CachedNetworkImage(
+                      imageUrl: user.img_cover_url,
+                      placeholder: (context, url) => const LoadingProgress(),
+                      errorWidget: (context, url, error){
+                        return Image.asset(
                           Assets.imageBackgroundProfil,
                           width: double.infinity,
                           height: coverHeight,
                           fit: BoxFit.cover,
-                        ),
-                      ),
-                      user.img_cover_url.isNotEmpty ? Positioned(
-                        left: Dimentions.heightSize130,
-                        top: Dimentions.height40,
-                        child: Center(
-                          child: FutureBuilder(
-                              future: precacheImage(NetworkImage(user.img_cover_url,), context),
-                              builder: (BuildContext context, AsyncSnapshot snapshot){
-                                if (snapshot.connectionState == ConnectionState.done) {
-                                  return const SizedBox.shrink();
-                                } else {
-                                  return const LoadingProgress();
-                                }
-                              }
+                        );
+                      },
+                      imageBuilder: (context, imageProvider) => Container(
+                        width: double.infinity,
+                        height: coverHeight,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      ) : const Text(""),
-                    ],
+                      ),
+                    ),
                   ),
 
                   // Icons Widget
@@ -196,7 +192,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                           ) : user.img_profil_url.isNotEmpty ? CircleAvatar(
                             radius: profileSize,
                             backgroundColor: Colors.grey.shade800,
-                            backgroundImage: NetworkImage(user.img_profil_url),
+                            backgroundImage: CachedNetworkImageProvider(user.img_profil_url),
                           ) : CircleAvatar(
                             radius: profileSize,
                             backgroundColor: Colors.grey.shade800,
@@ -275,38 +271,35 @@ class _UserDetailPageState extends State<UserDetailPage> {
                             itemCount: documents.length, // number of columns in the grid
                             itemBuilder: (context, index){
                               PostingImageModel image = documents[index];
-                              return Stack(
-                                children: [
-                                  GestureDetector(
-                                    onTap: (){
-                                      Get.toNamed(RouteHalper.getDetailImage(image.imageId, image.imageGroup));
+                              return GestureDetector(
+                                  onTap: (){
+                                    Get.toNamed(RouteHalper.getDetailImage(image.imageId, image.imageGroup));
+                                  },
+                                  child: CachedNetworkImage(
+                                    imageUrl: image.imageUrl,
+                                    placeholder: (context, url) => LoadingProgress(size: Dimentions.height25,),
+                                    errorWidget: (context, url, error){
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                                          image: const DecorationImage(
+                                            image: AssetImage(Assets.imageBackgroundProfil),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      );
                                     },
-                                    child: Container(
+                                    imageBuilder: (context, imageProvider) => Container(
                                       decoration: BoxDecoration(
                                         color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
                                         image: DecorationImage(
-                                          image: NetworkImage(image.imageUrl),
+                                          image: imageProvider,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                   ),
-                                  Positioned.fill(
-                                    child: Center(
-                                      child: FutureBuilder(
-                                          future: precacheImage(NetworkImage(image.imageUrl,), context),
-                                          builder: (BuildContext context, AsyncSnapshot snapshot){
-                                            if (snapshot.connectionState == ConnectionState.done) {
-                                              return SizedBox.shrink();
-                                            } else {
-                                              return LoadingProgress(size: Dimentions.height25,);
-                                            }
-                                          }
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
+                                );
                             },
                           );
                         }
@@ -351,37 +344,34 @@ class _UserDetailPageState extends State<UserDetailPage> {
                                 itemCount: allImage.length, // number of columns in the grid
                                 itemBuilder: (context, index){
                                   PostingImageModel image = allImage[index];
-                                  return Stack(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: (){
-                                          Get.toNamed(RouteHalper.getDetailImage(image.imageId, image.imageGroup));
-                                        },
-                                        child: Container(
+                                  return GestureDetector(
+                                    onTap: (){
+                                      Get.toNamed(RouteHalper.getDetailImage(image.imageId, image.imageGroup));
+                                    },
+                                    child: CachedNetworkImage(
+                                      imageUrl: image.imageUrl,
+                                      placeholder: (context, url) => LoadingProgress(size: Dimentions.height25,),
+                                      errorWidget: (context, url, error){
+                                        return Container(
                                           decoration: BoxDecoration(
                                             color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
-                                            image: DecorationImage(
-                                              image: NetworkImage(image.imageUrl),
+                                            image: const DecorationImage(
+                                              image: AssetImage(Assets.imageBackgroundProfil),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Positioned.fill(
-                                        child: Center(
-                                          child: FutureBuilder(
-                                              future: precacheImage(NetworkImage(image.imageUrl,), context),
-                                              builder: (BuildContext context, AsyncSnapshot snapshot){
-                                                if (snapshot.connectionState == ConnectionState.done) {
-                                                  return const SizedBox.shrink();
-                                                } else {
-                                                  return LoadingProgress(size: Dimentions.height25,);
-                                                }
-                                              }
+                                        );
+                                      },
+                                      imageBuilder: (context, imageProvider) => Container(
+                                        decoration: BoxDecoration(
+                                          color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                                          image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   );
                                 },
                               ),

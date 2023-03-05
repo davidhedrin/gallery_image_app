@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/function_halpers.dart';
@@ -104,7 +105,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                               color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
                                               image: getUser.img_profil_url.isNotEmpty ? DecorationImage(
                                                 fit: BoxFit.cover,
-                                                image: NetworkImage(getUser.img_profil_url,),
+                                                image: CachedNetworkImageProvider(getUser.img_profil_url,),
                                               ) : const DecorationImage(
                                                 fit: BoxFit.cover,
                                                 image: AssetImage(Assets.imageBackgroundProfil)
@@ -114,7 +115,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                         getUser.img_profil_url.isNotEmpty ? Positioned.fill(
                                           child: Center(
                                             child: FutureBuilder(
-                                                future: precacheImage(NetworkImage(getUser.img_profil_url,), context),
+                                                future: precacheImage(CachedNetworkImageProvider(getUser.img_profil_url,), context),
                                                 builder: (BuildContext context, AsyncSnapshot snapshot){
                                                   if (snapshot.connectionState == ConnectionState.done) {
                                                     return const SizedBox.shrink();

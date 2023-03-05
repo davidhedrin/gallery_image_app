@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
@@ -50,213 +51,195 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
       },
       child: Scaffold(
         body: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-            stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: Container(child: CircularProgressIndicator()));
+          stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if(!snapshot.hasData){
+              return const DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
+            }else{
+              var data = snapshot.data;
+              Map<String, dynamic> getMapUser = data!.data() as Map<String, dynamic>;
+              UserModel getUser = UserModel.fromMap(getMapUser);
+
+              Future<List<PostingImageModel>> getAllDocuments() async {
+                var getUserMaster = await getService.getDocDataByDocId(context: context, collection: Collections.usermaster, docId: getUser.phone);
+                List<Map<String, dynamic>> groupArray = List.from(getUserMaster!.get("group"));
+                List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
+                  UserGroupModel getGroup = UserGroupModel.fromMap(res);
+                  return getGroup;
+                }).toList();
+
+                List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
+                  return FirebaseFirestore.instance.collection(model.nama_group.toLowerCase()).get();
+                }).toList();
+
+                List<QuerySnapshot> snapshots = await Future.wait(futures);
+
+                List<PostingImageModel> documents = snapshots.expand((snapshot) {
+                  return snapshot.docs.map((doc) {
+                    Map<String, dynamic> getMap = doc.data() as Map<String, dynamic>;
+                    PostingImageModel fromMap = PostingImageModel.fromMap(getMap);
+                    return fromMap;
+                  });
+                }).toList();
+
+                return documents.where((item) => item.userById == widget.uid).toList();
               }
-              if(!snapshot.hasData){
-                return DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
-              }else{
-                var data = snapshot.data;
-                Map<String, dynamic> getMapUser = data!.data() as Map<String, dynamic>;
-                UserModel getUser = UserModel.fromMap(getMapUser);
 
-                Future<List<PostingImageModel>> getAllDocuments() async {
-                  var getUserMaster = await getService.getDocDataByDocId(context: context, collection: Collections.usermaster, docId: getUser.phone);
-                  List<Map<String, dynamic>> groupArray = List.from(getUserMaster!.get("group"));
-                  List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
-                    UserGroupModel getGroup = UserGroupModel.fromMap(res);
-                    return getGroup;
-                  }).toList();
-
-                  List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
-                    return FirebaseFirestore.instance.collection(model.nama_group.toLowerCase()).get();
-                  }).toList();
-
-                  List<QuerySnapshot> snapshots = await Future.wait(futures);
-
-                  List<PostingImageModel> documents = snapshots.expand((snapshot) {
-                    return snapshot.docs.map((doc) {
-                      Map<String, dynamic> getMap = doc.data() as Map<String, dynamic>;
-                      PostingImageModel fromMap = PostingImageModel.fromMap(getMap);
-                      return fromMap;
-                    });
-                  }).toList();
-
-                  return documents.where((item) => item.userById == widget.uid).toList();
-                }
-
-                return Column(
-                  children: [
-                    Stack(
-                      clipBehavior: Clip.none,
-                      alignment: Alignment.center,
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
-                              color: Colors.grey,
-                              child: data.data()!.containsKey("img_cover_url") ? getUser.img_cover_url.isNotEmpty ? Image.network(
-                                getUser.img_cover_url,
-                                width: double.infinity,
-                                height: coverHeight,
-                                fit: BoxFit.cover,
-                              ) : Image.asset(
-                                Assets.imageBackgroundProfil,
-                                width: double.infinity,
-                                height: coverHeight,
-                                fit: BoxFit.cover,
-                              ) : Image.asset(
-                                Assets.imageBackgroundProfil,
-                                width: double.infinity,
-                                height: coverHeight,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            data.data()!.containsKey("img_cover_url") ? getUser.img_cover_url.isNotEmpty ? Positioned(
-                              left: Dimentions.heightSize130,
-                              top: Dimentions.height40,
-                              child: Center(
-                                child: FutureBuilder(
-                                    future: precacheImage(NetworkImage(getUser.img_cover_url,), context),
-                                    builder: (BuildContext context, AsyncSnapshot snapshot){
-                                      if (snapshot.connectionState == ConnectionState.done) {
-                                        return const SizedBox.shrink();
-                                      } else {
-                                        return const LoadingProgress();
-                                      }
-                                    }
-                                ),
-                              ),
-                            ) : const Text("") : const Text(""),
-                          ],
-                        ),
-
-                        // Icons Widget
-                        Positioned(
-                          top: Dimentions.height45,
-                          left: Dimentions.width20,
-                          right: Dimentions.width20,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: (){
-                                  Get.toNamed(RouteHalper.getEditAccountPage(uid: widget.uid));
-                                },
-                                child: AppIcon(icon: Icons.edit),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Positioned(
-                          top: coverHeight - profileSize,
-                          child: CircleAvatar(
-                            radius: profileSize + 5,
-                            backgroundColor: Colors.white,
-                            child: data.data()!.containsKey("img_profil_url") ? getUser.img_profil_url.isNotEmpty ? CircleAvatar(
-                              radius: profileSize,
-                              backgroundColor: Colors.grey.shade800,
-                              backgroundImage: NetworkImage(getUser.img_profil_url),
-                            ) : CircleAvatar(
-                              radius: profileSize,
-                              backgroundColor: Colors.grey.shade800,
-                              backgroundImage: AssetImage(Assets.imagePrifil),
-                            ) : CircleAvatar(
-                              radius: profileSize,
-                              backgroundColor: Colors.grey.shade800,
-                              backgroundImage: AssetImage(Assets.imagePrifil),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: Dimentions.height10,),
-                    Text(getUser.nama_lengkap, style: TextStyle(fontSize: Dimentions.font22, fontWeight: FontWeight.bold)),
-                    SmallText(text: getUser.phone, color: Colors.black87, size: Dimentions.font16,),
-
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: Dimentions.width8, right: Dimentions.width8),
-                        child: FutureBuilder<List<PostingImageModel>>(
-                          future: getAllDocuments(),
-                          builder: (BuildContext context, AsyncSnapshot<List<PostingImageModel>> snapshotImage) {
-                            if (snapshotImage.connectionState == ConnectionState.waiting) {
-                              return Center(child: Container(child: CircularProgressIndicator()));
-                            }
-                            if (snapshotImage.hasError) {
-                              return Center(child: DataNotFoundWidget(msgTop: 'Error: ${snapshotImage.error}'));
-                            }
-                            if (!snapshotImage.hasData) {
-                              return const Center(child: DataNotFoundWidget(msgTop: 'Data tidak ditemukan!'));
-                            } else {
-                              List<PostingImageModel> documents = snapshotImage.data!;
-                              if(documents.isEmpty){
-                                return const Center(
-                                  child: DataNotFoundWidget(
-                                    msgTop: 'Belum pernah upload nichh...',
-                                    msgButton: 'Silahkan Upload gambar anda sekarang!',
-                                  )
-                                );
-                              }else{
-                                return GridView.builder(
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    crossAxisSpacing: Dimentions.height6,
-                                    mainAxisSpacing: Dimentions.height6,
-                                  ),
-                                  itemCount: documents.length, // number of columns in the grid
-                                  itemBuilder: (context, index){
-                                    PostingImageModel image = documents[index];
-                                    return Stack(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: (){
-                                            Get.toNamed(RouteHalper.getDetailImage(image.imageId, image.imageGroup));
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
-                                              image: DecorationImage(
-                                                image: NetworkImage(image.imageUrl),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned.fill(
-                                          child: Center(
-                                            child: FutureBuilder(
-                                                future: precacheImage(NetworkImage(image.imageUrl,), context),
-                                                builder: (BuildContext context, AsyncSnapshot snapshot){
-                                                  if (snapshot.connectionState == ConnectionState.done) {
-                                                    return SizedBox.shrink();
-                                                  } else {
-                                                    return LoadingProgress(size: Dimentions.height25,);
-                                                  }
-                                                }
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            }
+              return Column(
+                children: [
+                  Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
+                        color: Colors.grey,
+                        child: CachedNetworkImage(
+                          imageUrl: getUser.img_cover_url,
+                          placeholder: (context, url) => const LoadingProgress(),
+                          errorWidget: (context, url, error){
+                            return Image.asset(
+                              Assets.imageBackgroundProfil,
+                              width: double.infinity,
+                              height: coverHeight,
+                              fit: BoxFit.cover,
+                            );
                           },
+                          imageBuilder: (context, imageProvider) => Container(
+                            width: double.infinity,
+                            height: coverHeight,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              }
-            }
-        ),
 
+                      // Icons Widget
+                      Positioned(
+                        top: Dimentions.height45,
+                        left: Dimentions.width20,
+                        right: Dimentions.width20,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            GestureDetector(
+                              onTap: (){
+                                Get.toNamed(RouteHalper.getEditAccountPage(uid: widget.uid));
+                              },
+                              child: AppIcon(icon: Icons.edit),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Positioned(
+                        top: coverHeight - profileSize,
+                        child: CircleAvatar(
+                          radius: profileSize + 5,
+                          backgroundColor: Colors.white,
+                          child: data.data()!.containsKey("img_profil_url") ? getUser.img_profil_url.isNotEmpty ? CircleAvatar(
+                            radius: profileSize,
+                            backgroundColor: Colors.grey.shade800,
+                            backgroundImage: CachedNetworkImageProvider(getUser.img_profil_url),
+                          ) : CircleAvatar(
+                            radius: profileSize,
+                            backgroundColor: Colors.grey.shade800,
+                            backgroundImage: const AssetImage(Assets.imagePrifil),
+                          ) : CircleAvatar(
+                            radius: profileSize,
+                            backgroundColor: Colors.grey.shade800,
+                            backgroundImage: const AssetImage(Assets.imagePrifil),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: Dimentions.height10,),
+                  Text(getUser.nama_lengkap, style: TextStyle(fontSize: Dimentions.font22, fontWeight: FontWeight.bold)),
+                  SmallText(text: getUser.phone, color: Colors.black87, size: Dimentions.font16,),
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: Dimentions.width8, right: Dimentions.width8),
+                      child: FutureBuilder<List<PostingImageModel>>(
+                        future: getAllDocuments(),
+                        builder: (BuildContext context, AsyncSnapshot<List<PostingImageModel>> snapshotImage) {
+                          if (snapshotImage.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          if (snapshotImage.hasError) {
+                            return Center(child: DataNotFoundWidget(msgTop: 'Error: ${snapshotImage.error}'));
+                          }
+                          if (!snapshotImage.hasData) {
+                            return const Center(child: DataNotFoundWidget(msgTop: 'Data tidak ditemukan!'));
+                          } else {
+                            List<PostingImageModel> documents = snapshotImage.data!;
+                            if(documents.isEmpty){
+                              return const Center(
+                                child: DataNotFoundWidget(
+                                  msgTop: 'Belum pernah upload nichh...',
+                                  msgButton: 'Silahkan Upload gambar anda sekarang!',
+                                )
+                              );
+                            }else{
+                              return GridView.builder(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: Dimentions.height6,
+                                  mainAxisSpacing: Dimentions.height6,
+                                ),
+                                itemCount: documents.length, // number of columns in the grid
+                                itemBuilder: (context, index){
+                                  PostingImageModel image = documents[index];
+                                  return GestureDetector(
+                                    onTap: (){
+                                      Get.toNamed(RouteHalper.getDetailImage(image.imageId, image.imageGroup));
+                                    },
+                                    child: CachedNetworkImage(
+                                      imageUrl: image.imageUrl,
+                                      placeholder: (context, url) => LoadingProgress(size: Dimentions.height25,),
+                                      errorWidget: (context, url, error){
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
+                                            image: const DecorationImage(
+                                              image: AssetImage(Assets.imageBackgroundProfil),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      imageBuilder: (context, imageProvider) => Container(
+                                        decoration: BoxDecoration(
+                                          color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
+                                          image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+          }
+        ),
       ),
     );
   }

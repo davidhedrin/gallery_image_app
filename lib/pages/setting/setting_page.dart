@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
@@ -85,7 +86,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                       contentPadding: EdgeInsets.only(top: Dimentions.height15, left: Dimentions.height20, right: Dimentions.height20),
                       leading: data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? CircleAvatar(
                         radius: Dimentions.radius30,
-                        backgroundImage: NetworkImage(getUser.img_profil_url),
+                        backgroundImage: CachedNetworkImageProvider(getUser.img_profil_url),
                       ) : CircleAvatar(
                         radius: Dimentions.radius30,
                         backgroundImage: const AssetImage(Assets.imageBackgroundProfil),

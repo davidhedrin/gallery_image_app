@@ -169,6 +169,7 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
       onTap: action,
       child: Container(
         margin: EdgeInsets.only(left: Dimentions.width15, right: Dimentions.width15, bottom: Dimentions.height10),
+        padding: EdgeInsets.only(top: Dimentions.height6, bottom: Dimentions.height6),
         decoration: BoxDecoration(
           color: Colors.grey.withOpacity(0.08),
         ),
@@ -183,15 +184,30 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
             child: Icon(icon, color: iconColor,),
           ),
           title: Text(text, style: const TextStyle(fontWeight: FontWeight.w500),),
-          trailing: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SmallText(text: "Anggota"),
-              BigText(text: count, size: Dimentions.font22,)
-            ],
+          trailing: int.parse(count) > 0 ? GestureDetector(
+            onTap: (){},
+            child: Icon(Icons.delete_forever, color: Colors.grey.withOpacity(0.5),)
+          ) : GestureDetector(
+            onTap: () async {
+              bool check = false;
+              await onBackButtonPressYesNo(context: context, text: "Hapus User", desc: "Yakin ingin menghapus user dari aplikasi?").then((value){
+                check = value;
+              });
+              if(check){
+
+              }
+            },
+            child: const Icon(Icons.delete_forever, color: Colors.redAccent),
           ),
-          subtitle: subText!.isNotEmpty ? Text("Dibuat: $subText") : null,
+          subtitle: subText!.isNotEmpty ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: Dimentions.height2,),
+              Text("Dibuat: $subText"),
+              SizedBox(height: Dimentions.height2,),
+              Text("Anggota: $count"),
+            ],
+          ) : null,
         ),
       ),
     );
@@ -221,10 +237,10 @@ class _AddNewGroupState extends State<AddNewGroup> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Tambah Group Baru", textAlign: TextAlign.center,),
+      title: const Text("Tambah Group Baru", textAlign: TextAlign.center,),
       icon: Icon(Icons.supervised_user_circle, size: Dimentions.height45, color: generateRandomColor()),
       content: IntrinsicWidth(
-        child: Container(
+        child: SizedBox(
           width: Dimentions.heightSize300,
           child: Form(
             key: _formKey,

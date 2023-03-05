@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:delivery_food_app/models/posting_image.dart';
 import 'package:delivery_food_app/models/user_master_model.dart';
+import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:dio/dio.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -126,44 +128,55 @@ class AppServices{
     }
   }
 
-  void deleteFullUserAccount({required String uid, required String phone}) async {
-    DocumentReference<Map<String, dynamic>> getUser = fbStore.collection(Collections.users).doc(uid);
-    DocumentReference<Map<String, dynamic>> getUserMaster = fbStore.collection(Collections.usermaster).doc(phone);
+  void deleteFullUserAccount({required BuildContext context, required String uid, required String phone}) async {
+    try{
+      DocumentReference<Map<String, dynamic>> getUser = fbStore.collection(Collections.users).doc(uid);
+      DocumentReference<Map<String, dynamic>> getUserMaster = fbStore.collection(Collections.usermaster).doc(phone);
 
-    DocumentSnapshot<Map<String, dynamic>> getUM = await getUserMaster.get();
+      DocumentSnapshot<Map<String, dynamic>> getUM = await getUserMaster.get();
+      DocumentSnapshot<Map<String, dynamic>> getUs = await getUser.get();
 
-    // Start delete posted image
-    Map<String, dynamic> mapUserMaster = getUM.data() as Map<String, dynamic>;
-    UserMasterModel fromMapUM = UserMasterModel.fromMap(mapUserMaster);
+      // Start delete user from firebase Autheticate
+      Map<String, dynamic> mapUser = getUs.data() as Map<String, dynamic>;
+      UserModel fromMapUs = UserModel.fromMap(mapUser);
+      // End delete user
 
-    List<Map<String, dynamic>> groupArray = fromMapUM.groupMap!;
-    List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
-      UserGroupModel getGroup = UserGroupModel.fromMap(res);
-      return getGroup;
-    }).toList();
+      // Start delete posted image
+      Map<String, dynamic> mapUserMaster = getUM.data() as Map<String, dynamic>;
+      UserMasterModel fromMapUM = UserMasterModel.fromMap(mapUserMaster);
 
-    List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
-      return fbStore.collection(model.nama_group.toLowerCase()).get();
-    }).toList();
+      List<Map<String, dynamic>> groupArray = fromMapUM.groupMap!;
+      List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
+        UserGroupModel getGroup = UserGroupModel.fromMap(res);
+        return getGroup;
+      }).toList();
 
-    List<QuerySnapshot> snapshots = await Future.wait(futures);
+      List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
+        return fbStore.collection(model.nama_group.toLowerCase()).get();
+      }).toList();
 
-    for (var snapshot in snapshots){
-      var docsSnap = snapshot.docs.where((item) => item.get(Collections.collColumnuserById) == uid);
-      if(docsSnap.isNotEmpty){
-        for(var element in docsSnap){
-          Map<String, dynamic> getMapImage = element.data() as Map<String, dynamic>;
-          PostingImageModel fromMapImage = PostingImageModel.fromMap(getMapImage);
+      List<QuerySnapshot> snapshots = await Future.wait(futures);
 
-          await _fbStorage.ref().child("${fromMapImage.imageGroup}/${fromMapImage.imageId}").delete();
-          await element.reference.delete();
+      for (var snapshot in snapshots){
+        var docsSnap = snapshot.docs.where((item) => item.get(Collections.collColumnuserById) == uid);
+        if(docsSnap.isNotEmpty){
+          for(var element in docsSnap){
+            Map<String, dynamic> getMapImage = element.data() as Map<String, dynamic>;
+            PostingImageModel fromMapImage = PostingImageModel.fromMap(getMapImage);
+
+            await _fbStorage.ref().child("${fromMapImage.imageGroup}/${fromMapImage.imageId}").delete();
+            await element.reference.delete();
+          }
         }
       }
-    }
-    // End delete posted image
+      // End delete posted image
 
-    await getUserMaster.delete();
-    await getUser.delete();
+      await getUserMaster.delete();
+      await getUser.delete();
+    } catch (e) {
+      showAwsBar(context: context, contentType: ContentType.warning, msg: e.toString(), title: "Delete!");
+      return;
+    }
   }
 
   Future<DocumentSnapshot?> getDocUidByColumn({
