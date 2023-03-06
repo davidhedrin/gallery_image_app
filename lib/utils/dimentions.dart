@@ -77,6 +77,9 @@ class Dimentions{
   // icons size
   static double iconSize36 = screenHeight/23.0;
   static double iconSize32 = screenHeight/27.0;
+  static double iconSize28 = screenHeight/27.89;
+  static double iconSize26 = screenHeight/30.04;
+  static double iconSize25 = screenHeight/31.24;
   static double iconSize24 = screenHeight/35.17;
   static double iconSize22 = screenHeight/35.50;
   static double iconSize16 = screenHeight/42.75;

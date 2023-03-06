@@ -45,11 +45,11 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
         ],
       ),
       body: Column(
-        children: const [
-          Expanded(
+        children: [
+          const Expanded(
             child: _DemoMessageList()
           ),
-          _ActionBar()
+          _ChatInput()
         ],
       ),
     );
@@ -265,70 +265,86 @@ class _MessageOwnTile extends StatelessWidget {
   }
 }
 
-class _ActionBar extends StatefulWidget {
-  const _ActionBar({Key? key}) : super(key: key);
+class _ChatInput extends StatelessWidget {
+  _ChatInput({Key? key}) : super(key: key);
 
-  @override
-  __ActionBarState createState() => __ActionBarState();
-}
-
-class __ActionBarState extends State<_ActionBar> {
-  final TextEditingController controller = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: true,
-      top: false,
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: Dimentions.height10, horizontal: Dimentions.width10),
       child: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  width: Dimentions.width2,
-                  color: Theme.of(context).dividerColor,
-                ),
-              ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: Dimentions.width15),
-              child: Icon(
-                Icons.photo_camera_back_outlined,
-              ),
-            ),
-          ),
+          //input field & buttons
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(left: Dimentions.width15),
-              child: TextField(
-                controller: controller,
-                style: TextStyle(fontSize: Dimentions.font15),
-                decoration: const InputDecoration(
-                  hintText: "Masukkan pesan...",
-                  border: InputBorder.none,
-                ),
-                onSubmitted: (_){},
+            child: Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimentions.radius15)),
+              child: Row(
+                children: [
+                  //emoji button
+                  IconButton(
+                    onPressed: () {
+
+                    },
+                    icon: Icon(Icons.emoji_emotions, color: Colors.blueAccent, size: Dimentions.iconSize25)
+                  ),
+
+                  Expanded(
+                      child: TextField(
+                        controller: _textController,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        onTap: () {
+
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Type Something...',
+                          border: InputBorder.none
+                        ),
+                      )),
+
+                  //pick image from gallery button
+                  IconButton(
+                    onPressed: () async {
+                    },
+                    icon: Icon(Icons.image,color: Colors.blueAccent, size: Dimentions.iconSize26)
+                  ),
+
+                  IconButton(
+                    onPressed: () async {
+                    },
+                    icon: Icon(Icons.camera_alt_rounded, color: Colors.blueAccent, size: Dimentions.iconSize26)
+                  ),
+
+                  SizedBox(width: Dimentions.width3),
+                ],
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-              left: Dimentions.width12,
-              right: Dimentions.radius20,
-            ),
-            child: GlowingActionButton(
-              color: AppColors.secondary,
-              icon: Icons.send_rounded,
-              size: Dimentions.height45,
-              onPressed: (){},
-            ),
+
+          SizedBox(width: Dimentions.width3),
+          GlowingActionButton(
+            color: AppColors.secondary,
+            icon: Icons.send_rounded,
+            size: Dimentions.height45,
+            onPressed: (){},
           ),
+          // MaterialButton(
+          //   onPressed: () {
+          //   },
+          //   minWidth: 0,
+          //   padding: EdgeInsets.only(top: Dimentions.height10, bottom: Dimentions.height10, right: Dimentions.width5, left: Dimentions.width10),
+          //   shape: const CircleBorder(),
+          //   color: AppColors.secondary,
+          //   child: Icon(Icons.send, color: Colors.white, size: Dimentions.iconSize28),
+          // )
         ],
       ),
     );
   }
 }
+
 
 
 
