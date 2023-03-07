@@ -319,12 +319,19 @@ class AppServices{
     return _fbStore.collection(collection).snapshots();
   }
 
+  Stream<DocumentSnapshot<Map<String, dynamic>>> streamGetDocById({required String collection, required String docId}) {
+    return _fbStore.collection(collection).doc(docId).snapshots();
+  }
+
   Stream<QuerySnapshot<Object?>> streamGetCollecInColect({required String collection1, required String collection2, required String docId}) {
     return _fbStore.collection(collection1).doc(docId).collection(collection2).snapshots();
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> streamGetDocByColumn({required String collection, required String collName, required String value}){
     return _fbStore.collection(collection).where(collName, isEqualTo: value).snapshots();
+  }
+  Stream<QuerySnapshot<Map<String, dynamic>>> streamColNotEqualById({required String collection, required String value}){
+    return _fbStore.collection(collection).where(FieldPath.documentId, isNotEqualTo: value).snapshots();
   }
 
   //delete doc coll in coll
@@ -379,5 +386,38 @@ class AppServices{
     }
 
     return result;
+  }
+
+  void sendMessage({
+    required Map<String, dynamic>data,
+    required Map<String, dynamic>dataMsg,
+    required String collection,
+    required String chatId,
+  }) async {
+    DateTime dt = DateTime.now();
+    String docIdMsg = dt.millisecond.toString()+dt.second.toString()+dt.minute.toString()+dt.hour.toString()+dt.day.toString()+dt.month.toString()+dt.year.toString();
+
+    try{
+      await _fbStore.collection(collection).doc(chatId).set(data); //Add Master Chat
+      final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
+      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg);
+    }catch(e){
+      print(e.toString());
+    }
+  }
+  void saveMessage({
+    required Map<String, dynamic>dataMsg,
+    required String collection,
+    required String chatId,
+  }) async {
+    DateTime dt = DateTime.now();
+    String docIdMsg = dt.millisecond.toString()+dt.second.toString()+dt.minute.toString()+dt.hour.toString()+dt.day.toString()+dt.month.toString()+dt.year.toString();
+
+    try{
+      final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
+      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg);
+    }catch(e){
+      print(e.toString());
+    }
   }
 }

@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../utils/colors.dart';
 
@@ -9,15 +11,17 @@ class IconBackground extends StatelessWidget {
     Key? key,
     required this.icon,
     required this.onTap,
+    this.color,
   }) : super(key: key);
 
   final IconData icon;
   final VoidCallback onTap;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.buttonBackgroundColor,
+      color: color.isNull ? AppColors.buttonBackgroundColor : color,
       borderRadius: BorderRadius.circular(Dimentions.radius6),
       child: InkWell(
         borderRadius: BorderRadius.circular(Dimentions.radius6),
@@ -79,19 +83,26 @@ class Avatar extends StatelessWidget {
 
   Widget _avatar(BuildContext context) {
     if (url != null) {
-      return CircleAvatar(
+      return url!.isNotEmpty ? CircleAvatar(
         radius: radius,
         backgroundImage: CachedNetworkImageProvider(url!),
         backgroundColor: Theme.of(context).cardColor,
+      ) : CircleAvatar(
+        radius: radius,
+        child: ClipOval(
+          child: Image.asset(
+            Assets.imagePrifil,
+            fit: BoxFit.cover,
+          ),
+        ),
       );
     } else {
       return CircleAvatar(
         radius: radius,
-        backgroundColor: Theme.of(context).cardColor,
-        child: Center(
-          child: Text(
-            '?',
-            style: TextStyle(fontSize: radius),
+        child: ClipOval(
+          child: Image.asset(
+            Assets.imagePrifil,
+            fit: BoxFit.cover,
           ),
         ),
       );

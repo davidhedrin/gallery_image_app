@@ -8,6 +8,8 @@ class Collections{
   static const String likes = "likes";
   static const String bookmark = "bookmark";
 
+  static const String message = "message";
+
   static const String collColumngroup = "group";
   static const String collColumnuserById = "userById";
 }

@@ -119,37 +119,33 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                               itemBuilder: (context, index){
                                 UserMasterModel getDataUser = getUser[index];
                                 GroupModel getCurrentGroup = getDataUser.group!.firstWhere((group) => group.group_id == getGroup.group_id);
-                                return GestureDetector(
-                                  onTap: (){
-                                  },
-                                  child: StreamBuilder<QuerySnapshot>(
-                                      stream: getService.streamGetDocByColumn(collection: Collections.users, collName: "phone", value: getDataUser.phone),
-                                      builder: (context, snapshotUser) {
-                                        if (snapshotUser.connectionState == ConnectionState.waiting) {
-                                          return const Center(child: CircularProgressIndicator());
-                                        }
-                                        if(!snapshotUser.hasData){
-                                          return const Text("Data tidak ditemukan!",);
-                                        }else{
-                                          var getDocs = snapshotUser.data!.docs;
-                                          if(getDocs.isNotEmpty){
-                                            var data = getDocs.first;
-                                            Map<String, dynamic> getMap = data.data() as Map<String, dynamic>;
-                                            UserModel userModel = UserModel.fromMap(getMap);
-                                            userModel.user_type = getCurrentGroup.status;
+                                return StreamBuilder<QuerySnapshot>(
+                                    stream: getService.streamGetDocByColumn(collection: Collections.users, collName: "phone", value: getDataUser.phone),
+                                    builder: (context, snapshotUser) {
+                                      if (snapshotUser.connectionState == ConnectionState.waiting) {
+                                        return const Center(child: CircularProgressIndicator());
+                                      }
+                                      if(!snapshotUser.hasData){
+                                        return const Text("Data tidak ditemukan!",);
+                                      }else{
+                                        var getDocs = snapshotUser.data!.docs;
+                                        if(getDocs.isNotEmpty){
+                                          var data = getDocs.first;
+                                          Map<String, dynamic> getMap = data.data() as Map<String, dynamic>;
+                                          UserModel userModel = UserModel.fromMap(getMap);
+                                          userModel.user_type = getCurrentGroup.status;
 
-                                            return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
-                                          }else{
-                                            UserModel userModel = UserModel(
-                                              nama_lengkap: getDataUser.nama,
-                                              phone: getDataUser.phone,
-                                              user_type: getCurrentGroup.status
-                                            );
-                                            return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
-                                          }
+                                          return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
+                                        }else{
+                                          UserModel userModel = UserModel(
+                                            nama_lengkap: getDataUser.nama,
+                                            phone: getDataUser.phone,
+                                            user_type: getCurrentGroup.status
+                                          );
+                                          return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
                                         }
                                       }
-                                  ),
+                                    }
                                 );
                               }
                           );
@@ -195,7 +191,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                         image: NetworkImage(userModel.img_profil_url,),
                       ) : const DecorationImage(
                         fit: BoxFit.cover,
-                        image: AssetImage(Assets.imageBackgroundProfil),
+                        image: AssetImage(Assets.imagePrifil),
                       ),
                   ),
                 ),

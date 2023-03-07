@@ -84,6 +84,8 @@ class Dimentions{
   static double iconSize22 = screenHeight/35.50;
   static double iconSize16 = screenHeight/42.75;
   static double iconSize15 = screenHeight/52.07;
+  static double iconSize13 = screenHeight/60.08;
+  static double iconSize12 = screenHeight/65.09;
 
   // List view size 390
   static double listViewImgSize = screenWidth/3.25;
@@ -114,6 +116,7 @@ class Dimentions{
   static double widhSize200 = screenWidth/1.96;
   // Public Height
   static double heightSize600 = screenHeight/1.30;
+  static double heightSize550 = screenHeight/1.42;
   static double heightSize500 = screenHeight/1.56;
   static double heightSize400 = screenHeight/1.95;
   static double heightSize300 = screenHeight/2.60;

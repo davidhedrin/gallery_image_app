@@ -110,6 +110,10 @@ class AuthProvider extends ChangeNotifier{
         collection: Collections.users,
       );
 
+      _fbStore.collection(Collections.usermaster).doc(_userModel.phone).update({
+        "nama" : _userModel.nama_lengkap,
+      });
+
       _isLoading = false;
       notifyListeners();
       Navigator.of(dialogcontext).pop();

@@ -6,6 +6,7 @@ import 'package:delivery_food_app/pages/auth/login_page.dart';
 import 'package:delivery_food_app/pages/auth/otp_page.dart';
 import 'package:delivery_food_app/pages/auth/register_page.dart';
 import 'package:delivery_food_app/pages/auth/register_with_phone.dart';
+import 'package:delivery_food_app/pages/message/chat_page.dart';
 import 'package:delivery_food_app/pages/setting/menus/group_page.dart';
 import 'package:delivery_food_app/pages/setting/menus/group_panel_manage.dart';
 import 'package:delivery_food_app/pages/setting/menus/user_page.dart';
@@ -38,6 +39,8 @@ class RouteHalper{
 
   static const String userSettingPage = "/user-setting-page";
 
+  static const String userChatPage = "/user-chat-page";
+
   static String getInitial({String? uid}) => '$initial?uid=$uid';
 
   static String getLoginPage() => '$loginPage';
@@ -54,6 +57,8 @@ class RouteHalper{
   static String getsplashScreen() => '$splashScreen';
 
   static String getUserSettingPage() => '$userSettingPage';
+
+  static String getUserChatPage({String? userId}) => '$userChatPage?userId=$userId';
 
   static List<GetPage> routes = [
     GetPage(name: initial, transition: Transition.native, page: (){
@@ -96,5 +101,10 @@ class RouteHalper{
     }),
 
     GetPage(name: userSettingPage, page: () => UserSettingPage()),
+
+    GetPage(name: userChatPage, page: (){
+      String userId = Get.parameters["userId"].toString();
+      return ChatMessagePage(userId: userId);
+    }),
   ];
 }

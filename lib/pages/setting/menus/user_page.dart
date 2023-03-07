@@ -108,7 +108,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                                 image: CachedNetworkImageProvider(getUser.img_profil_url,),
                                               ) : const DecorationImage(
                                                 fit: BoxFit.cover,
-                                                image: AssetImage(Assets.imageBackgroundProfil)
+                                                image: AssetImage(Assets.imagePrifil)
                                               ),
                                           ),
                                         ),
