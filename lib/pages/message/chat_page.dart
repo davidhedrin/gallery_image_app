@@ -33,14 +33,14 @@ class ChatMessagePage extends StatefulWidget {
 }
 
 class _ChatMessagePageState extends State<ChatMessagePage> {
-  late String charRoomId;
+  final TextEditingController _textController = TextEditingController();
+  late String chatRoomId = "";
 
   @override
   Widget build(BuildContext context) {
     idUserGet = widget.userId!.isNotEmpty ? widget.userId! : "";
-    charRoomId = widget.chatId != null ? widget.chatId! : "";
+    chatRoomId = chatRoomId.isNotEmpty ? chatRoomId : widget.chatId != null ? widget.chatId! : "";
 
-    print(charRoomId);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -69,8 +69,8 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
         children: [
           SizedBox(height: Dimentions.height2,),
           Expanded(
-            child: charRoomId.isNotEmpty ? StreamBuilder<QuerySnapshot>(
-              stream: getService.streamGetCollecInColect(collection1: collectionMsg, collection2: Collections.message, docId: widget.chatId!),
+            child: chatRoomId.isNotEmpty ? StreamBuilder<QuerySnapshot>(
+              stream: getService.streamGetCollecInColect(collection1: collectionMsg, collection2: Collections.message, docId: chatRoomId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator(),);
@@ -86,7 +86,7 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
                   }).toList();
                   getListFromMap.sort((a,b) => b.messageDate!.compareTo(a.messageDate!));
 
-                  return _DemoMessageList(listMsgData: getListFromMap,);
+                  return _DemoMessageList(listMsgData: getListFromMap, chatId: chatRoomId,);
                 }
               }
             ) : const Center(child: Text("Selamat chattigan... 😇")),
@@ -97,7 +97,6 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
     );
   }
 
-  final TextEditingController _textController = TextEditingController();
   Widget ChatInput(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height10, horizontal: Dimentions.width10),
@@ -154,7 +153,11 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
             size: Dimentions.height45,
             onPressed: (){
               if(_textController.text.isNotEmpty){
+                DateTime dt = DateTime.now();
+                String docIdMsg = dt.millisecond.toString()+dt.second.toString()+dt.minute.toString()+dt.hour.toString()+dt.day.toString()+dt.month.toString()+dt.year.toString();
+
                 MessageData msgData = MessageData(
+                  id: docIdMsg,
                   toId: idUserGet,
                   fromId: MainAppPage.setUserId,
                   msg: _textController.text,
@@ -163,22 +166,28 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
                   messageDate: DateTime.now(),
                 );
 
-                if(charRoomId.isEmpty){
-                  String chatId = "${MainAppPage.setUserId}$idUserGet";
-                  MainMessage mainMsg = MainMessage(
-                    chatId: chatId,
-                    userId: [MainAppPage.setUserId, idUserGet],
-                  );
+                String chatId = "${MainAppPage.setUserId}$idUserGet";
+                MainMessage mainMsg = MainMessage(
+                  chatId: chatId,
+                  userId: [MainAppPage.setUserId, idUserGet],
+                );
 
-                  getService.sendMessage(
-                    data: mainMsg.toMap(),
-                    collection: collectionMsg,
-                    chatId: chatId,
-                    dataMsg: msgData.toMap(),
-                  );
-                }else{
-                  getService.saveMessage(dataMsg: msgData.toMap(), collection: collectionMsg, chatId: charRoomId);
+                getService.sendMessage(
+                  data: mainMsg.toMap(),
+                  collection: collectionMsg,
+                  chatId: chatId,
+                  docIdMsg: docIdMsg,
+                  dataMsg: msgData.toMap(),
+                );
+
+                if(chatRoomId.isEmpty){
+                  setState(() {
+                    chatRoomId = chatId;
+                  });
                 }
+                // else{
+                //   getService.saveMessage(dataMsg: msgData.toMap(), collection: collectionMsg, chatId: chatRoomId, docIdMsg: docIdMsg);
+                // }
 
                 _textController.clear();
               }
@@ -241,16 +250,29 @@ class _AppBarTitleState extends State<_AppBarTitle> {
 
 class _DemoMessageList extends StatefulWidget {
   final List<MessageData> listMsgData;
-  const _DemoMessageList({Key? key, required this.listMsgData}) : super(key: key);
+  final String chatId;
+  const _DemoMessageList({Key? key, required this.listMsgData, required this.chatId}) : super(key: key);
 
   @override
   State<_DemoMessageList> createState() => _DemoMessageListState();
 }
 
 class _DemoMessageListState extends State<_DemoMessageList> {
+
+  void updateNotReadMsg(List<MessageData> listMsg, String chatId) {
+    List<MessageData> allListMsg = listMsg.where((msg) => msg.toId == MainAppPage.setUserId && msg.read == "N").toList();
+    for(var msg in allListMsg){
+      getService.fbStore.collection(collectionMsg).doc(chatId).collection(Collections.message).doc(msg.id).update({
+        'read': 'Y'
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     List<MessageData> listMsg = widget.listMsgData;
+
+    updateNotReadMsg(listMsg, widget.chatId);
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Dimentions.height8),
@@ -259,19 +281,11 @@ class _DemoMessageListState extends State<_DemoMessageList> {
         children: listMsg.map((msgData){
           MessageData msg = msgData;
           bool checkIdMsg = MainAppPage.setUserId == msg.toId;
-          DateTime dt = msg.messageDate!;
-          String msgTime = DateFormat('HH:mm').format(dt);
 
           if(checkIdMsg){
-            return _MessageTile(
-              message: msg.msg,
-              messageDate: msgTime,
-            );
+            return _MessageTile(msgData: msg,);
           }else{
-            return   _MessageOwnTile(
-              message: msg.msg,
-              messageDate: msgTime,
-            );
+            return _MessageOwnTile(msgData: msg,);
           }
         }).toList(),
         // [
@@ -315,15 +329,17 @@ class _DataTable extends StatelessWidget {
 }
 
 class _MessageTile extends StatelessWidget {
-  const _MessageTile({Key? key, required this.message, required this.messageDate}) : super(key: key);
+  const _MessageTile({Key? key, required this.msgData}) : super(key: key);
 
-  final String message;
-  final String messageDate;
+  final MessageData msgData;
 
   static double _borderRadius = Dimentions.radius26;
 
   @override
   Widget build(BuildContext context) {
+    DateTime dt = msgData.messageDate!;
+    String msgTime = DateFormat('HH:mm - dd MMMM yy').format(dt);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height4),
       child: Align(
@@ -344,7 +360,7 @@ class _MessageTile extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: Dimentions.height15, horizontal: Dimentions.width12),
                 child: Text(
-                  message,
+                  msgData.msg,
                   style: TextStyle(
                       color: AppColors.textLigth
                   ),
@@ -354,7 +370,7 @@ class _MessageTile extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: Dimentions.height8),
               child: Text(
-                messageDate,
+                msgTime,
                 style: TextStyle(
                   fontSize: Dimentions.font10,
                   color: AppColors.textFaded,
@@ -370,15 +386,17 @@ class _MessageTile extends StatelessWidget {
 }
 
 class _MessageOwnTile extends StatelessWidget {
-  const _MessageOwnTile({Key? key, required this.message, required this.messageDate}) : super(key: key);
+  const _MessageOwnTile({Key? key, required this.msgData, }) : super(key: key);
 
-  final String message;
-  final String messageDate;
+  final MessageData msgData;
 
   static double _borderRadius = Dimentions.radius26;
 
   @override
   Widget build(BuildContext context) {
+    DateTime dt = msgData.messageDate!;
+    String msgTime = DateFormat('HH:mm - dd MMMM yy').format(dt);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height4),
       child: Align(
@@ -399,7 +417,7 @@ class _MessageOwnTile extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: Dimentions.height15, horizontal: Dimentions.width12),
                 child: Text(
-                  message,
+                  msgData.msg,
                   style: TextStyle(
                     color: AppColors.textLigth
                   ),
@@ -412,15 +430,15 @@ class _MessageOwnTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    messageDate,
+                    msgTime,
                     style: TextStyle(
                       fontSize: Dimentions.font10,
                       color: AppColors.textFaded,
                       fontWeight: FontWeight.bold
                     ),
                   ),
-                  SizedBox(width: Dimentions.width5,),
-                  Icon(Icons.done_all, size: Dimentions.iconSize13, color: Colors.green,),
+                  SizedBox(width: Dimentions.width3,),
+                  Icon(Icons.done_all, size: Dimentions.iconSize13, color: msgData.read == "Y" ? Colors.green : Colors.grey,),
                 ],
               ),
             )

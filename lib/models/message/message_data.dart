@@ -1,4 +1,5 @@
 class MessageData{
+  String id;
   String toId;
   String msg;
   String read;
@@ -7,6 +8,7 @@ class MessageData{
   DateTime? messageDate;
 
   MessageData({
+    this.id = "",
     this.toId = "",
     this.msg = "",
     this.read = "",
@@ -17,6 +19,7 @@ class MessageData{
 
   factory MessageData.fromMap(Map<String, dynamic> map){
     return MessageData(
+      id: map["id"] ?? "",
       toId: map["toId"] ?? "",
       msg: map["msg"] ?? "",
       read: map["read"] ?? "",
@@ -28,6 +31,7 @@ class MessageData{
 
   Map<String, dynamic> toMap(){
     return {
+      "id" : id,
       "toId" : toId,
       "msg" : msg,
       "read" : read,

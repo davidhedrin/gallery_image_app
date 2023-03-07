@@ -393,10 +393,8 @@ class AppServices{
     required Map<String, dynamic>dataMsg,
     required String collection,
     required String chatId,
+    required String docIdMsg,
   }) async {
-    DateTime dt = DateTime.now();
-    String docIdMsg = dt.millisecond.toString()+dt.second.toString()+dt.minute.toString()+dt.hour.toString()+dt.day.toString()+dt.month.toString()+dt.year.toString();
-
     try{
       await _fbStore.collection(collection).doc(chatId).set(data); //Add Master Chat
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
@@ -409,10 +407,8 @@ class AppServices{
     required Map<String, dynamic>dataMsg,
     required String collection,
     required String chatId,
+    required String docIdMsg,
   }) async {
-    DateTime dt = DateTime.now();
-    String docIdMsg = dt.millisecond.toString()+dt.second.toString()+dt.minute.toString()+dt.hour.toString()+dt.day.toString()+dt.month.toString()+dt.year.toString();
-
     try{
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
       setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg);

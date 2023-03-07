@@ -242,7 +242,7 @@ class _MessageTitleState extends State<_MessageTitle> {
                             return Row(
                               children: [
                                 MainAppPage.setUserId == latestMsg.fromId ? Icon(Icons.done_all, size: Dimentions.iconSize15, color: msgNotReadStatus > 0 ? const Color(0xFFccc7c5) : Colors.green,) : const SizedBox(),
-                                SizedBox(width: MainAppPage.setUserId == latestMsg.fromId ? msgNotReadStatus > 0 ? Dimentions.width5 : 0.0 : 0.0,),
+                                SizedBox(width: MainAppPage.setUserId == latestMsg.fromId ? msgNotReadStatus > 0 ? Dimentions.width5 : Dimentions.width5 : 0.0,),
                                 SmallTextOvr(
                                   text: latestMsg.msg,
                                   size: Dimentions.font13,
@@ -432,15 +432,11 @@ class _NewChatRoomState extends State<NewChatRoom> {
                                                         Map<String, dynamic> getMap = doc.data() as Map<String, dynamic>;
                                                         MainMessage fromMap = MainMessage.fromMap(getMap);
                                                         return fromMap;
-                                                      }).toList();
+                                                      }).where((item) => item.userId!.contains(MainAppPage.setUserId) && item.userId!.contains(userModel.id)).toList();
 
                                                       MainMessage getCurrentMainMsg = MainMessage();
                                                       if(listMsgDoc.isNotEmpty){
-                                                        getCurrentMainMsg = listMsgDoc.where((item){
-                                                          item.userId!.contains(MainAppPage.setUserId);
-                                                          item.userId!.contains(userModel.id);
-                                                          return true;
-                                                        }).first;
+                                                        getCurrentMainMsg = listMsgDoc.first;
                                                       }
 
                                                       Navigator.of(context).pop();
