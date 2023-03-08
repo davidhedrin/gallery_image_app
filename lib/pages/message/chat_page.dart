@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/models/message/message_data.dart';
@@ -7,7 +5,6 @@ import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/message_widget.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -20,7 +17,7 @@ import '../../widgets/glowing_action_button.dart';
 
 late String idUserGet;
 final AppServices getService = AppServices();
-late String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
+String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
 
 class ChatMessagePage extends StatefulWidget {
   final String? userId;
@@ -89,15 +86,15 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
                   return _DemoMessageList(listMsgData: getListFromMap, chatId: chatRoomId,);
                 }
               }
-            ) : const Center(child: Text("Selamat chattigan... 😇")),
+            ) : const Center(child: Text("Mulai tinggalkan pesan... 😇")),
           ),
-          ChatInput(context),
+          chatInput(context),
         ],
       ),
     );
   }
 
-  Widget ChatInput(BuildContext context) {
+  Widget chatInput(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height10, horizontal: Dimentions.width10),
       child: Row(
@@ -166,28 +163,28 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
                   messageDate: DateTime.now(),
                 );
 
-                String chatId = "${MainAppPage.setUserId}$idUserGet";
-                MainMessage mainMsg = MainMessage(
-                  chatId: chatId,
-                  userId: [MainAppPage.setUserId, idUserGet],
-                );
-
-                getService.sendMessage(
-                  data: mainMsg.toMap(),
-                  collection: collectionMsg,
-                  chatId: chatId,
-                  docIdMsg: docIdMsg,
-                  dataMsg: msgData.toMap(),
-                );
-
                 if(chatRoomId.isEmpty){
+                  String chatId = "${MainAppPage.setUserId}$idUserGet";
+                  MainMessage mainMsg = MainMessage(
+                    chatId: chatId,
+                    userId: [MainAppPage.setUserId, idUserGet],
+                  );
+
+                  getService.sendMessage(
+                    data: mainMsg.toMap(),
+                    collection: collectionMsg,
+                    chatId: chatId,
+                    docIdMsg: docIdMsg,
+                    dataMsg: msgData.toMap(),
+                  );
+
                   setState(() {
                     chatRoomId = chatId;
                   });
                 }
-                // else{
-                //   getService.saveMessage(dataMsg: msgData.toMap(), collection: collectionMsg, chatId: chatRoomId, docIdMsg: docIdMsg);
-                // }
+                else{
+                  getService.saveMessage(dataMsg: msgData.toMap(), collection: collectionMsg, chatId: chatRoomId, docIdMsg: docIdMsg);
+                }
 
                 _textController.clear();
               }
@@ -224,6 +221,7 @@ class _AppBarTitleState extends State<_AppBarTitle> {
           var data = snapshot.data;
           Map<String, dynamic> getMapUser = data!.data() as Map<String, dynamic>;
           UserModel getUser = UserModel.fromMap(getMapUser);
+          String gSt = getUser.statusLog;
 
           return Row(
             children: [
@@ -236,7 +234,7 @@ class _AppBarTitleState extends State<_AppBarTitle> {
                   children: [
                     BigText(text: getUser.nama_lengkap, size: Dimentions.font14,),
                     SizedBox(height: Dimentions.height2,),
-                    SmallText(text: "Online", color: Colors.green, fontWeight: FontWeight.bold,),
+                    SmallText(text: gSt == "1" ? "Online" : "Offline", color: gSt == "1" ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold,),
                   ],
                 ),
               )
@@ -274,6 +272,15 @@ class _DemoMessageListState extends State<_DemoMessageList> {
 
     updateNotReadMsg(listMsg, widget.chatId);
 
+    bool haveDateTable = false;
+
+    MessageData checkFirstOfDate(DateTime curentDate){
+      final startOfDay = DateTime(curentDate.year, curentDate.month, curentDate.day);
+      List<MessageData> setListOfDate = listMsg.where((msg) => DateTime(msg.messageDate!.year, msg.messageDate!.month, msg.messageDate!.day) == startOfDay).toList();
+      MessageData firstMsg = setListOfDate.last;
+      return firstMsg;
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Dimentions.height8),
       child: ListView(
@@ -282,10 +289,29 @@ class _DemoMessageListState extends State<_DemoMessageList> {
           MessageData msg = msgData;
           bool checkIdMsg = MainAppPage.setUserId == msg.toId;
 
-          if(checkIdMsg){
-            return _MessageTile(msgData: msg,);
+          MessageData getFirstOfDate = checkFirstOfDate(msg.messageDate!);
+          String getDateMsg = DateFormat('dd MMMM yyyy').format(getFirstOfDate.messageDate!);
+
+          if(msg.id != getFirstOfDate.id){
+            haveDateTable = true;
           }else{
-            return _MessageOwnTile(msgData: msg,);
+            haveDateTable = false;
+          }
+
+          if(checkIdMsg){
+            return Column(
+              children: [
+                haveDateTable == false ? _DataTable(lable: getDateMsg) : const SizedBox(),
+                _MessageTile(msgData: msg,),
+              ],
+            );
+          }else{
+            return Column(
+              children: [
+                haveDateTable == false ? _DataTable(lable: getDateMsg) : const SizedBox(),
+                _MessageOwnTile(msgData: msg,),
+              ],
+            );
           }
         }).toList(),
         // [
@@ -305,7 +331,7 @@ class _DataTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: Dimentions.height15),
+        padding: EdgeInsets.symmetric(vertical: Dimentions.height10),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.grey.shade200,
@@ -333,12 +359,12 @@ class _MessageTile extends StatelessWidget {
 
   final MessageData msgData;
 
-  static double _borderRadius = Dimentions.radius26;
+  static final double _borderRadius = Dimentions.radius26;
 
   @override
   Widget build(BuildContext context) {
     DateTime dt = msgData.messageDate!;
-    String msgTime = DateFormat('HH:mm - dd MMMM yy').format(dt);
+    String msgTime = DateFormat('HH:mm').format(dt);
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height4),
@@ -390,12 +416,12 @@ class _MessageOwnTile extends StatelessWidget {
 
   final MessageData msgData;
 
-  static double _borderRadius = Dimentions.radius26;
+  static final double _borderRadius = Dimentions.radius26;
 
   @override
   Widget build(BuildContext context) {
     DateTime dt = msgData.messageDate!;
-    String msgTime = DateFormat('HH:mm - dd MMMM yy').format(dt);
+    String msgTime = DateFormat('HH:mm').format(dt);
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height4),

@@ -151,6 +151,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                       check = value;
                                     });
                                     if(check){
+                                      getService.setStatus(status: "2", userId: widget.uid);
                                       getService.logout();
                                     }
                                   },

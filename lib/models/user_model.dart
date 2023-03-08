@@ -11,6 +11,7 @@ class UserModel{
   String img_profil_url;
   String img_cover_url;
   DateTime? create_date;
+  String statusLog;
 
   UserModel({
     this.email = "",
@@ -24,6 +25,7 @@ class UserModel{
     this.user_type = "",
     this.img_profil_url = "",
     this.img_cover_url = "",
+    this.statusLog = "",
     this.create_date,
   });
 
@@ -40,6 +42,7 @@ class UserModel{
       user_type : map['user_type'] ?? '',
       img_profil_url : map['img_profil_url'] ?? '',
       img_cover_url : map['img_cover_url'] ?? '',
+      statusLog : map['statusLog'] ?? '',
       create_date: map['create_date'].toDate(),
     );
   }
@@ -55,6 +58,7 @@ class UserModel{
       "uidEmail": uidEmail,
       "uidPhone": uidPhone,
       "user_type": user_type,
+      "statusLog": statusLog,
       "create_date": create_date,
     };
   }

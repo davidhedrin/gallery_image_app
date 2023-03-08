@@ -4,6 +4,7 @@ import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/pages/account/account_page.dart';
 import 'package:delivery_food_app/pages/home/home_page.dart';
 import 'package:delivery_food_app/pages/message/message_page.dart';
+import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,13 +24,33 @@ class MainAppPage extends StatefulWidget {
   State<MainAppPage> createState() => _MainAppPageState();
 }
 
-class _MainAppPageState extends State<MainAppPage> {
+class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
+  final AppServices getServ = AppServices();
   int index = 0;
 
   void onChangeTab(int index){
     setState(() {
       this.index = index;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    getServ.setStatus(status: "1", userId: widget.Userid);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state){
+    if(state == AppLifecycleState.resumed){
+      // Online
+      getServ.setStatus(status: "1", userId: widget.Userid);
+    }else{
+      // Offline
+      getServ.setStatus(status: "2", userId: widget.Userid);
+    }
   }
 
   @override

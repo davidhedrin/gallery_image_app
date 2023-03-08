@@ -12,4 +12,5 @@ class Collections{
 
   static const String collColumngroup = "group";
   static const String collColumnuserById = "userById";
+  static const String collColumnstatus = "statusLog";
 }

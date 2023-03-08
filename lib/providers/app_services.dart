@@ -51,6 +51,12 @@ class AppServices{
     Get.toNamed(RouteHalper.getLoginPage());
   }
 
+  void setStatus({required String status, required String userId}) async {
+    await _fbStore.collection(Collections.users).doc(userId).update({
+      "${Collections.collColumnstatus}" : status
+    });
+  }
+
   String generateGuid(){
     return const Uuid().v1();
   }
