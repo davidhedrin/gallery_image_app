@@ -1,6 +1,8 @@
 class Collections{
   static const String hostUrlNotif = "https://fcm.googleapis.com/fcm/send";
   static const String bearerTokenNotif = "AAAAp5TEY9U:APA91bGwfhVPESYCWGo921ARWyyUgQv8XklydbCn9GFRbizP3z1JcW8RVMke47w20Ictt0K95e42-bhOes812hFEbW4n9QyR9RVFr9gQCCpvE60ctHuIIlJDbuOIlKdb-glBMvDGmDV6";
+  static const String androidChanId = "we_gallery";
+  static const String androidChanName = "We Gallery";
 
   static const String strgImageCover = "imageCover";
   static const String strgImageProfile = "imageProfile";

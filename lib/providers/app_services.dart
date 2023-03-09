@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:delivery_food_app/models/message/message_data.dart';
@@ -10,6 +9,7 @@ import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -63,7 +63,7 @@ class AppServices{
   void setStatus({required String status, required String userId}) async {
     Map<String, dynamic> setUpdate = {
       Collections.collColumnstatus : status,
-      Collections.collColumnpushtoken : loginUser.pushToken,
+      Collections.collColumnpushtoken : await getNotifToken(),
     };
     if(status == "2"){
       setUpdate[Collections.collColumnlastonline] = DateTime.now();
@@ -72,23 +72,33 @@ class AppServices{
     await _fbStore.collection(Collections.users).doc(userId).update(setUpdate);
   }
 
-  static Future<void> getNotifToken() async {
-    await fbNotif.requestPermission();
-    await fbNotif.getToken().then((token) {
+  Future<String> getNotifToken() async {
+    return await fbNotif.getToken().then((token) {
+      String result = "";
       if(token != null){
-        loginUser.pushToken = token;
+        result = token;
       }
+      return result;
     });
   }
 
-  static Future<void> sendPushNotif({required UserModel getUser, required String from, required String msg}) async {
+  static Future<void> sendPushNotif({required UserModel getUser, required String from, required String msg, required String roomId}) async {
     try{
-      final body = {
+      final body = <String, dynamic>{
         "to": getUser.pushToken,
-        "notification": {
+        "priority": "high",
+        "notification": <String, dynamic>{
           "title": from,
-          "body": msg
-        }
+          "body": msg,
+          "android_channel_id": Collections.androidChanId
+        },
+        "data": <String, dynamic>{
+          "click_action": "FLUTTER_NOTIFICATION_CLICK",
+          "status": "done",
+          "title": from,
+          "body": msg,
+          "some_data" : "$roomId",
+        },
       };
       Map<String, String> header = {
         HttpHeaders.contentTypeHeader: "application/json",
@@ -105,7 +115,9 @@ class AppServices{
       print('Response status: ${res.statusCode}');
       print('Response body: ${res.body}');
     }catch(e){
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
   }
 
@@ -120,7 +132,6 @@ class AppServices{
       }
     });
 
-    await getNotifToken();
     setStatus(status: "1", userId: userId);
   }
 
@@ -476,7 +487,7 @@ class AppServices{
       await _fbStore.collection(collection).doc(chatId).set(data); //Add Master Chat
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
       setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg)
-      .then((value) => sendPushNotif(getUser: forUser, from: loginUser.nama_lengkap, msg: msgData.type == Type.text ? msgData.msg : "Image"));
+      .then((value) => sendPushNotif(getUser: forUser, from: loginUser.nama_lengkap, msg: msgData.type == Type.text ? msgData.msg : "Image", roomId: chatId));
     }catch(e){
       print(e.toString());
     }
@@ -494,7 +505,7 @@ class AppServices{
 
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
       setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg)
-      .then((value) => sendPushNotif(getUser: forUser, from: loginUser.nama_lengkap, msg: msgData.type == Type.text ? msgData.msg : "Image"));
+      .then((value) => sendPushNotif(getUser: forUser, from: loginUser.nama_lengkap, msg: msgData.type == Type.text ? msgData.msg : "Image", roomId: chatId));
     }catch(e){
       print(e.toString());
     }

@@ -4,6 +4,7 @@ import 'package:country_picker/country_picker.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/user_model.dart';
+import 'package:delivery_food_app/pages/message/chat_page.dart';
 import 'package:delivery_food_app/providers/auth_provider.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/utils/utils.dart';
@@ -245,6 +246,8 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             _isIcon = false;
                           });
 
+                          String fcmToken = await getService.getNotifToken();
+
                           String number = "+${selectCountry.phoneCode}${noPhoneController.text}";
                           var modelUser = UserModel(
                             nama_lengkap: namaController.text,
@@ -256,7 +259,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             statusLog: "1",
                             create_date: DateTime.now(),
                             lastOnline: DateTime.now(),
-                            pushToken: "",
+                            pushToken: fcmToken,
                           );
                           await auth.verifyPhone(
                             context: context,
