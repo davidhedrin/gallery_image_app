@@ -253,7 +253,10 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             phone: number,
                             flag_active: "Y",
                             user_type: "USR",
+                            statusLog: "1",
                             create_date: DateTime.now(),
+                            lastOnline: DateTime.now(),
+                            pushToken: "",
                           );
                           await auth.verifyPhone(
                             context: context,

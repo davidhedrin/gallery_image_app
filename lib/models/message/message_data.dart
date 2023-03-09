@@ -25,7 +25,19 @@ class MessageData{
       read: map["read"] ?? "",
       type: map["type"].toString() == Type.image.name ? Type.image : Type.text,
       fromId: map["fromId"] ?? "",
-      messageDate: map["messageDate"].toDate() ?? "",
+      messageDate: map["messageDate"].toDate(),
+    );
+  }
+
+  factory MessageData.fromMapNotif(Map<String, dynamic> map){
+    return MessageData(
+      id: map["id"] ?? "",
+      toId: map["toId"] ?? "",
+      msg: map["msg"] ?? "",
+      read: map["read"] ?? "",
+      type: map["type"].toString() == Type.image.name ? Type.image : Type.text,
+      fromId: map["fromId"] ?? "",
+      messageDate: map["messageDate"],
     );
   }
 

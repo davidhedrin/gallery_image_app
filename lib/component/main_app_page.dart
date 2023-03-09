@@ -38,8 +38,13 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
+    setLoginUser();
+
     WidgetsBinding.instance.addObserver(this);
-    getServ.setStatus(status: "1", userId: widget.Userid);
+  }
+
+  void setLoginUser() async {
+    await getServ.getUserLoginModel(widget.Userid);
   }
 
   @override

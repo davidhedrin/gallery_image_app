@@ -61,6 +61,9 @@ dependencies:
   cached_network_image: ^3.2.3
   faker: ^2.1.0
   jiffy: ^5.0.0
+  emoji_picker_flutter: ^1.5.2
+  firebase_messaging: ^14.2.6
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

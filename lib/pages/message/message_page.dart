@@ -422,7 +422,7 @@ class _NewChatRoomState extends State<NewChatRoom> {
                                                         SmallText(text: "+6282110863133"),
                                                       ],
                                                     ),
-                                                    trailing: Icon(Icons.circle, size: Dimentions.iconSize15,color: Colors.green,),
+                                                    trailing: Icon(Icons.circle, size: Dimentions.iconSize12,color: userModel.statusLog == "1" ? Colors.green : Colors.red,),
                                                     onTap: () async {
                                                       String docIdChat = "${MainAppPage.setUserId}${userModel.id}";
                                                       var checkUserMsg = await getService.getAllDocuments(collectionMsg);

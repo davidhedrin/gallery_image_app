@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/models/message/message_data.dart';
@@ -5,8 +7,10 @@ import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/message_widget.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 
 import '../../models/message/main_message.dart';
 import '../../models/user_model.dart';
@@ -31,65 +35,80 @@ class ChatMessagePage extends StatefulWidget {
 
 class _ChatMessagePageState extends State<ChatMessagePage> {
   final TextEditingController _textController = TextEditingController();
+  FocusNode _focusInput = FocusNode();
   late String chatRoomId = "";
+  bool showEmoji = false;
 
   @override
   Widget build(BuildContext context) {
     idUserGet = widget.userId!.isNotEmpty ? widget.userId! : "";
     chatRoomId = chatRoomId.isNotEmpty ? chatRoomId : widget.chatId != null ? widget.chatId! : "";
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: _AppBarTitle(uid: idUserGet),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87,),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.photo_camera_front, color: Colors.black87, size: Dimentions.iconSize24,),
-            onPressed: () {},
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: Dimentions.width8),
-            child: IconButton(
-              icon: Icon(Icons.phone, color: Colors.black87, size: Dimentions.iconSize24,),
-              onPressed: () {},
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: SafeArea(
+        child: WillPopScope(
+          onWillPop: (){
+            if(showEmoji){
+              setState(() => showEmoji = !showEmoji);
+              return Future.value(false);
+            }else{
+              return Future.value(true);
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: true,
+              title: _AppBarTitle(uid: idUserGet),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black87,),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+            body: Column(
+              children: [
+                SizedBox(height: Dimentions.height2,),
+                Expanded(
+                  child: chatRoomId.isNotEmpty ? StreamBuilder<QuerySnapshot>(
+                    stream: getService.streamGetCollecInColect(collection1: collectionMsg, collection2: Collections.message, docId: chatRoomId),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator(),);
+                      }
+                      if (!snapshot.hasData) {
+                        return const Center(child: Text("Pesan tidak ditemukan!"),);
+                      }else{
+                        var data = snapshot.data!.docs;
+                        List<MessageData> getListFromMap = data.map((item) {
+                          Map<String, dynamic> getMap = item.data() as Map<String, dynamic>;
+                          MessageData fromMap = MessageData.fromMap(getMap);
+                          return fromMap;
+                        }).toList();
+                        getListFromMap.sort((a,b) => b.messageDate!.compareTo(a.messageDate!));
+
+                        return _DemoMessageList(listMsgData: getListFromMap, chatId: chatRoomId,);
+                      }
+                    }
+                  ) : const Center(child: Text("Mulai tinggalkan pesan... 😇")),
+                ),
+                chatInput(context),
+                if(showEmoji)
+                  SizedBox(
+                    height: Dimentions.heightSize270,
+                    child: EmojiPicker(
+                      textEditingController: _textController,
+                      config: Config(
+                        columns: 8,
+                        emojiSizeMax: 28 * (Platform.isIOS ? 1.30 : 1.0),
+                      ),
+                    ),
+                  )
+              ],
             ),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          SizedBox(height: Dimentions.height2,),
-          Expanded(
-            child: chatRoomId.isNotEmpty ? StreamBuilder<QuerySnapshot>(
-              stream: getService.streamGetCollecInColect(collection1: collectionMsg, collection2: Collections.message, docId: chatRoomId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator(),);
-                }
-                if (!snapshot.hasData) {
-                  return const Center(child: Text("Pesan tidak ditemukan!"),);
-                }else{
-                  var data = snapshot.data!.docs;
-                  List<MessageData> getListFromMap = data.map((item) {
-                    Map<String, dynamic> getMap = item.data() as Map<String, dynamic>;
-                    MessageData fromMap = MessageData.fromMap(getMap);
-                    return fromMap;
-                  }).toList();
-                  getListFromMap.sort((a,b) => b.messageDate!.compareTo(a.messageDate!));
-
-                  return _DemoMessageList(listMsgData: getListFromMap, chatId: chatRoomId,);
-                }
-              }
-            ) : const Center(child: Text("Mulai tinggalkan pesan... 😇")),
-          ),
-          chatInput(context),
-        ],
+        ),
       ),
     );
   }
@@ -108,34 +127,33 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
                   //emoji button
                   IconButton(
                       onPressed: () {
-
+                        FocusScope.of(context).unfocus();
+                        setState(() {
+                          if(showEmoji == false){
+                            showEmoji = true;
+                          }else{
+                            showEmoji = false;
+                            _focusInput.requestFocus();
+                          }
+                        });
                       },
-                      icon: Icon(Icons.emoji_emotions, color: Colors.blueAccent, size: Dimentions.iconSize25)
+                      icon: Icon(!showEmoji ? Icons.emoji_emotions : Icons.keyboard_alt_outlined, color: Colors.blueAccent, size: Dimentions.iconSize25)
                   ),
 
                   Expanded(
                       child: TextField(
                         controller: _textController,
+                        focusNode: _focusInput,
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
+                        onTap: (){
+                          if(showEmoji) {setState(() => showEmoji = !showEmoji );}
+                        },
                         decoration: const InputDecoration(
                             hintText: 'Type Something...',
                             border: InputBorder.none
                         ),
                       )),
-
-                  //pick image from gallery button
-                  IconButton(
-                      onPressed: () async {
-                      },
-                      icon: Icon(Icons.image,color: Colors.blueAccent, size: Dimentions.iconSize26)
-                  ),
-
-                  IconButton(
-                      onPressed: () async {
-                      },
-                      icon: Icon(Icons.camera_alt_rounded, color: Colors.blueAccent, size: Dimentions.iconSize26)
-                  ),
 
                   SizedBox(width: Dimentions.width3),
                 ],
@@ -148,10 +166,14 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
             color: AppColors.secondary,
             icon: Icons.send_rounded,
             size: Dimentions.height45,
-            onPressed: (){
+            onPressed: () async {
               if(_textController.text.isNotEmpty){
                 DateTime dt = DateTime.now();
                 String docIdMsg = dt.millisecond.toString()+dt.second.toString()+dt.minute.toString()+dt.hour.toString()+dt.day.toString()+dt.month.toString()+dt.year.toString();
+
+                var getUserTo = await getService.fbStore.collection(Collections.users).doc(idUserGet).get();
+                Map<String, dynamic> getMap = getUserTo.data() as Map<String, dynamic>;
+                UserModel userTo = UserModel.fromMap(getMap);
 
                 MessageData msgData = MessageData(
                   id: docIdMsg,
@@ -176,6 +198,7 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
                     chatId: chatId,
                     docIdMsg: docIdMsg,
                     dataMsg: msgData.toMap(),
+                    forUser: userTo,
                   );
 
                   setState(() {
@@ -183,7 +206,7 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
                   });
                 }
                 else{
-                  getService.saveMessage(dataMsg: msgData.toMap(), collection: collectionMsg, chatId: chatRoomId, docIdMsg: docIdMsg);
+                  getService.saveMessage(dataMsg: msgData.toMap(), collection: collectionMsg, chatId: chatRoomId, docIdMsg: docIdMsg, forUser: userTo);
                 }
 
                 _textController.clear();
@@ -222,6 +245,7 @@ class _AppBarTitleState extends State<_AppBarTitle> {
           Map<String, dynamic> getMapUser = data!.data() as Map<String, dynamic>;
           UserModel getUser = UserModel.fromMap(getMapUser);
           String gSt = getUser.statusLog;
+          String lastSeen = Jiffy(getUser.lastOnline).fromNow();
 
           return Row(
             children: [
@@ -229,12 +253,11 @@ class _AppBarTitleState extends State<_AppBarTitle> {
               SizedBox(width: Dimentions.width15,),
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     BigText(text: getUser.nama_lengkap, size: Dimentions.font14,),
                     SizedBox(height: Dimentions.height2,),
-                    SmallText(text: gSt == "1" ? "Online" : "Offline", color: gSt == "1" ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold,),
+                    SmallText(text: gSt == "1" ? "Online" : "Last seen $lastSeen", color: gSt == "1" ? Colors.green : Colors.grey, fontWeight: FontWeight.bold,),
                   ],
                 ),
               )
