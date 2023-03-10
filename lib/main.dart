@@ -6,20 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-Future<void> _firebaseMsgBackground(RemoteMessage message) async {
-  try{
-    if(message.messageId != null && message.messageId!.isNotEmpty){
-      print("Message ID: ${message.messageId}");
-    }
-  }catch(e){
-  }
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseMessaging.instance.getInitialMessage();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMsgBackground);
 
   runApp(
       MultiProvider(

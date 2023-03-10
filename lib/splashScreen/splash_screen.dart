@@ -6,11 +6,20 @@ import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 
 import '../providers/app_services.dart';
+import '../providers/notification_service.dart';
+
+Future<void> _firebaseMsgBackground(RemoteMessage message) async {
+  try{
+    print(message);
+  }catch(e){
+  }
+}
 
 class SplashScerenApp extends StatefulWidget {
   const SplashScerenApp({Key? key}) : super(key: key);
@@ -22,35 +31,46 @@ class SplashScerenApp extends StatefulWidget {
 class _SplashScerenAppState extends State<SplashScerenApp> {
   final store = GetStorage();
   final AppServices getService = AppServices();
+  final HalperNotification helpHotif = HalperNotification();
+  final AppServices getServ = AppServices();
 
   @override
   void initState(){
     Timer(
-        const Duration(
-          seconds: 4,
-        ),(){
-      bool? _boarding = store.read('onBoarding');
+      const Duration(
+        seconds: 4,
+      ),() {
+        bool? _boarding = store.read('onBoarding');
 
-      if(_boarding == null){
-        Get.toNamed(RouteHalper.getOnBoardScreen());
-      }else{
-        FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-          if (user != null) {
-            DocumentSnapshot docUser = await getService.getDocumentByColumn("users", "uidEmail", user.uid);
-            String uid = docUser.id;
-            Get.toNamed(RouteHalper.getInitial(uid: uid));
-          } else {
-            Get.toNamed(RouteHalper.getLoginPage());
-          }
-        });
+        if(_boarding == null){
+          Get.toNamed(RouteHalper.getOnBoardScreen());
+        }else{
+          FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+            if (user != null) {
+              DocumentSnapshot docUser = await getService.getDocumentByColumn("users", "uidEmail", user.uid);
+              String uid = docUser.id;
+              await setLoginUser(uid);
+
+              FirebaseMessaging.onBackgroundMessage(_firebaseMsgBackground);
+              Get.toNamed(RouteHalper.getInitial(uid: uid));
+            } else {
+              Get.toNamed(RouteHalper.getLoginPage());
+            }
+          });
+        }
+
+        _boarding == null ? Get.toNamed(RouteHalper.getOnBoardScreen()):
+        _boarding == true ? Get.toNamed(RouteHalper.getLoginPage()):
+        Get.toNamed(RouteHalper.getLoginPage());
       }
-
-      _boarding == null ? Get.toNamed(RouteHalper.getOnBoardScreen()):
-      _boarding == true ? Get.toNamed(RouteHalper.getLoginPage()):
-      Get.toNamed(RouteHalper.getLoginPage());
-    }
     );
     super.initState();
+  }
+
+  Future<void> setLoginUser(String userId) async {
+    await getServ.getUserLoginModel(userId);
+    await helpHotif.requestPermition();
+    helpHotif.initialize();
   }
 
   @override

@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:math';
+
+import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -8,9 +11,8 @@ import 'package:get/get.dart';
 import '../pages/message/chat_page.dart';
 
 class HalperNotification{
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   FirebaseMessaging fbNotif = FirebaseMessaging.instance;
-
 
   initialize() async {
     var androidInit = const AndroidInitializationSettings("@mipmap/ic_launcher");
@@ -19,35 +21,21 @@ class HalperNotification{
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) async {
+        final String payload = response.payload.toString();
+        if(response.payload != null && response.payload.toString().isNotEmpty){
+          print("Get ID: $payload");
+          await  Get.to(() => ChatMessagePage(userId: AppServices().getUserLogin.id, chatId: payload,));
+        }
+      },
     );
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print("..................Message..................");
-      print("On Message: ${message.notification?.title}/${message.notification?.body}");
-      
-      BigTextStyleInformation bigTextStyleInfo = BigTextStyleInformation(
-        message.notification!.body.toString(),
-        htmlFormatBigText: true,
-        contentTitle: message.notification!.title.toString(),
-        htmlFormatContentTitle: true,
-      );
-
-      AndroidNotificationDetails androidNotifDetail = AndroidNotificationDetails(
-        Collections.androidChanId,
-        Collections.androidChanName,
-        importance: Importance.high,
-        styleInformation: bigTextStyleInfo,
-        priority: Priority.high,
-        playSound: true,
-      );
-
-      NotificationDetails notificationDetails = NotificationDetails(android: androidNotifDetail, iOS: const DarwinNotificationDetails());
-      
-      await flutterLocalNotificationsPlugin.show(0, message.notification!.title, message.notification!.body, notificationDetails, payload: message.data["body"]);
+    FirebaseMessaging.onMessage.listen((RemoteMessage messages) {
+      HalperNotification.showNotification(messages);
     });
   }
 
-  void requestPermition() async {
+  Future<void> requestPermition() async {
     NotificationSettings settings = await fbNotif.requestPermission(
       alert: true,
       announcement: false,
@@ -67,17 +55,27 @@ class HalperNotification{
     }
   }
 
-  void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
-    try{
-      final String? payload = notificationResponse.payload;// getId
-      if(payload != null && payload.isNotEmpty){
-        if (notificationResponse.payload != null) {
-          // Get.to(() => ChatMessagePage(userId: AppServices().getUserLogin.id, chatId: payload,));
-          print('notification payload: $payload');
-        }
-      }
-    }catch(e){
+  static void showNotification(RemoteMessage message) async {
+    BigTextStyleInformation bigTextStyleInfo = BigTextStyleInformation(
+      message.notification!.body.toString(),
+      htmlFormatBigText: true,
+      contentTitle: message.notification!.title.toString(),
+      htmlFormatContentTitle: true,
+    );
 
-    }
+    AndroidNotificationDetails androidNotifDetail = AndroidNotificationDetails(
+      Collections.androidChanId,
+      Collections.androidChanName,
+      importance: Importance.high,
+      styleInformation: bigTextStyleInfo,
+      priority: Priority.high,
+      playSound: true,
+    );
+
+    NotificationDetails notificationDetails = NotificationDetails(android: androidNotifDetail, iOS: const DarwinNotificationDetails());
+
+    Random random = Random();
+    int i = random.nextInt(10000);
+    await flutterLocalNotificationsPlugin.show(i, message.notification!.title, message.notification!.body, notificationDetails, payload: message.data["some_data"]);
   }
 }

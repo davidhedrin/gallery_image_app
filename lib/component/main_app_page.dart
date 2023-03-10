@@ -7,6 +7,7 @@ import 'package:delivery_food_app/pages/message/message_page.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/providers/notification_service.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,6 @@ class MainAppPage extends StatefulWidget {
 
 class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
   final AppServices getServ = AppServices();
-  final HalperNotification helpHotif = HalperNotification();
   int index = 0;
 
   void onChangeTab(int index){
@@ -40,15 +40,7 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
-    helpHotif.requestPermition();
-    helpHotif.initialize();
-
-    setLoginUser();
     WidgetsBinding.instance.addObserver(this);
-  }
-
-  void setLoginUser() async {
-    await getServ.getUserLoginModel(widget.Userid);
   }
 
   @override
