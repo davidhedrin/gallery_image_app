@@ -13,7 +13,6 @@ class UserModel{
   DateTime? create_date;
   DateTime? lastOnline;
   String statusLog;
-  String pushToken;
 
   UserModel({
     this.email = "",
@@ -30,7 +29,6 @@ class UserModel{
     this.statusLog = "",
     this.create_date,
     this.lastOnline,
-    this.pushToken = "",
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map){
@@ -49,7 +47,6 @@ class UserModel{
       statusLog : map['statusLog'] ?? '',
       create_date: map['create_date'].toDate(),
       lastOnline: map['lastOnline'].toDate(),
-      pushToken: map['pushToken'] ?? "",
     );
   }
 
@@ -67,7 +64,6 @@ class UserModel{
       "statusLog": statusLog,
       "create_date": create_date,
       "lastOnline": lastOnline,
-      "pushToken": pushToken,
     };
   }
 

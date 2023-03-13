@@ -246,8 +246,6 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             _isIcon = false;
                           });
 
-                          String fcmToken = await getService.getNotifToken();
-
                           String number = "+${selectCountry.phoneCode}${noPhoneController.text}";
                           var modelUser = UserModel(
                             nama_lengkap: namaController.text,
@@ -259,7 +257,6 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             statusLog: "1",
                             create_date: DateTime.now(),
                             lastOnline: DateTime.now(),
-                            pushToken: fcmToken,
                           );
                           await auth.verifyPhone(
                             context: context,

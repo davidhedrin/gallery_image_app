@@ -5,6 +5,7 @@ import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/message/message_data.dart';
 import 'package:delivery_food_app/pages/message/chat_page.dart';
+import 'package:delivery_food_app/providers/notification_service.dart';
 import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
@@ -239,6 +240,10 @@ class _MessageTitleState extends State<_MessageTitle> {
                             MessageData latestMsg = getListFromMap.first;
                             int msgNotRead = getListFromMap.where((msg) => msg.read == "N" && msg.toId == MainAppPage.setUserId).length;
                             int msgNotReadStatus = getListFromMap.where((msg) => msg.read == "N" && msg.fromId == MainAppPage.setUserId).length;
+
+                            // if(MainAppPage.setUserId == latestMsg.toId && msgNotRead > 0){
+                            //   HalperNotification.showNotification(title: "David", body: "Hello Everyone!", payload: setMM.chatId);
+                            // }
                             return Row(
                               children: [
                                 MainAppPage.setUserId == latestMsg.fromId ? Icon(Icons.done_all, size: Dimentions.iconSize15, color: msgNotReadStatus > 0 ? const Color(0xFFccc7c5) : Colors.green,) : const SizedBox(),

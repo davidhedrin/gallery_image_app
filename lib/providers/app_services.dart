@@ -2,13 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:delivery_food_app/models/message/message_data.dart';
 import 'package:delivery_food_app/models/posting_image.dart';
 import 'package:delivery_food_app/models/user_master_model.dart';
 import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
@@ -38,7 +36,6 @@ class AppServices{
 
   static late UserModel loginUser;
   UserModel get getUserLogin => loginUser;
-  static FirebaseMessaging fbNotif = FirebaseMessaging.instance;
 
   void loading(BuildContext context){
     showDialog(
@@ -63,7 +60,6 @@ class AppServices{
   void setStatus({required String status, required String userId}) async {
     Map<String, dynamic> setUpdate = {
       Collections.collColumnstatus : status,
-      Collections.collColumnpushtoken : await getNotifToken(),
     };
     if(status == "2"){
       setUpdate[Collections.collColumnlastonline] = DateTime.now();
@@ -72,20 +68,10 @@ class AppServices{
     await _fbStore.collection(Collections.users).doc(userId).update(setUpdate);
   }
 
-  Future<String> getNotifToken() async {
-    return await fbNotif.getToken().then((token) {
-      String result = "";
-      if(token != null){
-        result = token;
-      }
-      return result;
-    });
-  }
-
   static Future<void> sendPushNotif({required UserModel getUser, required String from, required String msg, required String roomId}) async {
     try{
       final body = <String, dynamic>{
-        "to": getUser.pushToken,
+        // "to": getUser.pushToken,
         "priority": "high",
         "notification": <String, dynamic>{
           "title": from,
@@ -482,12 +468,9 @@ class AppServices{
     required UserModel forUser,
   }) async {
     try{
-      MessageData msgData = MessageData.fromMapNotif(dataMsg);
-
       await _fbStore.collection(collection).doc(chatId).set(data); //Add Master Chat
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
-      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg)
-      .then((value) => sendPushNotif(getUser: forUser, from: loginUser.nama_lengkap, msg: msgData.type == Type.text ? msgData.msg : "Image", roomId: chatId));
+      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg);
     }catch(e){
       print(e.toString());
     }
@@ -501,11 +484,8 @@ class AppServices{
     required UserModel forUser,
   }) async {
     try{
-      MessageData msgData = MessageData.fromMapNotif(dataMsg);
-
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
-      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg)
-      .then((value) => sendPushNotif(getUser: forUser, from: loginUser.nama_lengkap, msg: msgData.type == Type.text ? msgData.msg : "Image", roomId: chatId));
+      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg);
     }catch(e){
       print(e.toString());
     }
