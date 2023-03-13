@@ -114,6 +114,8 @@ class AuthProvider extends ChangeNotifier{
         "nama" : _userModel.nama_lengkap,
       });
 
+      await appProvider.getUserLoginModel(guid);
+
       _isLoading = false;
       notifyListeners();
       Navigator.of(dialogcontext).pop();
