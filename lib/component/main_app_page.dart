@@ -52,15 +52,16 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
     }
   }
 
+  final List<Widget> pages = <Widget> [
+    HomePageMenu(),
+    MessagePageMenu(),
+    SettingPageMenu(),
+    AccountPageMenu()
+  ];
+
   @override
   Widget build(BuildContext context) {
     MainAppPage.setUserId = widget.Userid;
-    List<Widget> pages = <Widget> [
-      HomePageMenu(uid: widget.Userid),
-      MessagePageMenu(),
-      SettingPageMenu(uid: widget.Userid),
-      AccountPageMenu(uid: widget.Userid)
-    ];
 
     return Scaffold(
       body: pages[index],

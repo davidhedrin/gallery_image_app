@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../component/main_app_page.dart';
 import '../../halper/function_halpers.dart';
 import '../../models/user_group.dart';
 import '../../models/user_group_master_model.dart';
@@ -26,8 +27,7 @@ import '../../widgets/data_not_found.dart';
 import '../../widgets/small_text.dart';
 
 class SettingPageMenu extends StatefulWidget {
-  final String uid;
-  const SettingPageMenu({Key? key, required this.uid}) : super(key: key);
+  const SettingPageMenu({Key? key}) : super(key: key);
 
   @override
   State<SettingPageMenu> createState() => _SettingPageMenuState();
@@ -37,6 +37,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
   final FirebaseAuth userAuth = FirebaseAuth.instance;
   final AppServices getService = AppServices();
   final FunHelp getHelp = FunHelp();
+  final String _userId = MainAppPage.setUserId;
 
   late UserModel lateCurrentUser = UserModel();
 
@@ -64,7 +65,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
       child: Scaffold(
         body: SafeArea(
           child: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-            stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
+            stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: _userId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -151,7 +152,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                       check = value;
                                     });
                                     if(check){
-                                      getService.setStatus(status: "2", userId: widget.uid);
+                                      getService.setStatus(status: "2", userId: _userId);
                                       getService.logout();
                                     }
                                   },

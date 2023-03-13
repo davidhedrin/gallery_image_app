@@ -18,8 +18,7 @@ import '../../widgets/big_text.dart';
 import '../../component/main_app_page.dart';
 
 class HomePageMenu extends StatefulWidget {
-  final String uid;
-  const HomePageMenu({Key? key, required this.uid}) : super(key: key);
+  const HomePageMenu({Key? key}) : super(key: key);
 
   @override
   State<HomePageMenu> createState() => _HomePageMenuState();
@@ -28,6 +27,7 @@ class HomePageMenu extends StatefulWidget {
 class _HomePageMenuState extends State<HomePageMenu> {
   final FirebaseAuth userAuth = FirebaseAuth.instance;
   final AppServices getService = AppServices();
+  final String _userId = MainAppPage.setUserId;
   String? _selectedItem = "";
   String? _selectedItemChane = "";
 
@@ -54,7 +54,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-                    stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
+                    stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: _userId),
                     builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Container(child: BigText(text: "-", color: AppColors.mainColor,));
@@ -145,7 +145,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
           Expanded(
             child: SingleChildScrollView(
               child: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-                stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
+                stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: _userId),
                 builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();

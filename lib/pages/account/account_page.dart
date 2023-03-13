@@ -13,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../component/main_app_page.dart';
 import '../../models/posting_image.dart';
 import '../../models/user_group.dart';
 import '../../providers/app_services.dart';
@@ -21,8 +22,7 @@ import '../../widgets/app_icon.dart';
 import '../../widgets/loading_progres.dart';
 
 class AccountPageMenu extends StatefulWidget {
-  final String uid;
-  const AccountPageMenu({Key? key, required this.uid}) : super(key: key);
+  const AccountPageMenu({Key? key}) : super(key: key);
 
   @override
   State<AccountPageMenu> createState() => _AccountPageMenuState();
@@ -32,6 +32,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
   final FirebaseFirestore _fbStore = FirebaseFirestore.instance;
   final FirebaseAuth userAuth = FirebaseAuth.instance;
   final AppServices getService = AppServices();
+  final String _userId = MainAppPage.setUserId;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
       },
       child: Scaffold(
         body: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
-          stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: widget.uid),
+          stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: _userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -85,7 +86,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                   });
                 }).toList();
 
-                return documents.where((item) => item.userById == widget.uid).toList();
+                return documents.where((item) => item.userById == _userId).toList();
               }
 
               return Column(
@@ -131,7 +132,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                           children: [
                             GestureDetector(
                               onTap: (){
-                                Get.toNamed(RouteHalper.getEditAccountPage(uid: widget.uid));
+                                Get.toNamed(RouteHalper.getEditAccountPage(uid: _userId));
                               },
                               child: AppIcon(icon: Icons.edit),
                             ),
