@@ -129,15 +129,16 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
                                 );
 
                                 return iconTitle(
-                                    icon: Icons.supervised_user_circle_sharp,
-                                    iconColor: generateRandomColor(),
-                                    boxColor: generateRandomColor(),
-                                    text: getGroup.nama_group,
-                                    count: getCount.length.toString(),
-                                    subText: "${getGroup.create_date!.day} $month ${getGroup.create_date!.year}",
-                                    action: (){
-                                      Get.to(() => GroupPanelManage(groupModel: groupModel, currentUser: curUser,));
-                                    }
+                                  groupModel: groupModel,
+                                  icon: Icons.supervised_user_circle_sharp,
+                                  iconColor: generateRandomColor(),
+                                  boxColor: generateRandomColor(),
+                                  text: getGroup.nama_group,
+                                  count: getCount.length.toString(),
+                                  subText: "${getGroup.create_date!.day} $month ${getGroup.create_date!.year}",
+                                  action: (){
+                                    Get.to(() => GroupPanelManage(groupModel: groupModel, currentUser: curUser,));
+                                  }
                                 );
                               }
                             }
@@ -157,6 +158,7 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
   }
 
   Widget iconTitle({
+    required UserGroupModel groupModel,
     required IconData icon,
     required Color boxColor,
     required Color iconColor,
@@ -194,7 +196,8 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
                 check = value;
               });
               if(check){
-
+                getService.deleteDocById(collection: Collections.usergroup, docId: groupModel.group_id);
+                showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menghapus group", title: "Delete Group");
               }
             },
             child: const Icon(Icons.delete_forever, color: Colors.redAccent),

@@ -59,15 +59,46 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
     AccountPageMenu()
   ];
 
+  void _reloadPage(int index) {
+    setState(() {
+      pages[index] = _getPage(index);
+    });
+  }
+
+  Widget _getPage(int index) {
+    switch (index) {
+      case 0:
+        return HomePageMenu();
+      case 1:
+        return MessagePageMenu();
+      case 2:
+        return SettingPageMenu();
+      case 3:
+        return AccountPageMenu();
+      default:
+        return Container();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     MainAppPage.setUserId = widget.Userid;
 
     return Scaffold(
-      body: pages[index],
+      body: IndexedStack(
+        index: index,
+        children: pages,
+      ),
       bottomNavigationBar: TabBarNavigationMaterial(
         index: index,
-        onChangeTab: onChangeTab,
+        onChangeTab: (idx){
+          setState(() {
+            index = idx;
+          });
+          if(idx == 1){
+            _reloadPage(idx);
+          }
+        },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, size: Dimentions.iconSize36,),

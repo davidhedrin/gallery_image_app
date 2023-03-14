@@ -404,6 +404,10 @@ class AppServices{
     return _fbStore.collection(collection).where(FieldPath.documentId, isNotEqualTo: value).snapshots();
   }
 
+  void deleteDocById({required String collection, required docId}) async {
+    await fbStore.collection(collection).doc(docId).delete();
+  }
+
   //delete doc coll in coll
   void deleteDataCollecInCollec({
     required BuildContext context,
@@ -489,5 +493,15 @@ class AppServices{
     }catch(e){
       print(e.toString());
     }
+  }
+
+  Future<UserGroupModel> getFirstGroupUser(String phone) async {
+    UserGroupModel group = UserGroupModel();
+
+    var getGroup = await streamBuilderGetDoc(collection: Collections.usermaster, docId: phone).first;
+    Map<String, dynamic> listMap = List.from(getGroup.get("group")).first;
+    group = UserGroupModel.fromMap(listMap);
+
+    return group;
   }
 }

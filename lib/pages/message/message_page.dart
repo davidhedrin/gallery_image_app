@@ -36,10 +36,9 @@ class MessagePageMenu extends StatefulWidget {
 }
 
 class _MessagePageMenuState extends State<MessagePageMenu> {
-  late String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
-
   @override
   Widget build(BuildContext context) {
+    String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
     return WillPopScope(
       onWillPop: () async {
         bool check = false;
