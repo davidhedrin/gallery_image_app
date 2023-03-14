@@ -15,6 +15,7 @@ class Collections{
 
   static const String message = "message";
 
+  static const String collColumnpassword = "password";
   static const String collColumngroup = "group";
   static const String collColumnuserById = "userById";
   static const String collColumnstatus = "statusLog";

@@ -71,7 +71,6 @@ class UserModel{
     return {
       "email": email,
       "nama_lengkap": nama_lengkap,
-      "password": password,
       "img_profil_url": img_profil_url,
       "img_cover_url": img_cover_url
       // "user_type": user_type,

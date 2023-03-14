@@ -33,9 +33,6 @@ class _EditAccountPageState extends State<EditAccountPage> {
 
   final TextEditingController namaController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController newpasswordController = TextEditingController();
-  final TextEditingController newCoPasswordController = TextEditingController();
 
 
   @override
@@ -231,48 +228,6 @@ class _EditAccountPageState extends State<EditAccountPage> {
                               ),
                             ),
 
-                            SizedBox(height: Dimentions.height15,),
-                            Padding(
-                              padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
-                              child: SmallText(text: "Form ganti password", color: Colors.black54,),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
-                              child: const Divider(height: 1, color: Colors.black87),
-                            ),
-                            SizedBox(height: Dimentions.height15,),
-
-                            Padding(
-                              padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
-                              child: MyTextFieldReg(
-                                controller: passwordController,
-                                hintText: "Masukkan Password Lama",
-                                obscureText: true,
-                              ),
-                            ),
-
-                            SizedBox(height: Dimentions.height15,),
-
-                            Padding(
-                              padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
-                              child: MyTextFieldReg(
-                                controller: newpasswordController,
-                                hintText: "Masukkan Password Baru",
-                                obscureText: true,
-                              ),
-                            ),
-
-                            SizedBox(height: Dimentions.height15,),
-
-                            Padding(
-                              padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
-                              child: MyTextFieldReg(
-                                controller: newCoPasswordController,
-                                hintText: "Konfirmasi Password Baru",
-                                obscureText: true,
-                              ),
-                            ),
-
                             SizedBox(height: Dimentions.height20,),
 
                             Padding(
@@ -281,59 +236,42 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                 minWidth: double.infinity,
                                 onPressed: () {
                                   BuildContext dialogcontext = context;
-                                  void hitUpdate() async {
-                                    if(_formKey.currentState!.validate()){
-                                      getService.loading(dialogcontext);
-
-                                      if(imageProfile != null){
-                                        if(dataData.containsKey("img_profil_url")){
-                                          getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageProfile}/${widget.uid}");
-                                        }
+                                  UserModel userMdl = UserModel(
+                                    nama_lengkap: namaController.text,
+                                    email: emailController.text,
+                                  );
+                                  void execute() async {
+                                    if(imageProfile != null){
+                                      if(dataData.containsKey("img_profil_url")){
+                                        getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageProfile}/${widget.uid}");
                                       }
-                                      if(imageCover != null){
-                                        if(dataData.containsKey("img_cover_url")){
-                                          getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageCover}/${widget.uid}");
-                                        }
+                                    }
+                                    if(imageCover != null){
+                                      if(dataData.containsKey("img_cover_url")){
+                                        getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageCover}/${widget.uid}");
                                       }
+                                    }
 
-                                      String imgProfileUrl = imageProfile != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageProfile}/${widget.uid}", file: imageProfile!, context: context) : dataData.containsKey("img_profil_url") ? data.get("img_profil_url") : "";
-                                      String imgCoverUrl = imageCover != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageCover}/${widget.uid}", file: imageCover!, context: context) : dataData.containsKey("img_cover_url") ? data.get("img_cover_url") : "";
+                                    String imgProfileUrl = imageProfile != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageProfile}/${widget.uid}", file: imageProfile!, context: context) : dataData.containsKey("img_profil_url") ? data.get("img_profil_url") : "";
+                                    String imgCoverUrl = imageCover != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageCover}/${widget.uid}", file: imageCover!, context: context) : dataData.containsKey("img_cover_url") ? data.get("img_cover_url") : "";
 
-                                      UserModel userModel = UserModel(
-                                        nama_lengkap: namaController.text,
-                                        email: emailController.text,
-                                        password: newpasswordController.text.isEmpty ? data.get("password") : newpasswordController.text,
-                                      );
-
-                                      if(imgProfileUrl.isNotEmpty){
-                                        userModel.img_profil_url = imgProfileUrl;
-                                      }
-                                      if(imgCoverUrl.isNotEmpty){
-                                        userModel.img_cover_url = imgCoverUrl;
-                                      }
-
-                                      getService.updateDataDb(data: userModel.toMapUpdate(), context: context, collection: Collections.users, guid: widget.uid);
-
-                                      Navigator.of(dialogcontext).pop();
-                                      showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil memperbaharui data", title: "Update");
+                                    if(imgProfileUrl.isNotEmpty){
+                                      userMdl.img_profil_url = imgProfileUrl;
+                                    }
+                                    if(imgCoverUrl.isNotEmpty){
+                                      userMdl.img_cover_url = imgCoverUrl;
                                     }
                                   }
-                                  if(passwordController.text.isEmpty && newpasswordController.text.isEmpty && newCoPasswordController.text.isEmpty){
-                                    hitUpdate();
-                                  }else{
-                                    if(passwordController.text == userModel.password){
-                                      if(newpasswordController.text.isNotEmpty && newCoPasswordController.text.isNotEmpty){
-                                        if(newpasswordController.text == newCoPasswordController.text){
-                                          hitUpdate();
-                                        }else{
-                                          showAwsBar(context: context, contentType: ContentType.help, msg: "Password baru dan konfirmasi password tidak sama!", title: "Opss...");
-                                        }
-                                      }else{
-                                        showAwsBar(context: context, contentType: ContentType.help, msg: "Masukkan password baru!", title: "Opss...");
-                                      }
-                                    }else{
-                                      showAwsBar(context: context, contentType: ContentType.warning, msg: "Password lama tidak sesuai!", title: "Opss...");
-                                    }
+
+                                  if(_formKey.currentState!.validate()){
+                                    getService.loading(dialogcontext);
+
+                                    execute();
+
+                                    getService.updateDataDb(data: userMdl.toMapUpdate(), context: context, collection: Collections.users, guid: widget.uid);
+
+                                    Navigator.of(dialogcontext).pop();
+                                    showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil memperbaharui data", title: "Update");
                                   }
                                 },
                                 color: Colors.black,

@@ -8,6 +8,7 @@ import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/pages/setting/menus/group_page.dart';
 import 'package:delivery_food_app/pages/setting/menus/group_panel_manage.dart';
+import 'package:delivery_food_app/pages/setting/menus/password_page.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -138,7 +139,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                   boxColor: Colors.blue,
                                   text: "Password",
                                   action: (){
-
+                                    Get.to(ChangePasswordPage(setUser: getUser));
                                   }
                               ),
                               iconTitle(

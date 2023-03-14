@@ -31,6 +31,7 @@ class AppServices{
   final FirebaseStorage _fbStorage = FirebaseStorage.instance;
 
   FirebaseFirestore get fbStore => _fbStore;
+  FirebaseAuth get fbAuth => _auth;
 
   CollectionReference userCollec = FirebaseFirestore.instance.collection(Collections.users);
 
@@ -53,7 +54,8 @@ class AppServices{
     MainAppPage.groupCodeId = "";
     MainAppPage.setUserId = "";
 
-    FirebaseAuth.instance.signOut();
+    setStatus(status: "2", userId: loginUser.id);
+    _auth.signOut();
     Get.toNamed(RouteHalper.getLoginPage());
   }
 
