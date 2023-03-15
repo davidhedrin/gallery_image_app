@@ -145,8 +145,8 @@ class AppServices{
       UserCredential userEmail = await _auth.signInWithEmailAndPassword(email: email, password: password);
       String uidEm = userEmail.user!.uid;
 
-      DocumentSnapshot docUser = await getDocumentByColumn(Collections.users, "uidEmail", uidEm);
-      String uid = docUser.id;
+      DocumentSnapshot? docUser = await getDocumentByColumn(Collections.users, "uidEmail", uidEm);
+      String uid = docUser!.id;
 
       result["status"] = "200";
       result["uid"] = uid;
@@ -208,11 +208,6 @@ class AppServices{
       DocumentSnapshot<Map<String, dynamic>> getUM = await getUserMaster.get();
       DocumentSnapshot<Map<String, dynamic>> getUs = await getUser.get();
 
-      // Start delete user from firebase Autheticate
-      Map<String, dynamic> mapUser = getUs.data() as Map<String, dynamic>;
-      UserModel fromMapUs = UserModel.fromMap(mapUser);
-      // End delete user
-
       // Start delete posted image
       Map<String, dynamic> mapUserMaster = getUM.data() as Map<String, dynamic>;
       UserMasterModel fromMapUM = UserMasterModel.fromMap(mapUserMaster);
@@ -245,6 +240,17 @@ class AppServices{
 
       await getUserMaster.delete();
       await getUser.delete();
+
+      // Start delete user from firebase Autheticate
+      // Map<String, dynamic> mapUser = getUs.data() as Map<String, dynamic>;
+      // UserModel fromMapUs = UserModel.fromMap(mapUser);
+      //
+      // final FirebaseAuth authLog = FirebaseAuth.instance;
+      // await authLog.signInWithEmailAndPassword(email: fromMapUs.email, password: fromMapUs.password);
+      // User setUser = authLog.currentUser!;
+      // await setUser.delete();
+      // authLog.signOut();
+      // End delete user
     } catch (e) {
       showAwsBar(context: context, contentType: ContentType.warning, msg: e.toString(), title: "Delete!");
       return;
@@ -305,13 +311,22 @@ class AppServices{
   }
 
   // Get the document from the collection with a specific condition
-  Future<DocumentSnapshot> getDocumentByColumn(String collectionName, String column, String value) async {
-    DocumentSnapshot document = await _fbStore
-        .collection(collectionName)
-        .where(column, isEqualTo: value).get()
-        .then((QuerySnapshot snap) {
-      return snap.docs.first;
-    });
+  Future<DocumentSnapshot?> getDocumentByColumn(String collectionName, String column, String value) async {
+    DocumentSnapshot? document;
+
+    try{
+      document = await _fbStore
+          .collection(collectionName)
+          .where(column, isEqualTo: value).get()
+          .then((QuerySnapshot snap) {
+        return snap.docs.first;
+      });
+    }catch(e){
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+
     return document;
   }
 

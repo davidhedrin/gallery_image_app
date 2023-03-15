@@ -8,11 +8,13 @@ class Assets {
   static const String image4 = 'assets/image/4.png';
   static const String imageBackgroundProfil = 'assets/image/backgroundProfil.png';
   static const String imageBg = 'assets/image/bg.jpg';
+  static const String imageChangePassword = 'assets/image/changePassword.png';
   static const String imageCika = 'assets/image/cika.png';
   static const String imageFacebook = 'assets/image/Facebook.png';
   static const String imageGoogle = 'assets/image/Google.png';
   static const String imageMakanan = 'assets/image/Makanan.jpg';
   static const String imageNotFound = 'assets/image/notFound.png';
+  static const String imageOtpForgot = 'assets/image/otpForgot.png';
   static const String imagePasswordChange = 'assets/image/password-change.png';
   static const String imagePrifil = 'assets/image/prifil.jpg';
   static const String imageRegister = 'assets/image/register.png';

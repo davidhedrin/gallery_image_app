@@ -15,7 +15,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../component/main_app_page.dart';
 import '../../utils/utils.dart';
 import '../../widgets/auth_widget/button_widget.dart';
 import '../../widgets/auth_widget/text_widget.dart';
@@ -29,7 +28,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   // text editing controllers
-  final no_phoneController = TextEditingController();
+  final noPhoneController = TextEditingController();
   final passwordController = TextEditingController();
   final AppServices services = AppServices();
 
@@ -47,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
   );
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AuthProvider>(context);
+    final app = Provider.of<AuthProvider>(context);
     return WillPopScope(
       onWillPop: () async {
         bool check = false;
@@ -60,12 +59,12 @@ class _LoginPageState extends State<LoginPage> {
         return check;
       },
       child: Scaffold(
-        backgroundColor: Color(0xFF181A20),
+        backgroundColor: const Color(0xFF181A20),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
               child: ElasticIn(
-                delay: Duration(milliseconds: 100),
+                delay: const Duration(milliseconds: 100),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -87,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding:  EdgeInsets.symmetric(horizontal: Dimentions.height25),
                       child: TextFormField(
-                        controller: no_phoneController,
+                        controller: noPhoneController,
                         validator: (value){
                           if(value!.isEmpty){
                             return '*masukkan nomor ponsel';
@@ -99,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(
-                            RegExp(r'[0-9]'),
+                            RegExp(r'\d'),
                           ),
                           FilteringTextInputFormatter.deny(
                             RegExp(r'^0+'),
@@ -112,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(right: Dimentions.width15, top: Dimentions.height15, bottom: Dimentions.height15),
-                          enabledBorder:  OutlineInputBorder(
+                          enabledBorder:  const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white),
                           ),
                           focusedBorder: OutlineInputBorder(
@@ -122,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                           filled: true,
                           hintText: "812-xxxx-xxxx",
                           hintStyle: TextStyle(color: Colors.grey[500], fontSize: Dimentions.font20),
-                          suffixIcon: Icon(Icons.phone_android),
+                          suffixIcon: const Icon(Icons.phone_android),
                           prefixIcon: Padding(
                             padding: EdgeInsets.only(left: Dimentions.width15, top: Dimentions.screenHeight/62, right: Dimentions.width5),
                             child: InkWell(
@@ -168,9 +167,14 @@ class _LoginPageState extends State<LoginPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            'Forgot Password?',
-                            style: TextStyle(color: Colors.white, fontSize: Dimentions.font12),
+                          InkWell(
+                            onTap: (){
+                              Get.toNamed(RouteHalper.getForgotPassNumberPage());
+                            },
+                            child: Text(
+                              'Forgot Password?',
+                              style: TextStyle(color: Colors.white, fontSize: Dimentions.font12),
+                            ),
                           ),
                         ],
                       ),
@@ -183,13 +187,13 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: () async {
                         BuildContext dialogcontext = context;
 
-                        if(no_phoneController.text.isNotEmpty && passwordController.text.isNotEmpty){
+                        if(noPhoneController.text.isNotEmpty && passwordController.text.isNotEmpty){
                           services.loading(dialogcontext);
 
-                          final String phone = "+${selectCountry.phoneCode}"+no_phoneController.text;
+                          final String phone = "+${selectCountry.phoneCode}${noPhoneController.text}";
                           final String password = passwordController.text.trim();
 
-                          await _app.getDataDocumentByColumn(context: context, collection: Collections.users, column: "phone", param: phone).then((result) async {
+                          await app.getDataDocumentByColumn(context: context, collection: Collections.users, column: "phone", param: phone).then((result) async {
                             if(result){
                               QuerySnapshot snap = await FirebaseFirestore.instance.collection(Collections.users).where("phone", isEqualTo: phone).get();
                               final String email = snap.docs.first.get('email');
@@ -198,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                               if(password == pass){
                                 await services.loginWithEmailRetMap(context, email, password).then((Map<String, dynamic> status){
                                   if(status["status"] == "200"){
-                                    no_phoneController.clear();
+                                    noPhoneController.clear();
                                     passwordController.clear();
                                     Navigator.of(dialogcontext).pop();
                                     Get.toNamed(RouteHalper.getInitial(uid: status["uid"]));
@@ -233,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                       padding:  EdgeInsets.symmetric(horizontal: Dimentions.height25),
                       child: Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: Divider(
                               thickness: 0.5,
                               color: Colors.white,
@@ -241,12 +245,12 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Padding(
                             padding:  EdgeInsets.symmetric(horizontal: Dimentions.height10),
-                            child: Text(
+                            child: const Text(
                               'Not have account?',
                               style: TextStyle(color: Colors.white70),
                             ),
                           ),
-                          Expanded(
+                          const Expanded(
                             child: Divider(
                               thickness: 0.5,
                               color: Colors.white,

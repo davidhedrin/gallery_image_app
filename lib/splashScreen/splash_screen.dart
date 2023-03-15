@@ -38,10 +38,10 @@ class _SplashScerenAppState extends State<SplashScerenApp> {
         if(_boarding == null){
           Get.toNamed(RouteHalper.getOnBoardScreen());
         }else{
-          FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+          getService.fbAuth.authStateChanges().listen((User? user) async {
             if (user != null) {
-              DocumentSnapshot docUser = await getService.getDocumentByColumn("users", "uidEmail", user.uid);
-              String uid = docUser.id;
+              DocumentSnapshot? docUser = await getService.getDocumentByColumn("users", "uidEmail", user.uid);
+              String uid = docUser!.id;
               await setLoginUser(uid);
 
               Get.toNamed(RouteHalper.getInitial(uid: uid));

@@ -21,4 +21,6 @@ class Collections{
   static const String collColumnstatus = "statusLog";
   static const String collColumnlastonline = "lastOnline";
   static const String collColumnpushtoken = "pushToken";
+  static const String collColumnphone = "phone";
+  static const String collColumnuidphone = "uidPhone";
 }

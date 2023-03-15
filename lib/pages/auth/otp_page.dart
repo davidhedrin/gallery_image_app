@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
@@ -12,7 +10,6 @@ import 'package:provider/provider.dart';
 
 import '../../generated/assets.dart';
 import '../../utils/utils.dart';
-import '../../widgets/app_bar_widget.dart';
 
 class OtpPage extends StatefulWidget {
   final String verificationId;
@@ -23,8 +20,8 @@ class OtpPage extends StatefulWidget {
 }
 
 class _OtpPageState extends State<OtpPage> {
-  Color accentPurpleColor = Color(0xFF6A53A1);
-  final TextEditingController otp_number = TextEditingController();
+  Color accentPurpleColor = const Color(0xFF6A53A1);
+  final TextEditingController otpNumber = TextEditingController();
 
   TextStyle? createStyle() {
     TextStyle theme = TextStyle(
@@ -46,7 +43,6 @@ class _OtpPageState extends State<OtpPage> {
       createStyle(),
     ];
 
-    final boolAuth = Provider.of<AuthProvider>(context, listen: true);
     final auth = Provider.of<AuthProvider>(context, listen: false);
 
     return WillPopScope(
@@ -97,7 +93,7 @@ class _OtpPageState extends State<OtpPage> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 28,
                       ),
                       Container(
@@ -118,7 +114,7 @@ class _OtpPageState extends State<OtpPage> {
                               autoFocus: true,
                               borderWidth: 3.0,
                               onSubmit: (String verCode) {
-                                otp_number.text = verCode;
+                                otpNumber.text = verCode;
                               },
                             ),
                             SizedBox(
@@ -128,16 +124,16 @@ class _OtpPageState extends State<OtpPage> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () async {
-                                  if(otp_number.text.length > 5){
+                                  if(otpNumber.text.length > 5){
                                     await auth.verifyOtp(
                                       context: context,
                                       verId: widget.verificationId,
-                                      otp: otp_number.text,
+                                      otp: otpNumber.text,
                                     );
                                   }else{
                                     showAwsBar(context: context, contentType: ContentType.help, msg: "Masukkan 6 digit kode OTP", title: "OTP!");
                                   }
-                                  otp_number.clear();
+                                  otpNumber.clear();
                                 },
                                 style: ButtonStyle(
                                   foregroundColor:MaterialStateProperty.all<Color>(Colors.white),
@@ -160,7 +156,7 @@ class _OtpPageState extends State<OtpPage> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 18,
                       ),
                       Text(
@@ -172,7 +168,7 @@ class _OtpPageState extends State<OtpPage> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 18,
                       ),
                       Text(

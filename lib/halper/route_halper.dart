@@ -1,4 +1,7 @@
 import 'package:delivery_food_app/component/add_new_posting.dart';
+import 'package:delivery_food_app/pages/auth/forgot_change_pass.dart';
+import 'package:delivery_food_app/pages/auth/forgot_pass_number.dart';
+import 'package:delivery_food_app/pages/auth/forgot_pass_otp.dart';
 import 'package:delivery_food_app/pages/home/bookmark_page.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/pages/account/edit_accout_page.dart';
@@ -23,6 +26,9 @@ class RouteHalper{
   static const String initial = "/";
 
   static const String loginPage = "/login-page";
+  static const String forgotPassNumberPage = "/forgot-pass-number-page";
+  static const String forgotPassOtpPage = "/forgot-pass-otp-page";
+  static const String forgotChangePassPage = "/forgot-change-pass-page";
   static const String registerPage = "/register-page";
   static const String registerWithPhonePage = "/register-with-phone-page";
   static const String otpPage = "/otp-page";
@@ -41,6 +47,9 @@ class RouteHalper{
   static String getInitial({String? uid}) => '$initial?uid=$uid';
 
   static String getLoginPage() => '$loginPage';
+  static String getForgotPassNumberPage() => '$forgotPassNumberPage';
+  static String getForgotPassOtpPage({String? verId}) => '$forgotPassOtpPage?verId=$verId';
+  static String getForgotChangePassPage({String? userId}) => '$forgotChangePassPage?userId=$userId';
   static String getRegisterPage() => '$registerPage';
   static String getRegisterWithPhonePage() => '$registerWithPhonePage';
   static String getOtpPage({String? verId}) => '$otpPage?verId=$verId';
@@ -66,6 +75,15 @@ class RouteHalper{
     GetPage(name: onBoardScreen, page: () => OnBoardScreenApp(), transition: Transition.native),
 
     GetPage(name: loginPage, page: () => LoginPage()),
+    GetPage(name: forgotPassNumberPage, page: () => ForgotPassNumberPage()),
+    GetPage(name: forgotPassOtpPage, page: () {
+      String? verId = Get.parameters['verId'].toString();
+      return ForgotPassOtpPage(verificationId: verId,);
+    }),
+    GetPage(name: forgotChangePassPage, page: () {
+      String? userId = Get.parameters['userId'].toString();
+      return ForgotChangePassPage(userId: userId,);
+    }),
     GetPage(name: registerPage, page: () => RegisterPage()),
     GetPage(name: registerWithPhonePage, page: () => RegisterWithPhoneNumber()),
     GetPage(name: otpPage, page: () {
