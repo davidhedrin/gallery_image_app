@@ -130,7 +130,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                   boxColor: Colors.green,
                                   text: "Personal",
                                   action: (){
-
+                                    Get.toNamed(RouteHalper.getPersonalInfoPage());
                                   }
                               ),
                               iconTitle(
@@ -139,7 +139,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                   boxColor: Colors.blue,
                                   text: "Password",
                                   action: (){
-                                    Get.to(ChangePasswordPage(setUser: getUser));
+                                    Get.to(() => ChangePasswordPage(setUser: getUser));
                                   }
                               ),
                               iconTitle(
@@ -297,22 +297,20 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
   }
 
   Widget iconTitle({required IconData icon, required Color boxColor, required Color iconColor, required String text, void Function()? action}){
-    return GestureDetector(
+    return ListTile(
       onTap: action,
-      child: ListTile(
-        contentPadding: EdgeInsets.only(top: Dimentions.height15, left: Dimentions.width20, right: Dimentions.width20),
-        leading: Container(
-          height: Dimentions.height45,
-          width: Dimentions.height45,
-          decoration: BoxDecoration(
-            color: boxColor.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(Dimentions.radius15),
-          ),
-          child: Icon(icon, color: iconColor,),
+      contentPadding: EdgeInsets.only(top: Dimentions.height8, bottom: Dimentions.height8, left: Dimentions.width20, right: Dimentions.width20),
+      leading: Container(
+        height: Dimentions.height45,
+        width: Dimentions.height45,
+        decoration: BoxDecoration(
+          color: boxColor.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(Dimentions.radius15),
         ),
-        title: Text(text, style: const TextStyle(fontWeight: FontWeight.w500),),
-        trailing: Icon(Icons.arrow_forward_ios, color: Colors.black87, size: Dimentions.font20,),
+        child: Icon(icon, color: iconColor,),
       ),
+      title: Text(text, style: const TextStyle(fontWeight: FontWeight.w500),),
+      trailing: Icon(Icons.arrow_forward_ios, color: Colors.black87, size: Dimentions.font20,),
     );
   }
 }

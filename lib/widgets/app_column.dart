@@ -1,12 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/models/likes_model.dart';
 import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../models/posting_image.dart';
@@ -30,11 +30,11 @@ class _AppColumnState extends State<AppColumn> {
 
   @override
   Widget build(BuildContext context) {
-    var month = DateFormat('MMMM').format(widget.dataImage.isNull ? DateTime.now() : widget.dataImage!.tanggal!);
-    var setDiffDate = widget.dataImage.isNull ? DateTime.now().difference(DateTime.now()) : DateTime.now().difference(widget.dataImage!.uploadDate!);
+    var month = DateFormat('MMMM').format(widget.dataImage == null ? DateTime.now() : widget.dataImage!.tanggal!);
+    var setDiffDate = widget.dataImage == null ? DateTime.now().difference(DateTime.now()) : DateTime.now().difference(widget.dataImage!.uploadDate!);
     var diffMin = setDiffDate.inMinutes < 60 ? "${setDiffDate.inMinutes}min" : "";
     var diffDayUpload = setDiffDate.inDays.toString() != "0" ? "${setDiffDate.inDays}h" : "";
-    var difference = widget.dataImage.isNull ? "-" : "$diffDayUpload ${setDiffDate.inHours}j $diffMin";
+    var difference = widget.dataImage == null ? "-" : "$diffDayUpload ${setDiffDate.inHours}j $diffMin";
 
     bool containsDocId(List<QueryDocumentSnapshot<Object?>> querySnapshot) {
       for (QueryDocumentSnapshot docSnapshot in querySnapshot) {
@@ -51,8 +51,8 @@ class _AppColumnState extends State<AppColumn> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(child: BigText(text: widget.dataImage.isNull ? "Title Image" : widget.dataImage!.title, size: Dimentions.font26,)),
-            widget.dataImage.isNull ? BigText(
+            Flexible(child: BigText(text: widget.dataImage == null ? "Title Image" : widget.dataImage!.title, size: Dimentions.font26,)),
+            widget.dataImage == null ? BigText(
               text: "-", color: Colors.black45,
             ) : StreamBuilder<QuerySnapshot>(
                 stream: getService.streamGetCollecInColect(collection1: widget.groupName!, collection2: Collections.likes, docId: widget.dataImage!.imageId),
@@ -108,7 +108,7 @@ class _AppColumnState extends State<AppColumn> {
             // ),
             SizedBox(width: Dimentions.height6,),
             SmallText(text: "Tanggal Foto: "),
-            SmallText(text: widget.dataImage.isNull ? "upload date" : "${widget.dataImage!.tanggal!.day} $month ${widget.dataImage!.tanggal!.year}"),
+            SmallText(text: widget.dataImage == null ? "upload date" : "${widget.dataImage!.tanggal!.day} $month ${widget.dataImage!.tanggal!.year}"),
             // SizedBox(width: Dimentions.height10,),
             // SmallText(text: "1287"),
             // SizedBox(width: Dimentions.height10,),
@@ -119,10 +119,10 @@ class _AppColumnState extends State<AppColumn> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconAndTextWidget(icon: Icons.account_circle, text: widget.dataImage.isNull ? "-" : widget.dataImage!.userByName, iconColor: AppColors.iconColor1),
+            IconAndTextWidget(icon: Icons.account_circle, text: widget.dataImage == null ? "-" : widget.dataImage!.userByName, iconColor: AppColors.iconColor1),
             IconAndTextWidget(
-              icon: widget.dataImage.isNull ? Icons.remove_red_eye : widget.dataImage!.pemirsa == "1" ? Icons.people_outline : Icons.lock,
-              text: widget.dataImage.isNull ? "-" : widget.dataImage!.pemirsa == "1" ? "Public" : "Private",
+              icon: widget.dataImage == null ? Icons.remove_red_eye : widget.dataImage!.pemirsa == "1" ? Icons.people_outline : Icons.lock,
+              text: widget.dataImage == null ? "-" : widget.dataImage!.pemirsa == "1" ? "Public" : "Private",
               iconColor: AppColors.mainColor
             ),
             IconAndTextWidget(icon: Icons.access_time_rounded, text: difference, iconColor: AppColors.iconColor2),

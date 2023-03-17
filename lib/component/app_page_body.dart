@@ -48,7 +48,7 @@ class _AppPageBodyState extends State<AppPageBody> {
       children: [
         // Section Banner/Slider Carousel
         SizedBox(height: Dimentions.height2,),
-        Container(
+        SizedBox(
           // color: Colors.redAccent,
           height: Dimentions.pageView,
           child: StreamBuilder<QuerySnapshot>(

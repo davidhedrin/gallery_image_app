@@ -1,26 +1,36 @@
+// ignore_for_file: unused_local_variable
+
+import 'dart:async';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/providers/auth_provider.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../generated/assets.dart';
+import '../../providers/app_services.dart';
 import '../../utils/utils.dart';
 
 class OtpPage extends StatefulWidget {
   final String verificationId;
-  const OtpPage({Key? key, required this.verificationId}) : super(key: key);
+  final String phone;
+  const OtpPage({Key? key, required this.verificationId, required this.phone}) : super(key: key);
 
   @override
   State<OtpPage> createState() => _OtpPageState();
 }
 
 class _OtpPageState extends State<OtpPage> {
+  late String verId;
+  final AppServices getServ = AppServices();
   Color accentPurpleColor = const Color(0xFF6A53A1);
+  final FirebaseAuth authLog = FirebaseAuth.instance;
   final TextEditingController otpNumber = TextEditingController();
 
   TextStyle? createStyle() {
@@ -30,6 +40,38 @@ class _OtpPageState extends State<OtpPage> {
       color: Colors.white
     );
     return theme;
+  }
+
+  final int timerOtp = 60;
+  int start = 60;
+  bool wait = true;
+
+  void startTimer() {
+    setState(() {
+      start = timerOtp;
+      wait = true;
+    });
+    const onsec = Duration(seconds: 1);
+    Timer timer = Timer.periodic(onsec, (timer) {
+      if (start == 0) {
+        setState(() {
+          timer.cancel();
+          wait = false;
+        });
+      } else {
+        setState(() {
+          start--;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    startTimer();
+    verId = widget.verificationId;
+    super.initState();
   }
 
   @override
@@ -127,7 +169,7 @@ class _OtpPageState extends State<OtpPage> {
                                   if(otpNumber.text.length > 5){
                                     await auth.verifyOtp(
                                       context: context,
-                                      verId: widget.verificationId,
+                                      verId: verId,
                                       otp: otpNumber.text,
                                     );
                                   }else{
@@ -156,30 +198,63 @@ class _OtpPageState extends State<OtpPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 18,
+                      SizedBox(
+                        height: Dimentions.height15,
                       ),
                       Text(
-                        "Didn't you receive any code?",
+                        "Belum menerima kode otp?",
                         style: TextStyle(
                           fontSize: Dimentions.font13,
-                          fontWeight: FontWeight.bold,
                           color: Colors.white70,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(
-                        height: 18,
+                      SizedBox(
+                        height: Dimentions.height2,
                       ),
-                      Text(
-                        "Resend New Code",
-                        style: TextStyle(
-                          fontSize: Dimentions.font17,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.purple,
+                      InkWell(
+                        onTap:  wait == false ? () async {
+                          getServ.loading(context);
+                          String phone = "+${widget.phone}";
+
+                          await authLog.verifyPhoneNumber(
+                            phoneNumber: phone,
+                            verificationCompleted: (PhoneAuthCredential phoneAuthCredential) async {
+                              await authLog.signInWithCredential(phoneAuthCredential);
+                            },
+                            verificationFailed: (error) {
+                              showAwsBar(context: context, contentType: ContentType.warning, msg: error.message.toString(), title: "");
+                            },
+                            codeSent: (verificationId, forceResendingToken) {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                verId = verificationId;
+                              });
+                              startTimer();
+                              showAwsBar(context: context, contentType: ContentType.success, msg: "Kode OTP telah dikirim, silahkan masukkan", title: "Success OTP");
+                            },
+                            codeAutoRetrievalTimeout: (verificationId) {},
+                          );
+                        } : null,
+                        child: Text(
+                          "Kirim ulang OTP",
+                          style: TextStyle(
+                            fontSize: Dimentions.font17,
+                            fontWeight: FontWeight.bold,
+                            color: wait == false ? Colors.purple : Colors.grey,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
+                      if(wait == true)
+                        SizedBox(
+                          height: Dimentions.height4,
+                        ),
+                      if(wait == true)
+                        Text(
+                          "00:${start < 10 ? "0" : ""}$start",
+                          style: TextStyle(fontSize: Dimentions.font16, color: Colors.pinkAccent),
+                        ),
                     ],
                   ),
                 ),

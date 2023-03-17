@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/utils/collections.dart';
@@ -21,6 +23,7 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  final formKey = GlobalKey<FormState>();
   final AppServices getService = AppServices();
 
   final TextEditingController passwordController = TextEditingController();
@@ -56,34 +59,59 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
             SizedBox(height: Dimentions.height15,),
 
-            Padding(
-              padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
-              child: MyTextFieldReg(
-                controller: passwordController,
-                hintText: "Masukkan Password Lama",
-                obscureText: true,
-              ),
-            ),
+            Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
+                    child: MyTextFieldReg(
+                      controller: passwordController,
+                      hintText: "Masukkan Password Lama",
+                      obscureText: true,
+                      validator: (value){
+                        if(value!.isEmpty){
+                          return '*masukkan password lama';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
 
-            SizedBox(height: Dimentions.height15,),
+                  SizedBox(height: Dimentions.height15,),
 
-            Padding(
-              padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
-              child: MyTextFieldReg(
-                controller: newpasswordController,
-                hintText: "Masukkan Password Baru",
-                obscureText: true,
-              ),
-            ),
+                  Padding(
+                    padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
+                    child: MyTextFieldReg(
+                      controller: newpasswordController,
+                      hintText: "Masukkan Password Baru",
+                      obscureText: true,
+                      validator: (value){
+                        if(value!.isEmpty){
+                          return '*masukkan password baru';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
 
-            SizedBox(height: Dimentions.height15,),
+                  SizedBox(height: Dimentions.height15,),
 
-            Padding(
-              padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
-              child: MyTextFieldReg(
-                controller: newCoPasswordController,
-                hintText: "Konfirmasi Password Baru",
-                obscureText: true,
+                  Padding(
+                    padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
+                    child: MyTextFieldReg(
+                      controller: newCoPasswordController,
+                      hintText: "Konfirmasi Password Baru",
+                      obscureText: true,
+                      validator: (value){
+                        if(value!.isEmpty){
+                          return '*masukkan konfrimasi baru';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -94,56 +122,55 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               child: MaterialButton(
                 minWidth: double.infinity,
                 onPressed: () async {
-                  bool check = false;
-                  await onBackButtonPressYesNo(context: context, text: "Konfirmasi Password", desc: "Yakin ingin mengubah password?").then((value){
-                    check = value;
-                  });
-                  String changePassword = newpasswordController.text.isEmpty ? getUser.password : newpasswordController.text;
+                  if(formKey.currentState!.validate()){
+                    bool check = false;
+                    await onBackButtonPressYesNo(context: context, text: "Konfirmasi Password", desc: "Yakin ingin mengubah password?").then((value){
+                      check = value;
+                    });
+                    String changePassword = newpasswordController.text.isEmpty ? getUser.password : newpasswordController.text;
 
-                  if(check == true){
-                    getService.loading(context);
+                    if(check == true){
+                      getService.loading(context);
 
-                    if(passwordController.text.isNotEmpty){
                       if(passwordController.text == getUser.password){
-                        if(newpasswordController.text.isNotEmpty && newCoPasswordController.text.isNotEmpty){
-                          if(newpasswordController.text == newCoPasswordController.text){
-                            // Sign in with the user's email and old password
-                            try {
-                              await getService.fbAuth.signInWithEmailAndPassword(email: getUser.email, password: getUser.password);
-                            } on FirebaseAuthException catch (e) {
-                              // Handle sign-in errors here
-                              if (kDebugMode) {
-                                print('Error signing in: ${e.message}');
-                              }
-                              return;
+                        if(newpasswordController.text == newCoPasswordController.text){
+                          // Sign in with the user's email and old password
+                          try {
+                            await getService.fbAuth.signInWithEmailAndPassword(email: getUser.email, password: getUser.password);
+                          } on FirebaseAuthException catch (e) {
+                            // Handle sign-in errors here
+                            if (kDebugMode) {
+                              print('Error signing in: ${e.message}');
                             }
+                            return;
+                          }
 
-                            try {
-                              await getService.fbAuth.currentUser!.updatePassword(changePassword).then((value) async {
-                                await getService.fbStore.collection(Collections.users).doc(getUser.id).update({
-                                  Collections.collColumnpassword : changePassword
-                                });
+                          try {
+                            await getService.fbAuth.currentUser!.updatePassword(changePassword).then((value) async {
+                              await getService.fbStore.collection(Collections.users).doc(getUser.id).update({
+                                Collections.collColumnpassword : changePassword
                               });
-
-                              getService.logout();
-                            } on FirebaseAuthException catch (e) {
-                              Navigator.of(context).pop();
-                              showAwsBar(context: context, contentType: ContentType.help, msg: "Gagal memperbaharui password. Hubungi admin!", title: "Opss...");
-                              if (kDebugMode) {
-                                print('Error changing password: ${e.message}');
-                              }
-                              return;
-                            }
+                            });
 
                             Navigator.of(context).pop();
-                            showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil memperbaharui password. Silahkan login kembali menggunakan password baru.", title: "Password");
-                          }else{
-                            showAwsBar(context: context, contentType: ContentType.help, msg: "Password baru dan konfirmasi password tidak sama!", title: "Opss...");
+                            getService.logout();
+                          } on FirebaseAuthException catch (e) {
+                            Navigator.of(context).pop();
+                            showAwsBar(context: context, contentType: ContentType.help, msg: "Gagal memperbaharui password. Hubungi admin!", title: "Opss...");
+                            if (kDebugMode) {
+                              print('Error changing password: ${e.message}');
+                            }
+                            return;
                           }
+
+                          Navigator.of(context).pop();
+                          showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil memperbaharui password. Silahkan login kembali menggunakan password baru.", title: "Password");
                         }else{
-                          showAwsBar(context: context, contentType: ContentType.help, msg: "Masukkan password baru!", title: "Opss...");
+                          Navigator.of(context).pop();
+                          showAwsBar(context: context, contentType: ContentType.help, msg: "Password baru dan konfirmasi password tidak sama!", title: "Opss...");
                         }
                       }else{
+                        Navigator.of(context).pop();
                         showAwsBar(context: context, contentType: ContentType.warning, msg: "Password lama tidak sesuai!", title: "Opss...");
                       }
                     }

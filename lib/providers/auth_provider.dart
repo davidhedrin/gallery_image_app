@@ -47,7 +47,7 @@ class AuthProvider extends ChangeNotifier{
               showAwsBar(context: context, contentType: ContentType.warning, msg: error.message.toString(), title: "");
             },
             codeSent: (verificationId, forceResendingToken) {
-              Get.toNamed(RouteHalper.getOtpPage(verId: verificationId));
+              Get.toNamed(RouteHalper.getOtpPage(verId: verificationId, phone: number));
               showAwsBar(context: context, contentType: ContentType.success, msg: "Kode OTP telah dikirim, silahkan masukkan", title: "Success OTP");
             },
             codeAutoRetrievalTimeout: (verificationId) {},

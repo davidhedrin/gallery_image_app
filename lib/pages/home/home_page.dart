@@ -16,6 +16,7 @@ import '../../utils/dimentions.dart';
 import '../../utils/utils.dart';
 import '../../widgets/big_text.dart';
 import '../../component/main_app_page.dart';
+import '../../widgets/data_not_found.dart';
 
 class HomePageMenu extends StatefulWidget {
   const HomePageMenu({Key? key}) : super(key: key);
@@ -151,7 +152,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                     return CircularProgressIndicator();
                   }
                   if (!snapshot.hasData) {
-                    return CircularProgressIndicator();
+                    return const DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
                   }else{
                     var document = snapshot.data;
                     return StreamBuilder(
@@ -161,7 +162,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                           return CircularProgressIndicator();
                         }
                         if (!snapshotGroup.hasData) {
-                          return CircularProgressIndicator();
+                          return const DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
                         }else{
                           return AppPageBody(groupImage: MainAppPage.groupNameGet.toLowerCase(),);
                         }

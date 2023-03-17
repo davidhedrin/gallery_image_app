@@ -95,7 +95,7 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
           setState(() {
             index = idx;
           });
-          if(idx == 1){
+          if(idx == 1 || idx == 3){
             _reloadPage(idx);
           }
         },

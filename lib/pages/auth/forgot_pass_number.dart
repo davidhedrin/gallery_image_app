@@ -168,7 +168,7 @@ class _ForgotPassNumberPageState extends State<ForgotPassNumberPage> {
                             },
                             codeSent: (verificationId, forceResendingToken) {
                               Navigator.of(context).pop();
-                              Get.toNamed(RouteHalper.getForgotPassOtpPage(verId: verificationId));
+                              Get.toNamed(RouteHalper.getForgotPassOtpPage(verId: verificationId, phone: phone));
                               showAwsBar(context: context, contentType: ContentType.success, msg: "Kode OTP telah dikirim, silahkan masukkan", title: "Success OTP");
                             },
                             codeAutoRetrievalTimeout: (verificationId) {},

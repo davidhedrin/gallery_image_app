@@ -1,4 +1,5 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_local_variable
+import 'dart:async';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -18,17 +19,23 @@ import '../../utils/utils.dart';
 
 class ForgotPassOtpPage extends StatefulWidget {
   final String verificationId;
-  const ForgotPassOtpPage({Key? key, required this.verificationId}) : super(key: key);
+  final String phone;
+  const ForgotPassOtpPage({Key? key, required this.verificationId, required this.phone}) : super(key: key);
 
   @override
   State<ForgotPassOtpPage> createState() => _ForgotPassOtpPageState();
 }
 
 class _ForgotPassOtpPageState extends State<ForgotPassOtpPage> {
+  late String verId;
   final AppServices getServ = AppServices();
   final FirebaseAuth authLog = FirebaseAuth.instance;
   Color accentPurpleColor = const Color(0xFF6A53A1);
   final TextEditingController otpNumber = TextEditingController();
+
+  final int timerOtp = 60;
+  int start = 60;
+  bool wait = true;
 
   TextStyle? createStyle() {
     TextStyle theme = TextStyle(
@@ -37,6 +44,34 @@ class _ForgotPassOtpPageState extends State<ForgotPassOtpPage> {
         color: Colors.white
     );
     return theme;
+  }
+
+  void startTimer() {
+    setState(() {
+      start = timerOtp;
+      wait = true;
+    });
+    const onsec = Duration(seconds: 1);
+    Timer timer = Timer.periodic(onsec, (timer) {
+      if (start == 0) {
+        setState(() {
+          timer.cancel();
+          wait = false;
+        });
+      } else {
+        setState(() {
+          start--;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    startTimer();
+    verId = widget.verificationId;
+    super.initState();
   }
 
   @override
@@ -131,7 +166,7 @@ class _ForgotPassOtpPageState extends State<ForgotPassOtpPage> {
                               if(otpNumber.text.length > 5){
                                 getServ.loading(context);
                                 try{
-                                  PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: widget.verificationId, smsCode: otpNumber.text);
+                                  PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verId, smsCode: otpNumber.text);
                                   UserCredential userPhone = await authLog.signInWithCredential(credential);
                                   String uidPhone = userPhone.user!.uid;
 
@@ -183,30 +218,63 @@ class _ForgotPassOtpPageState extends State<ForgotPassOtpPage> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 18,
+                SizedBox(
+                  height: Dimentions.height15,
                 ),
                 Text(
                   "Belum menerima kode otp?",
                   style: TextStyle(
                     fontSize: Dimentions.font13,
-                    fontWeight: FontWeight.bold,
                     color: Colors.white70,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(
-                  height: 18,
+                SizedBox(
+                  height: Dimentions.height2,
                 ),
-                Text(
-                  "Kirim ulang OTP",
-                  style: TextStyle(
-                    fontSize: Dimentions.font17,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.purple,
+                InkWell(
+                  onTap:  wait == false ? () async {
+                    getServ.loading(context);
+                    String phone = "+${widget.phone}";
+
+                    await authLog.verifyPhoneNumber(
+                      phoneNumber: phone,
+                      verificationCompleted: (PhoneAuthCredential phoneAuthCredential) async {
+                        await authLog.signInWithCredential(phoneAuthCredential);
+                      },
+                      verificationFailed: (error) {
+                        showAwsBar(context: context, contentType: ContentType.warning, msg: error.message.toString(), title: "");
+                      },
+                      codeSent: (verificationId, forceResendingToken) {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          verId = verificationId;
+                        });
+                        startTimer();
+                        showAwsBar(context: context, contentType: ContentType.success, msg: "Kode OTP telah dikirim, silahkan masukkan", title: "Success OTP");
+                      },
+                      codeAutoRetrievalTimeout: (verificationId) {},
+                    );
+                  } : null,
+                  child: Text(
+                    "Kirim ulang OTP",
+                    style: TextStyle(
+                      fontSize: Dimentions.font17,
+                      fontWeight: FontWeight.bold,
+                      color: wait == false ? Colors.purple : Colors.grey,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
+                if(wait == true)
+                  SizedBox(
+                    height: Dimentions.height4,
+                  ),
+                if(wait == true)
+                  Text(
+                    "00:${start < 10 ? "0" : ""}$start",
+                    style: TextStyle(fontSize: Dimentions.font16, color: Colors.pinkAccent),
+                  ),
               ],
             ),
           ),

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -56,6 +58,7 @@ class AppServices{
 
     setStatus(status: "2", userId: loginUser.id);
     _auth.signOut();
+    loginUser = UserModel();
     Get.toNamed(RouteHalper.getLoginPage());
   }
 
@@ -208,7 +211,6 @@ class AppServices{
       DocumentSnapshot<Map<String, dynamic>> getUM = await getUserMaster.get();
       DocumentSnapshot<Map<String, dynamic>> getUs = await getUser.get();
 
-      // Start delete posted image
       Map<String, dynamic> mapUserMaster = getUM.data() as Map<String, dynamic>;
       UserMasterModel fromMapUM = UserMasterModel.fromMap(mapUserMaster);
 
@@ -218,6 +220,7 @@ class AppServices{
         return getGroup;
       }).toList();
 
+      // Start delete posted image
       List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
         return fbStore.collection(model.nama_group.toLowerCase()).get();
       }).toList();
@@ -227,6 +230,13 @@ class AppServices{
       for (var snapshot in snapshots){
         var docsSnap = snapshot.docs.where((item) => item.get(Collections.collColumnuserById) == uid);
         if(docsSnap.isNotEmpty){
+          for(var elementLike in snapshot.docs){
+            Map<String, dynamic> getMapImage = elementLike.data() as Map<String, dynamic>;
+            PostingImageModel fromMapImage = PostingImageModel.fromMap(getMapImage);
+
+            await _fbStore.collection(fromMapImage.imageGroup.toLowerCase()).doc(fromMapImage.imageId).collection(Collections.likes).doc(uid).delete();
+          }
+
           for(var element in docsSnap){
             Map<String, dynamic> getMapImage = element.data() as Map<String, dynamic>;
             PostingImageModel fromMapImage = PostingImageModel.fromMap(getMapImage);
@@ -238,9 +248,29 @@ class AppServices{
       }
       // End delete posted image
 
+      // Start delete user chat
+      List<Future<QuerySnapshot>> futuresChat = toModelGroup.map((model) {
+        return fbStore.collection("chat-${model.nama_group.toLowerCase()}").get();
+      }).toList();
+
+      List<QuerySnapshot> snapshotsChat = await Future.wait(futuresChat);
+
+      for (var snapshot in snapshotsChat){
+        var docsChat = snapshot.docs.where((doc) => doc.get('userId').contains(uid));
+        if(docsChat.isNotEmpty){
+          for(var itemChat in docsChat){
+            var msgData = await itemChat.reference.collection(Collections.message).get();
+            for (var doc in msgData.docs) {
+              await doc.reference.delete();
+            }
+            await itemChat.reference.delete();
+          }
+        }
+      }
+      // End delete user chat
+
       await getUserMaster.delete();
       await getUser.delete();
-
       // Start delete user from firebase Autheticate
       // Map<String, dynamic> mapUser = getUs.data() as Map<String, dynamic>;
       // UserModel fromMapUs = UserModel.fromMap(mapUser);

@@ -29,7 +29,6 @@ class AccountPageMenu extends StatefulWidget {
 }
 
 class _AccountPageMenuState extends State<AccountPageMenu> {
-  final FirebaseFirestore _fbStore = FirebaseFirestore.instance;
   final FirebaseAuth userAuth = FirebaseAuth.instance;
   final AppServices getService = AppServices();
   final String _userId = MainAppPage.setUserId;

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations
+
 import 'package:delivery_food_app/component/add_new_posting.dart';
 import 'package:delivery_food_app/pages/auth/forgot_change_pass.dart';
 import 'package:delivery_food_app/pages/auth/forgot_pass_number.dart';
@@ -10,6 +12,7 @@ import 'package:delivery_food_app/pages/auth/otp_page.dart';
 import 'package:delivery_food_app/pages/auth/register_page.dart';
 import 'package:delivery_food_app/pages/auth/register_with_phone.dart';
 import 'package:delivery_food_app/pages/message/chat_page.dart';
+import 'package:delivery_food_app/pages/setting/menus/personal_info_page.dart';
 import 'package:delivery_food_app/pages/setting/menus/user_page.dart';
 import 'package:delivery_food_app/splashScreen/on_board_screen.dart';
 import 'package:delivery_food_app/splashScreen/splash_screen.dart';
@@ -43,16 +46,17 @@ class RouteHalper{
 
   static const String userSettingPage = "/user-setting-page";
   static const String userChatPage = "/user-chat-page";
+  static const String userPersonalInfoPage = "/user-personal-info-page";
 
   static String getInitial({String? uid}) => '$initial?uid=$uid';
 
   static String getLoginPage() => '$loginPage';
   static String getForgotPassNumberPage() => '$forgotPassNumberPage';
-  static String getForgotPassOtpPage({String? verId}) => '$forgotPassOtpPage?verId=$verId';
+  static String getForgotPassOtpPage({String? verId, String? phone}) => '$forgotPassOtpPage?verId=$verId&phone=$phone';
   static String getForgotChangePassPage({String? userId}) => '$forgotChangePassPage?userId=$userId';
   static String getRegisterPage() => '$registerPage';
   static String getRegisterWithPhonePage() => '$registerWithPhonePage';
-  static String getOtpPage({String? verId}) => '$otpPage?verId=$verId';
+  static String getOtpPage({String? verId, String? phone}) => '$otpPage?verId=$verId&phone=$phone';
   static String getEditAccountPage({String? uid}) => '$editAccountPage?uid=$uid';
   static String getAddNewPostingPage({String? uid, String? groupId}) => '$addNewPostingPage?uid=$uid&groupId=$groupId';
   static String getBookmarkPage() => '$bookmarkPage';
@@ -64,6 +68,7 @@ class RouteHalper{
 
   static String getUserSettingPage() => '$userSettingPage';
   static String getUserChatPage({String? userId}) => '$userChatPage?userId=$userId';
+  static String getPersonalInfoPage({String? userId}) => '$userPersonalInfoPage?userId=$userId';
 
   static List<GetPage> routes = [
     GetPage(name: initial, transition: Transition.native, page: (){
@@ -78,7 +83,8 @@ class RouteHalper{
     GetPage(name: forgotPassNumberPage, page: () => ForgotPassNumberPage()),
     GetPage(name: forgotPassOtpPage, page: () {
       String? verId = Get.parameters['verId'].toString();
-      return ForgotPassOtpPage(verificationId: verId,);
+      String? phone = Get.parameters['phone'].toString();
+      return ForgotPassOtpPage(verificationId: verId, phone: phone,);
     }),
     GetPage(name: forgotChangePassPage, page: () {
       String? userId = Get.parameters['userId'].toString();
@@ -88,8 +94,9 @@ class RouteHalper{
     GetPage(name: registerWithPhonePage, page: () => RegisterWithPhoneNumber()),
     GetPage(name: otpPage, page: () {
       String? verId = Get.parameters['verId'].toString();
+      String? phone = Get.parameters['phone'].toString();
       if(verId.isNotEmpty && verId != null){
-        return OtpPage(verificationId: verId,);
+        return OtpPage(verificationId: verId, phone: phone,);
       }else{
         return LoginPage();
       }
@@ -118,6 +125,10 @@ class RouteHalper{
     GetPage(name: userChatPage, page: (){
       String userId = Get.parameters["userId"].toString();
       return ChatMessagePage(userId: userId);
+    }),
+    GetPage(name: userPersonalInfoPage, page: (){
+      String userId = Get.parameters["userId"].toString();
+      return PersonalInfoPage();
     }),
   ];
 }
