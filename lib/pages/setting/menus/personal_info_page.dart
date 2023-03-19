@@ -1,17 +1,45 @@
+// ignore_for_file: depend_on_referenced_packages
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../generated/assets.dart';
+import '../../../halper/function_halpers.dart';
+import '../../../halper/route_halper.dart';
+import '../../../models/posting_image.dart';
+import '../../../models/user_group.dart';
+import '../../../models/user_model.dart';
+import '../../../providers/app_services.dart';
+import '../../../utils/collections.dart';
+import '../../../widgets/data_not_found.dart';
+import '../../../widgets/loading_progres.dart';
+
 class PersonalInfoPage extends StatefulWidget {
-  const PersonalInfoPage({Key? key}) : super(key: key);
+  final String uid;
+  const PersonalInfoPage({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<PersonalInfoPage> createState() => _PersonalInfoPageState();
 }
 
 class _PersonalInfoPageState extends State<PersonalInfoPage> {
+  final AppServices getService = AppServices();
+  final FunHelp getHelp = FunHelp();
+  late String userId;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    userId = widget.uid;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,108 +54,255 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(left: Dimentions.height15, right: Dimentions.height15, top: Dimentions.height6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.all(Dimentions.height10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(Dimentions.radius12),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+      body: Padding(
+        padding: EdgeInsets.only(left: Dimentions.height10, right: Dimentions.height10, top: Dimentions.height6),
+        child: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
+          stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: userId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if(!snapshot.hasData){
+              return const Center(child: DataNotFoundWidget(msgTop: "Data tidak ditemukan!",));
+            }else{
+              var data = snapshot.data;
+              Map<String, dynamic> userMap = data!.data() as Map<String, dynamic>;
+              UserModel getUser = UserModel.fromMap(userMap);
+              String userType = getUser.user_type.toLowerCase();
+              int setType = getHelp.checkStatusUser(userType);
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(Dimentions.height10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(Dimentions.radius12),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Flexible(child: BigText(text: "David Simbolon", size: Dimentions.font22,)),
-                              SizedBox(width: Dimentions.width10,),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: Dimentions.height6, vertical: Dimentions.height2),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(Dimentions.radius6),
-                                ),
-                                child: Text(
-                                  "M. Admin",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: Dimentions.font12,
-                                    fontWeight: FontWeight.bold,
+                              Row(
+                                children: [
+                                  Flexible(child: BigText(text: getUser.nama_lengkap, size: Dimentions.font22,)),
+                                  SizedBox(width: Dimentions.width10,),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: Dimentions.height6, vertical: Dimentions.height2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(Dimentions.radius6),
+                                    ),
+                                    child: Text(
+                                      setType == 1 ? "M. Admin" : setType == 2 ? "Admin" : "User",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: Dimentions.font12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
+                              ),
+                              SizedBox(height: Dimentions.height10,),
+                              BigText(text: getUser.phone, size: Dimentions.font16,),
+                              SizedBox(height: Dimentions.height2,),
+                              BigText(text: getUser.email, size: Dimentions.font16,),
+                              SizedBox(height: Dimentions.height15,),
+                              Row(
+                                children: [
+                                  Flexible(child: BigText(text: "${getUser.id.substring(0, 18)}-****-***....", size: Dimentions.font14, fontWeight: FontWeight.bold,)),
+                                  SizedBox(width: Dimentions.width10,),
+                                  Icon(Icons.copy, size: Dimentions.iconSize20,),
+                                  SizedBox(width: Dimentions.width5,),
+                                  Icon(Icons.remove_red_eye, size: Dimentions.iconSize20,),
+                                ],
                               ),
                             ],
                           ),
-                          SizedBox(height: Dimentions.height10,),
-                          BigText(text: "+6282110863133", size: Dimentions.font16,),
-                          SizedBox(height: Dimentions.height2,),
-                          BigText(text: "davidhedrin123@gmail.com", size: Dimentions.font16,),
-                          SizedBox(height: Dimentions.height15,),
-                          Row(
-                            children: [
-                              Flexible(child: BigText(text: "user-8494c080-ab83-****-***....", size: Dimentions.font14, fontWeight: FontWeight.bold,)),
-                              SizedBox(width: Dimentions.width10,),
-                              Icon(Icons.copy, size: Dimentions.iconSize20,),
-                              SizedBox(width: Dimentions.width5,),
-                              Icon(Icons.remove_red_eye, size: Dimentions.iconSize20,),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: Dimentions.heightSize90,
-                      width: Dimentions.heightSize90,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Dimentions.radius20),
-                        color: const Color(0xFF9294cc),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/flutter-gallery-app-45b50.appspot.com/o/imageProfile%2Fuser-8494c080-ab83-11ed-bc26-057ccc836471?alt=media&token=51bfd54b-0df6-44fa-8e1d-d453065b70b1"),
                         ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+                        Container(
+                          height: Dimentions.heightSize90,
+                          width: Dimentions.heightSize90,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(Dimentions.radius20),
+                            color: const Color(0xFF9294cc),
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: getUser.img_profil_url,
+                            placeholder: (context, url) => LoadingProgress(size: Dimentions.height10,),
+                            errorWidget: (context, url, error){
+                              return Image.asset(
+                                Assets.imageBackgroundProfil,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                            imageBuilder: (context, imageProvider) => Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(Dimentions.radius20),
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
 
-              SizedBox(height: Dimentions.height12,),
-              const Divider(height: 1, color: Colors.black87),
-              SizedBox(height: Dimentions.height12,),
+                  SizedBox(height: Dimentions.height12,),
+                  const Divider(height: 1, color: Colors.black87),
 
-              setInfos(
-                desc: "Tanggal terdaftar: ",
-                text: "${DateTime.now().day} ${DateFormat('MMMM').format(DateTime.now())} ${DateTime.now().year}",
-                icon: Icons.calendar_month_outlined
-              ),
-            ],
-          ),
+                  setInfos(
+                    desc: "Tanggal terdaftar   : ",
+                    text: "${getUser.create_date!.day} ${DateFormat('MMMM').format(getUser.create_date!)} ${getUser.create_date!.year}",
+                    icon: Icons.calendar_month_outlined
+                  ),
+                  StreamBuilder(
+                    stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: getUser.phone),
+                    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup) {
+                      if (snapshotGroup.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (!snapshotGroup.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }else{
+                        List<Map<String, dynamic>> groupArray = List.from(snapshotGroup.data!.get("group"));
+                        List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
+                          UserGroupModel getGroup = UserGroupModel.fromMap(res);
+                          return getGroup;
+                        }).toList();
+
+                        return setInfos(
+                            desc: "Group's terdaftar   : ",
+                            icon: Icons.group,
+                            column: toModelGroup.map((e) => e.nama_group).toList(),
+                        );
+                      }
+                    }
+                  ),
+
+                  SizedBox(height: Dimentions.height15,),
+                  SizedBox(
+                    height: Dimentions.heightSize420,
+                    child: FutureBuilder<List<PostingImageModel>>(
+                      future: getService.getAllDocImagePosting(context: context, phone: getUser.phone, userId: userId),
+                      builder: (BuildContext context, AsyncSnapshot<List<PostingImageModel>> snapshotImage) {
+                        if (snapshotImage.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        if (snapshotImage.hasError) {
+                          return Center(child: DataNotFoundWidget(msgTop: 'Error: ${snapshotImage.error}'));
+                        }
+                        if (!snapshotImage.hasData) {
+                          return const Center(child: DataNotFoundWidget(msgTop: 'Data tidak ditemukan!'));
+                        } else {
+                          List<PostingImageModel> documents = snapshotImage.data!;
+                          if(documents.isEmpty){
+                            return const Center(
+                                child: DataNotFoundWidget(
+                                  msgTop: 'Belum pernah upload nichh...',
+                                  msgButton: 'Silahkan Upload gambar anda sekarang!',
+                                )
+                            );
+                          }else{
+                            return GridView.builder(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: Dimentions.height6,
+                                mainAxisSpacing: Dimentions.height6,
+                              ),
+                              itemCount: documents.length,
+                              itemBuilder: (context, index){
+                                PostingImageModel image = documents[index];
+                                return GestureDetector(
+                                  onTap: (){
+                                    Get.toNamed(RouteHalper.getDetailImage(image.imageId, image.imageGroup));
+                                  },
+                                  child: CachedNetworkImage(
+                                    imageUrl: image.imageUrl,
+                                    placeholder: (context, url) => LoadingProgress(size: Dimentions.height25,),
+                                    errorWidget: (context, url, error){
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
+                                          image: const DecorationImage(
+                                            image: AssetImage(Assets.imageBackgroundProfil),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    imageBuilder: (context, imageProvider) => Container(
+                                      decoration: BoxDecoration(
+                                        color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+          }
         ),
       ),
     );
   }
 
-  Widget setInfos({required String desc, required String text, IconData? icon}){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            SmallText(text: desc, size: Dimentions.font16,),
-            BigText(text: text, size: Dimentions.font16,),
-          ],
-        ),
-        icon != null ? Icon(icon) : const SizedBox(),
-      ],
+  Widget setInfos({required String desc, String? text, IconData? icon, List<String>? column}){
+    return Container(
+      margin: EdgeInsets.only(top: Dimentions.height15),
+      padding: EdgeInsets.all(Dimentions.height10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(Dimentions.radius12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SmallText(text: desc, size: Dimentions.font14,),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if(text != null && text.isNotEmpty)
+                    BigText(text: text, size: Dimentions.font14,),
+                  if(column != null && column.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: column.map((e) =>
+                          BigText(text: "- $e", size: Dimentions.font14,),
+                      ).toList(),
+                    ),
+                ],
+              ),
+            ],
+          ),
+          icon != null ? Icon(icon) : const SizedBox(),
+        ],
+      ),
     );
   }
 }

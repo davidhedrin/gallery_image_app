@@ -11,7 +11,6 @@ import 'package:delivery_food_app/pages/setting/menus/group_panel_manage.dart';
 import 'package:delivery_food_app/pages/setting/menus/password_page.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -130,7 +129,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                   boxColor: Colors.green,
                                   text: "Personal",
                                   action: (){
-                                    Get.toNamed(RouteHalper.getPersonalInfoPage());
+                                    Get.toNamed(RouteHalper.getPersonalInfoPage(userId: _userId));
                                   }
                               ),
                               iconTitle(

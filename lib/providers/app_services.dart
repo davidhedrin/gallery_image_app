@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, depend_on_referenced_packages
 
 import 'dart:convert';
 import 'dart:io';
@@ -12,7 +12,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -88,7 +87,7 @@ class AppServices{
           "status": "done",
           "title": from,
           "body": msg,
-          "some_data" : "$roomId",
+          "some_data" : roomId,
         },
       };
       Map<String, String> header = {
@@ -103,8 +102,10 @@ class AppServices{
           body: jsonEncode(body)
       );
       
-      print('Response status: ${res.statusCode}');
-      print('Response body: ${res.body}');
+      if (kDebugMode) {
+        print('Response status: ${res.statusCode}');
+        print('Response body: ${res.body}');
+      }
     }catch(e){
       if (kDebugMode) {
         print(e.toString());
@@ -137,7 +138,9 @@ class AppServices{
       result = "200";
     } on FirebaseAuthException catch(e) {
       result = "400";
-      print("David:"+e.message.toString());
+      if (kDebugMode) {
+        print("loginWithEmail: ${e.message}");
+      }
     }
     return result;
   }
@@ -155,7 +158,9 @@ class AppServices{
       result["uid"] = uid;
     } on FirebaseAuthException catch(e) {
       result["status"] = "400";
-      print("David:"+e.message.toString());
+      if (kDebugMode) {
+        print("loginWithEmailRetMap: ${e.message}");
+      }
     }
     return result;
   }
@@ -209,7 +214,7 @@ class AppServices{
       DocumentReference<Map<String, dynamic>> getUserMaster = fbStore.collection(Collections.usermaster).doc(phone);
 
       DocumentSnapshot<Map<String, dynamic>> getUM = await getUserMaster.get();
-      DocumentSnapshot<Map<String, dynamic>> getUs = await getUser.get();
+      // DocumentSnapshot<Map<String, dynamic>> getUs = await getUser.get();
 
       Map<String, dynamic> mapUserMaster = getUM.data() as Map<String, dynamic>;
       UserMasterModel fromMapUM = UserMasterModel.fromMap(mapUserMaster);
@@ -322,6 +327,9 @@ class AppServices{
       result = snapshot;
     } on FirebaseException catch (e){
       showSnackBar(context, "ErrorGetDataByDocId | Terjadi kesalahan, Ulangi beberapa saat lagi!");
+      if (kDebugMode) {
+        print("getDocDataByDocId: $e");
+      }
     }
     return result;
   }
@@ -335,7 +343,9 @@ class AppServices{
       DocumentSnapshot snapshot = await _fbStore.collection(collection).doc(docId).get();
       result = snapshot;
     } on FirebaseException catch (e){
-      print(e);
+      if (kDebugMode) {
+        print("getDocDataByDocIdNoCon: $e");
+      }
     }
     return result;
   }
@@ -353,7 +363,7 @@ class AppServices{
       });
     }catch(e){
       if (kDebugMode) {
-        print(e);
+        print("getDocumentByColumn: $e");
       }
     }
 
@@ -380,6 +390,9 @@ class AppServices{
       result = downloadUrl;
     }on FirebaseException catch(e){
       showSnackBar(context, "uploadImageToStorage | Terjadi kesalahan, Ulangi beberapa saat lagi!");
+      if (kDebugMode) {
+        print("uploadImageToStorage: $e");
+      }
     }
 
     return result;
@@ -405,6 +418,9 @@ class AppServices{
       );
     }catch(e){
       finish == false;
+      if (kDebugMode) {
+        print("downloadFile: $e");
+      }
     }
 
     if(finish == false){
@@ -420,6 +436,9 @@ class AppServices{
       await _fbStorage.ref().child(imagePath).delete();
     }on FirebaseException catch(e){
       showSnackBar(context, "deleteFileStorage | Terjadi kesalahan, Ulangi beberapa saat lagi!");
+      if (kDebugMode) {
+        print("deleteFileStorage: $e");
+      }
     }
   }
 
@@ -503,7 +522,9 @@ class AppServices{
         result = true;
       }
     } on FirebaseException catch (e){
-      print(e.message);
+      if (kDebugMode) {
+        print("checkExistDocById: $e");
+      }
     }
 
     return result;
@@ -523,7 +544,9 @@ class AppServices{
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
       setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg);
     }catch(e){
-      print(e.toString());
+      if (kDebugMode) {
+        print("sendMessage: $e");
+      }
     }
   }
   void saveMessage({
@@ -538,7 +561,9 @@ class AppServices{
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
       setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg);
     }catch(e){
-      print(e.toString());
+      if (kDebugMode) {
+        print("saveMessage: $e");
+      }
     }
   }
 
@@ -550,5 +575,30 @@ class AppServices{
     group = UserGroupModel.fromMap(listMap);
 
     return group;
+  }
+
+  Future<List<PostingImageModel>> getAllDocImagePosting({required BuildContext context, required String phone, required String userId}) async {
+    var getUserMaster = await getDocDataByDocId(context: context, collection: Collections.usermaster, docId: phone);
+    List<Map<String, dynamic>> groupArray = List.from(getUserMaster!.get("group"));
+    List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
+      UserGroupModel getGroup = UserGroupModel.fromMap(res);
+      return getGroup;
+    }).toList();
+
+    List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
+      return FirebaseFirestore.instance.collection(model.nama_group.toLowerCase()).get();
+    }).toList();
+
+    List<QuerySnapshot> snapshots = await Future.wait(futures);
+
+    List<PostingImageModel> documents = snapshots.expand((snapshot) {
+      return snapshot.docs.map((doc) {
+        Map<String, dynamic> getMap = doc.data() as Map<String, dynamic>;
+        PostingImageModel fromMap = PostingImageModel.fromMap(getMap);
+        return fromMap;
+      });
+    }).toList();
+
+    return documents.where((item) => item.userById == userId).toList();
   }
 }

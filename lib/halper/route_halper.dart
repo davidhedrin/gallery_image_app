@@ -128,7 +128,7 @@ class RouteHalper{
     }),
     GetPage(name: userPersonalInfoPage, page: (){
       String userId = Get.parameters["userId"].toString();
-      return PersonalInfoPage();
+      return PersonalInfoPage(uid: userId,);
     }),
   ];
 }

@@ -63,31 +63,6 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
               Map<String, dynamic> getMapUser = data!.data() as Map<String, dynamic>;
               UserModel getUser = UserModel.fromMap(getMapUser);
 
-              Future<List<PostingImageModel>> getAllDocuments() async {
-                var getUserMaster = await getService.getDocDataByDocId(context: context, collection: Collections.usermaster, docId: getUser.phone);
-                List<Map<String, dynamic>> groupArray = List.from(getUserMaster!.get("group"));
-                List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
-                  UserGroupModel getGroup = UserGroupModel.fromMap(res);
-                  return getGroup;
-                }).toList();
-
-                List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
-                  return FirebaseFirestore.instance.collection(model.nama_group.toLowerCase()).get();
-                }).toList();
-
-                List<QuerySnapshot> snapshots = await Future.wait(futures);
-
-                List<PostingImageModel> documents = snapshots.expand((snapshot) {
-                  return snapshot.docs.map((doc) {
-                    Map<String, dynamic> getMap = doc.data() as Map<String, dynamic>;
-                    PostingImageModel fromMap = PostingImageModel.fromMap(getMap);
-                    return fromMap;
-                  });
-                }).toList();
-
-                return documents.where((item) => item.userById == _userId).toList();
-              }
-
               return Column(
                 children: [
                   Stack(
@@ -169,7 +144,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                     child: Padding(
                       padding: EdgeInsets.only(left: Dimentions.width8, right: Dimentions.width8),
                       child: FutureBuilder<List<PostingImageModel>>(
-                        future: getAllDocuments(),
+                        future: getService.getAllDocImagePosting(context: context, phone: getUser.phone, userId: _userId),
                         builder: (BuildContext context, AsyncSnapshot<List<PostingImageModel>> snapshotImage) {
                           if (snapshotImage.connectionState == ConnectionState.waiting) {
                             return const Center(child: CircularProgressIndicator());
