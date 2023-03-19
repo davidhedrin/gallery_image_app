@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/generated/assets.dart';
@@ -81,10 +83,10 @@ class _UserSettingPageState extends State<UserSettingPage> {
                           itemCount: getListUser.length,
                           itemBuilder: (context, index){
                             UserModel getUser = getListUser[index];
-                            String userType = getUser.user_type.toLowerCase();
+                            String userType = getUser.userType.toLowerCase();
                             int setType = getHelp.checkStatusUser(userType);
 
-                            var month = DateFormat('MMMM').format(getUser.create_date!);
+                            var month = DateFormat('MMMM').format(getUser.createDate!);
 
                             return GestureDetector(
                               onTap: (){
@@ -103,19 +105,19 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                           decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(Dimentions.radius30),
                                               color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
-                                              image: getUser.img_profil_url.isNotEmpty ? DecorationImage(
+                                              image: getUser.imgProfilUrl.isNotEmpty ? DecorationImage(
                                                 fit: BoxFit.cover,
-                                                image: CachedNetworkImageProvider(getUser.img_profil_url,),
+                                                image: CachedNetworkImageProvider(getUser.imgProfilUrl,),
                                               ) : const DecorationImage(
                                                 fit: BoxFit.cover,
                                                 image: AssetImage(Assets.imagePrifil)
                                               ),
                                           ),
                                         ),
-                                        getUser.img_profil_url.isNotEmpty ? Positioned.fill(
+                                        getUser.imgProfilUrl.isNotEmpty ? Positioned.fill(
                                           child: Center(
                                             child: FutureBuilder(
-                                                future: precacheImage(CachedNetworkImageProvider(getUser.img_profil_url,), context),
+                                                future: precacheImage(CachedNetworkImageProvider(getUser.imgProfilUrl,), context),
                                                 builder: (BuildContext context, AsyncSnapshot snapshot){
                                                   if (snapshot.connectionState == ConnectionState.done) {
                                                     return const SizedBox.shrink();
@@ -149,7 +151,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Flexible(child: BigText(text: getUser.nama_lengkap)),
+                                                  Flexible(child: BigText(text: getUser.namaLengkap)),
                                                   Container(
                                                     padding: EdgeInsets.symmetric(horizontal: Dimentions.width5, vertical: Dimentions.height2),
                                                     decoration: BoxDecoration(
@@ -174,12 +176,12 @@ class _UserSettingPageState extends State<UserSettingPage> {
                                                 children: [
                                                   IconAndTextWidget(
                                                       icon: Icons.account_circle,
-                                                      text: getUser.flag_active == "N" ? "Blokir" : "Aktif",
+                                                      text: getUser.flagActive == "N" ? "Blokir" : "Aktif",
                                                       iconColor: AppColors.iconColor1
                                                   ),
                                                   IconAndTextWidget(
                                                       icon: Icons.calendar_month_outlined,
-                                                      text: "${getUser.create_date!.day} $month ${getUser.create_date!.year}",
+                                                      text: "${getUser.createDate!.day} $month ${getUser.createDate!.year}",
                                                       iconColor: AppColors.iconColor2
                                                   ),
                                                 ],

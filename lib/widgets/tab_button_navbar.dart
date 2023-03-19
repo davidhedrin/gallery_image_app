@@ -15,16 +15,16 @@ class _TabBarNavigationMaterialState extends State<TabBarNavigationMaterial> {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      shape: CircularNotchedRectangle(),
+      shape: const CircularNotchedRectangle(),
       notchMargin: Dimentions.notcMarginNavbar8,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          builTabItem(index: 0, icon: Icon(Icons.home_rounded)),
-          builTabItem(index: 1, icon: Icon(Icons.message_outlined)),
+          builTabItem(index: 0, icon: const Icon(Icons.home_rounded)),
+          builTabItem(index: 1, icon: const Icon(Icons.message_outlined)),
           SizedBox(width: Dimentions.width30,),
-          builTabItem(index: 2, icon: Icon(Icons.settings)),
-          builTabItem(index: 3, icon: Icon(Icons.account_circle_outlined)),
+          builTabItem(index: 2, icon: const Icon(Icons.settings)),
+          builTabItem(index: 3, icon: const Icon(Icons.account_circle_outlined)),
         ],
       ),
     );

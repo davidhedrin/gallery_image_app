@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages, use_build_context_synchronously
+
 import 'dart:math';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -55,7 +57,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
-          title: Text('Group "${getGroup.nama_group}"', style: const TextStyle(color: Colors.black87),),
+          title: Text('Group "${getGroup.namaGroup}"', style: const TextStyle(color: Colors.black87),),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black87,),
             onPressed: () => Navigator.of(context).pop(),
@@ -102,8 +104,8 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                           return images;
                         }).toList();
 
-                        List<UserMasterModel> getUser = getListGroup.expand((parent) => parent.group!).where((child) => child.group_id == getGroup.group_id).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
-                        getUser.sort((a, b) => a.create_date!.compareTo(b.create_date!));
+                        List<UserMasterModel> getUser = getListGroup.expand((parent) => parent.group!).where((child) => child.groupId == getGroup.groupId).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
+                        getUser.sort((a, b) => a.createDate!.compareTo(b.createDate!));
 
                         if(getUser.isEmpty){
                           return Padding(
@@ -118,7 +120,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                               itemCount: getUser.length,
                               itemBuilder: (context, index){
                                 UserMasterModel getDataUser = getUser[index];
-                                GroupModel getCurrentGroup = getDataUser.group!.firstWhere((group) => group.group_id == getGroup.group_id);
+                                GroupModel getCurrentGroup = getDataUser.group!.firstWhere((group) => group.groupId == getGroup.groupId);
                                 return StreamBuilder<QuerySnapshot>(
                                     stream: getService.streamGetDocByColumn(collection: Collections.users, collName: "phone", value: getDataUser.phone),
                                     builder: (context, snapshotUser) {
@@ -133,14 +135,14 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                                           var data = getDocs.first;
                                           Map<String, dynamic> getMap = data.data() as Map<String, dynamic>;
                                           UserModel userModel = UserModel.fromMap(getMap);
-                                          userModel.user_type = getCurrentGroup.status;
+                                          userModel.userType = getCurrentGroup.status;
 
                                           return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
                                         }else{
                                           UserModel userModel = UserModel(
-                                            nama_lengkap: getDataUser.nama,
+                                            namaLengkap: getDataUser.nama,
                                             phone: getDataUser.phone,
-                                            user_type: getCurrentGroup.status
+                                            userType: getCurrentGroup.status
                                           );
                                           return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
                                         }
@@ -163,11 +165,11 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
 
   Widget generateUserCard({required int index, UserModel? usrModel, UserGroupModel? groupModel}){
     UserModel userModel = usrModel!;
-    String? userType = userModel.user_type.isNotEmpty ? userModel.user_type.toLowerCase() : "";
+    String? userType = userModel.userType.isNotEmpty ? userModel.userType.toLowerCase() : "";
     int? setType = userType.isNotEmpty ? getHelp.checkStatusUser(userType) : 0;
-    String? month = userModel.create_date != null ? DateFormat('MMMM').format(userModel.create_date!) : "";
+    String? month = userModel.createDate != null ? DateFormat('MMMM').format(userModel.createDate!) : "";
 
-    int currentUser = getHelp.checkStatusUser(lateCurrentUser.user_type);
+    int currentUser = getHelp.checkStatusUser(lateCurrentUser.userType);
 
     return GestureDetector(
       onTap: (){
@@ -186,19 +188,19 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(Dimentions.radius30),
                       color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
-                      image: userModel.img_profil_url.isNotEmpty ? DecorationImage(
+                      image: userModel.imgProfilUrl.isNotEmpty ? DecorationImage(
                         fit: BoxFit.cover,
-                        image: NetworkImage(userModel.img_profil_url,),
+                        image: NetworkImage(userModel.imgProfilUrl,),
                       ) : const DecorationImage(
                         fit: BoxFit.cover,
                         image: AssetImage(Assets.imagePrifil),
                       ),
                   ),
                 ),
-                userModel.img_profil_url.isNotEmpty ? Positioned.fill(
+                userModel.imgProfilUrl.isNotEmpty ? Positioned.fill(
                   child: Center(
                     child: FutureBuilder(
-                        future: precacheImage(NetworkImage(userModel.img_profil_url,), context),
+                        future: precacheImage(NetworkImage(userModel.imgProfilUrl,), context),
                         builder: (BuildContext context, AsyncSnapshot snapshot){
                           if (snapshot.connectionState == ConnectionState.done) {
                             return const SizedBox.shrink();
@@ -232,7 +234,7 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Flexible(child: BigText(text: userModel.nama_lengkap.isNotEmpty ? userModel.nama_lengkap : "")),
+                          Flexible(child: BigText(text: userModel.namaLengkap.isNotEmpty ? userModel.namaLengkap : "")),
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: Dimentions.width5, vertical: Dimentions.height2),
                             decoration: BoxDecoration(
@@ -257,12 +259,12 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                         children: [
                           IconAndTextWidget(
                               icon: Icons.account_circle,
-                              text: userModel.flag_active.isNotEmpty ? userModel.flag_active == "N" ? "Blokir" : "Aktif" : "(not-regist)",
+                              text: userModel.flagActive.isNotEmpty ? userModel.flagActive == "N" ? "Blokir" : "Aktif" : "(not-regist)",
                               iconColor: AppColors.iconColor1
                           ),
                           IconAndTextWidget(
                               icon: Icons.calendar_month_outlined,
-                              text: userModel.create_date != null ? "${userModel.create_date!.day} $month ${userModel.create_date!.year}" : "",
+                              text: userModel.createDate != null ? "${userModel.createDate!.day} $month ${userModel.createDate!.year}" : "",
                               iconColor: AppColors.iconColor2
                           ),
                         ],
@@ -345,7 +347,7 @@ class _AddNewUserState extends State<AddNewUser> {
     UserGroupModel getGroup = widget.groupModel;
     UserModel curUser = widget.currentUser;
 
-    int setType = getHalp.checkStatusUser(curUser.user_type);
+    int setType = getHalp.checkStatusUser(curUser.userType);
 
     return AlertDialog(
       title: const Text("Tambah Group Baru", textAlign: TextAlign.center,),
@@ -426,7 +428,7 @@ class _AddNewUserState extends State<AddNewUser> {
                     },
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
-                        RegExp(r'[0-9]'),
+                        RegExp(r'\d'),
                       ),
                       FilteringTextInputFormatter.deny(
                         RegExp(r'^0+'),
@@ -492,13 +494,13 @@ class _AddNewUserState extends State<AddNewUser> {
                           String number = "+${selectCountry.phoneCode}${noPhoneController.text}";
 
                           List<Map<String, dynamic>> listGroupUser = [
-                            GroupModel(status: _selectedStatus, nama_group: getGroup.nama_group, group_id: getGroup.group_id).toMapUpload(),
+                            GroupModel(status: _selectedStatus, namaGroup: getGroup.namaGroup, groupId: getGroup.groupId).toMapUpload(),
                           ];
 
                           UserMasterModel setUser = UserMasterModel(
                             phone: number,
                             nama: namaUserController.text,
-                            create_date: DateTime.now(),
+                            createDate: DateTime.now(),
                             groupMap: listGroupUser,
                           );
 
@@ -602,7 +604,7 @@ class _AddNewUserState extends State<AddNewUser> {
                                   items: getListUserControl.map((e) {
                                     return DropdownMenuItem(
                                       value: e.id,
-                                      child: Text(e.id.isNotEmpty ? e.nama_lengkap : "Pilih User", style: TextStyle(fontSize: Dimentions.font20),),
+                                      child: Text(e.id.isNotEmpty ? e.namaLengkap : "Pilih User", style: TextStyle(fontSize: Dimentions.font20),),
                                     );
                                   }).toList(),
                                   onChanged: (value){
@@ -634,13 +636,13 @@ class _AddNewUserState extends State<AddNewUser> {
 
                           if(checkUserRegis == false){
                             List<Map<String, dynamic>> listGroupUser = [
-                              GroupModel(status: _selectedStatus, nama_group: getGroup.nama_group, group_id: getGroup.group_id).toMapUpload(),
+                              GroupModel(status: _selectedStatus, namaGroup: getGroup.namaGroup, groupId: getGroup.groupId).toMapUpload(),
                             ];
 
                             UserMasterModel setUser = UserMasterModel(
                               phone: number,
-                              nama: getSelectedUser.nama_lengkap,
-                              create_date: DateTime.now(),
+                              nama: getSelectedUser.namaLengkap,
+                              createDate: DateTime.now(),
                               groupMap: listGroupUser,
                             );
 
@@ -651,7 +653,7 @@ class _AddNewUserState extends State<AddNewUser> {
                             UserMasterModel setMasterUser = UserMasterModel.fromMap(getMap);
 
                             List<Map<String, dynamic>> listGroupUser = List<Map<String, dynamic>>.from(setMasterUser.groupMap!);
-                            Map<String, dynamic> setNewGroup = GroupModel(status: _selectedStatus, nama_group: getGroup.nama_group, group_id: getGroup.group_id).toMapUpload();
+                            Map<String, dynamic> setNewGroup = GroupModel(status: _selectedStatus, namaGroup: getGroup.namaGroup, groupId: getGroup.groupId).toMapUpload();
                             listGroupUser.add(setNewGroup);
 
                             final documentRef = getService.fbStore.collection(Collections.usermaster).doc(number);
@@ -674,7 +676,7 @@ class _AddNewUserState extends State<AddNewUser> {
           ],
         ),
       ) :
-      Container(
+      SizedBox(
         width: Dimentions.heightSize300,
         child: Form(
           key: _formKey,
@@ -741,7 +743,7 @@ class _AddNewUserState extends State<AddNewUser> {
                 },
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(
-                    RegExp(r'[0-9]'),
+                    RegExp(r'\d'),
                   ),
                   FilteringTextInputFormatter.deny(
                     RegExp(r'^0+'),
@@ -807,13 +809,13 @@ class _AddNewUserState extends State<AddNewUser> {
                       String number = "+${selectCountry.phoneCode}${noPhoneController.text}";
 
                       List<Map<String, dynamic>> listGroupUser = [
-                        GroupModel(status: _selectedStatus, nama_group: getGroup.nama_group, group_id: getGroup.group_id).toMapUpload(),
+                        GroupModel(status: _selectedStatus, namaGroup: getGroup.namaGroup, groupId: getGroup.groupId).toMapUpload(),
                       ];
 
                       UserMasterModel setUser = UserMasterModel(
                         phone: number,
                         nama: namaUserController.text,
-                        create_date: DateTime.now(),
+                        createDate: DateTime.now(),
                         groupMap: listGroupUser,
                       );
 

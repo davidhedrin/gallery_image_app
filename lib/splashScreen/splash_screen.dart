@@ -33,9 +33,9 @@ class _SplashScerenAppState extends State<SplashScerenApp> {
       const Duration(
         seconds: 4,
       ),() {
-        bool? _boarding = store.read('onBoarding');
+        bool? boarding = store.read('onBoarding');
 
-        if(_boarding == null){
+        if(boarding == null){
           Get.toNamed(RouteHalper.getOnBoardScreen());
         }else{
           getService.fbAuth.authStateChanges().listen((User? user) async {
@@ -51,8 +51,8 @@ class _SplashScerenAppState extends State<SplashScerenApp> {
           });
         }
 
-        _boarding == null ? Get.toNamed(RouteHalper.getOnBoardScreen()):
-        _boarding == true ? Get.toNamed(RouteHalper.getLoginPage()):
+        boarding == null ? Get.toNamed(RouteHalper.getOnBoardScreen()):
+        boarding == true ? Get.toNamed(RouteHalper.getLoginPage()):
         Get.toNamed(RouteHalper.getLoginPage());
       }
     );

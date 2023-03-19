@@ -1,27 +1,27 @@
 class UserGroupMasterModel{
-  String group_id;
-  String nama_group;
-  DateTime? create_date;
+  String groupId;
+  String namaGroup;
+  DateTime? createDate;
 
   UserGroupMasterModel({
-    this.nama_group = "",
-    this.group_id = "",
-    this.create_date,
+    this.namaGroup = "",
+    this.groupId = "",
+    this.createDate,
   });
 
   factory UserGroupMasterModel.fromMap(Map<String, dynamic> map) {
     return UserGroupMasterModel(
-      group_id: map['group_id'] ?? '',
-      nama_group: map['nama_group'] ?? '',
-      create_date: map['create_date'].toDate() ?? '',
+      groupId: map['group_id'] ?? '',
+      namaGroup: map['nama_group'] ?? '',
+      createDate: map['create_date'].toDate() ?? '',
     );
   }
 
   Map<String, dynamic> toMapUpload(){
     return {
-      "group_id": group_id,
-      "nama_group": nama_group,
-      "create_date": create_date
+      "group_id": groupId,
+      "nama_group": namaGroup,
+      "create_date": createDate
     };
   }
 }

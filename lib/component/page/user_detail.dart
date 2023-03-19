@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -47,7 +49,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     double coverHeight = Dimentions.imageSize180;
     double profileSize = Dimentions.screenHeight/14.5;
 
-    int setType = getHelp.checkStatusUser(user.user_type);
+    int setType = getHelp.checkStatusUser(user.userType);
 
     return SafeArea(
       child: Scaffold(
@@ -58,7 +60,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              BigText(text: user.nama_lengkap),
+              BigText(text: user.namaLengkap),
               SmallText(text: user.phone),
             ],
           ),
@@ -96,10 +98,10 @@ class _UserDetailPageState extends State<UserDetailPage> {
 
                   try{
                     getService.deleteFullUserAccount(context: context, uid: user.id, phone: user.phone);
-                    if(user.img_profil_url.isNotEmpty){
+                    if(user.imgProfilUrl.isNotEmpty){
                       getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageProfile}/${user.id}");
                     }
-                    if(user.img_cover_url.isNotEmpty){
+                    if(user.imgCoverUrl.isNotEmpty){
                       getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageCover}/${user.id}");
                     }
                     showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menghapus user", title: "Delete User");
@@ -132,7 +134,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                       height: coverHeight,
                       fit: BoxFit.cover,
                     ) : CachedNetworkImage(
-                      imageUrl: user.img_cover_url,
+                      imageUrl: user.imgCoverUrl,
                       placeholder: (context, url) => const LoadingProgress(),
                       errorWidget: (context, url, error){
                         return Image.asset(
@@ -189,14 +191,14 @@ class _UserDetailPageState extends State<UserDetailPage> {
                             radius: profileSize,
                             backgroundColor: Colors.grey.shade800,
                             backgroundImage: FileImage(imageProfile!),
-                          ) : user.img_profil_url.isNotEmpty ? CircleAvatar(
+                          ) : user.imgProfilUrl.isNotEmpty ? CircleAvatar(
                             radius: profileSize,
                             backgroundColor: Colors.grey.shade800,
-                            backgroundImage: CachedNetworkImageProvider(user.img_profil_url),
+                            backgroundImage: CachedNetworkImageProvider(user.imgProfilUrl),
                           ) : CircleAvatar(
                             radius: profileSize,
                             backgroundColor: Colors.grey.shade800,
-                            backgroundImage: AssetImage(Assets.imagePrifil),
+                            backgroundImage: const AssetImage(Assets.imagePrifil),
                           ),
                         ),
                         Positioned(
@@ -281,7 +283,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                                     errorWidget: (context, url, error){
                                       return Container(
                                         decoration: BoxDecoration(
-                                          color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                                          color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
                                           image: const DecorationImage(
                                             image: AssetImage(Assets.imageBackgroundProfil),
                                             fit: BoxFit.cover,
@@ -291,7 +293,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                                     },
                                     imageBuilder: (context, imageProvider) => Container(
                                       decoration: BoxDecoration(
-                                        color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                                        color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
                                         image: DecorationImage(
                                           image: imageProvider,
                                           fit: BoxFit.cover,
@@ -307,7 +309,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                     },
                   )
                   : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                      stream: getService.streamGetDocByColumn(collection: setGroup.nama_group.toLowerCase(), collName: Collections.collColumnuserById, value: user.id),
+                      stream: getService.streamGetDocByColumn(collection: setGroup.namaGroup.toLowerCase(), collName: Collections.collColumnuserById, value: user.id),
                       builder: (context, snapshotImage) {
                         if (snapshotImage.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
@@ -320,7 +322,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                         }else{
                           var data = snapshotImage.data!.docs;
                           List<PostingImageModel> allImage = data.map((item) {
-                            Map<String, dynamic> getMap = item.data() as Map<String, dynamic>;
+                            Map<String, dynamic> getMap = item.data();
                             PostingImageModel getImage = PostingImageModel.fromMap(getMap);
                             return getImage;
                           }).toList();
@@ -354,7 +356,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                                       errorWidget: (context, url, error){
                                         return Container(
                                           decoration: BoxDecoration(
-                                            color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                                            color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
                                             image: const DecorationImage(
                                               image: AssetImage(Assets.imageBackgroundProfil),
                                               fit: BoxFit.cover,
@@ -364,7 +366,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                                       },
                                       imageBuilder: (context, imageProvider) => Container(
                                         decoration: BoxDecoration(
-                                          color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                                          color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
                                           image: DecorationImage(
                                             image: imageProvider,
                                             fit: BoxFit.cover,
@@ -397,7 +399,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     }).toList();
 
     List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
-      return getService.fbStore.collection(model.nama_group.toLowerCase()).get();
+      return getService.fbStore.collection(model.namaGroup.toLowerCase()).get();
     }).toList();
 
     List<QuerySnapshot> snapshots = await Future.wait(futures);

@@ -1,7 +1,6 @@
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class LoadingProgress extends StatefulWidget {
   final double? size;
@@ -24,7 +23,7 @@ class _LoadingProgressState extends State<LoadingProgress> {
           children: [
             SpinKitWave(
               color: Colors.white,
-              size: widget.size.isNull ? Dimentions.height40 : widget.size!,
+              size: widget.size == null ? Dimentions.height40 : widget.size!,
             ),
           ],
         ),

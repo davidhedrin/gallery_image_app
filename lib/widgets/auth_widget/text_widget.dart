@@ -2,7 +2,7 @@ import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
 
 class MyTextField extends StatelessWidget {
-  final controller;
+  final TextEditingController controller;
   final String hintText;
   final bool obscureText;
   final TextInputType? typeText;
@@ -26,7 +26,7 @@ class MyTextField extends StatelessWidget {
         style: TextStyle(fontSize: Dimentions.font20),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.only(left: Dimentions.width15, right: Dimentions.width15, top: Dimentions.height15, bottom: Dimentions.height15),
-          enabledBorder:  OutlineInputBorder(
+          enabledBorder:  const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.white),
           ),
           focusedBorder: OutlineInputBorder(
@@ -54,6 +54,7 @@ class MyTextFieldReg extends StatelessWidget {
   final int? maxLines;
   final bool? enabled;
   final bool? readOnly;
+  final FocusNode? focusNode;
 
   const MyTextFieldReg({
     Key? key,
@@ -69,6 +70,7 @@ class MyTextFieldReg extends StatelessWidget {
     this.maxLines = 1,
     this.enabled = true,
     this.readOnly = false,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -85,10 +87,11 @@ class MyTextFieldReg extends StatelessWidget {
       validator: validator,
       maxLines: maxLines,
       readOnly: readOnly!,
+      focusNode: focusNode,
       decoration: InputDecoration(
         enabled: enabled!,
         contentPadding: EdgeInsets.symmetric(vertical: Dimentions.height15, horizontal: Dimentions.width15),
-        enabledBorder:  OutlineInputBorder(
+        enabledBorder:  const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white),
         ),
         focusedBorder: OutlineInputBorder(

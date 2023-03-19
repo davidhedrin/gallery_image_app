@@ -11,12 +11,10 @@ import 'package:delivery_food_app/utils/utils.dart';
 import 'package:delivery_food_app/widgets/app_icon.dart';
 import 'package:delivery_food_app/widgets/expandable_text_widget.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../generated/assets.dart';
 import '../../models/likes_model.dart';
-import '../../models/user_model.dart';
 import '../../providers/app_services.dart';
 import '../../widgets/app_column.dart';
 import '../../widgets/big_text.dart';
@@ -123,11 +121,6 @@ class _DetailImagePageState extends State<DetailImagePage> {
                               bool idLikeExists = containsDocId(likeData);
                               return GestureDetector(
                                 onTap: () async {
-                                  UserModel getUserClick = await getService.getDocDataByDocId(context: context, collection: "users", docId: MainAppPage.setUserId).then((value){
-                                    Map<String, dynamic> getMap = value!.data() as Map<String, dynamic>;
-                                    return UserModel.fromMap(getMap);
-                                  });
-
                                   LikesModel likeData = LikesModel(
                                     id: getData.imageId,
                                     by: widget.groupName!.toLowerCase(),

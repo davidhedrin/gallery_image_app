@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,7 +37,7 @@ class ChatMessagePage extends StatefulWidget {
 
 class _ChatMessagePageState extends State<ChatMessagePage> {
   final TextEditingController _textController = TextEditingController();
-  FocusNode _focusInput = FocusNode();
+  final FocusNode _focusInput = FocusNode();
   late String chatRoomId = "";
   bool showEmoji = false;
 
@@ -249,13 +251,13 @@ class _AppBarTitleState extends State<_AppBarTitle> {
 
           return Row(
             children: [
-              Avatar.small(url: getUser.img_profil_url,),
+              Avatar.small(url: getUser.imgProfilUrl,),
               SizedBox(width: Dimentions.width15,),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    BigText(text: getUser.nama_lengkap, size: Dimentions.font14,),
+                    BigText(text: getUser.namaLengkap, size: Dimentions.font14,),
                     SizedBox(height: Dimentions.height2,),
                     SmallText(text: gSt == "1" ? "Online" : "Last seen $lastSeen", color: gSt == "1" ? Colors.green : Colors.grey, fontWeight: FontWeight.bold,),
                   ],

@@ -6,7 +6,6 @@ import 'package:delivery_food_app/pages/home/home_page.dart';
 import 'package:delivery_food_app/pages/message/message_page.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,11 +13,11 @@ import '../pages/setting/setting_page.dart';
 import '../widgets/tab_button_navbar.dart';
 
 class MainAppPage extends StatefulWidget {
-  final String Userid;
+  final String userId;
   static String? groupCodeId = "";
   static String setUserId = "";
   static String groupNameGet = "";
-  const MainAppPage({Key? key, required this.Userid}) : super(key: key);
+  const MainAppPage({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<MainAppPage> createState() => _MainAppPageState();
@@ -45,10 +44,10 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state){
     if(state == AppLifecycleState.resumed){
       // Online
-      getServ.setStatus(status: "1", userId: widget.Userid);
+      getServ.setStatus(status: "1", userId: widget.userId);
     }else{
       // Offline
-      getServ.setStatus(status: "2", userId: widget.Userid);
+      getServ.setStatus(status: "2", userId: widget.userId);
     }
   }
 
@@ -82,7 +81,7 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    MainAppPage.setUserId = widget.Userid;
+    MainAppPage.setUserId = widget.userId;
 
     return Scaffold(
       body: IndexedStack(
@@ -103,7 +102,7 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, size: Dimentions.iconSize36,),
         onPressed: (){
-          Get.toNamed(RouteHalper.getAddNewPostingPage(uid: widget.Userid, groupId: MainAppPage.groupCodeId));
+          Get.toNamed(RouteHalper.getAddNewPostingPage(uid: widget.userId, groupId: MainAppPage.groupCodeId));
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

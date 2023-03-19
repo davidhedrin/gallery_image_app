@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -18,19 +21,19 @@ void showSnackBar(BuildContext context, String content) {
 }
 
 void showAwsBar({required BuildContext context, required ContentType contentType, required String msg, required String title}){
-  String TitleBar = '^-^';
+  String titleBar = '^-^';
   if(title.isEmpty){
     if(contentType == ContentType.success){
-      TitleBar = "Success";
+      titleBar = "Success";
     }else if(contentType == ContentType.help){
-      TitleBar = "Help";
+      titleBar = "Help";
     }else if(contentType == ContentType.warning){
-      TitleBar = "Warning";
+      titleBar = "Warning";
     }else if(contentType == ContentType.failure){
-      TitleBar = "Error";
+      titleBar = "Error";
     }
   }else{
-    TitleBar = title;
+    titleBar = title;
   }
 
   ScaffoldMessenger.of(context).showSnackBar(
@@ -39,7 +42,7 @@ void showAwsBar({required BuildContext context, required ContentType contentType
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.transparent,
       content: AwesomeSnackbarContent(
-        title: TitleBar,
+        title: titleBar,
         message: msg,
         contentType: contentType,
       ),
@@ -56,11 +59,18 @@ Future<File?> pickImageNoCrop(BuildContext context) async {
     File? getCompress;
     try{
       getCompress = await customCompressedFile(context: context, image: File(pickedImage!.path));
-    } catch (e) {}
+    } catch (e) {
+      if (kDebugMode) {
+        print("pickImageNoCrop/customCompressedFile: $e");
+      }
+    }
 
     image = getCompress;
   } catch (e) {
     showSnackBar(context, e.toString());
+    if (kDebugMode) {
+      print("pickImageNoCrop: $e");
+    }
   }
 
   return image;
@@ -75,7 +85,7 @@ Future<File?> pickImageCrop(BuildContext context) async {
     try{
       cropImage = await ImageCropper().cropImage(
         sourcePath: pickedImage.path,
-        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1  ),
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1  ),
         uiSettings: [
           AndroidUiSettings(
               toolbarTitle: 'Cropper Image',
@@ -92,7 +102,11 @@ Future<File?> pickImageCrop(BuildContext context) async {
           ),
         ],
       );
-    } catch (e) {}
+    } catch (e) {
+      if (kDebugMode) {
+        print("pickImageCrop/ImagePicker: $e");
+      }
+    }
 
     if(cropImage != null){
       image = File(cropImage.path);
@@ -115,6 +129,9 @@ Future<File?> customCompressedFile({required BuildContext context, required File
     result = pathImage;
   } catch (e) {
     showSnackBar(context, e.toString());
+    if (kDebugMode) {
+      print("customCompressedFile: $e");
+    }
   }
 
   return result;
@@ -135,14 +152,14 @@ Future<bool> onBackButtonPressYesNo({required BuildContext context, required Str
         content: SmallText(text: desc, color: Colors.black,),
         actions: [
           CupertinoDialogAction(
-            child: Text("No"),
+            child: const Text("No"),
             onPressed: (){
               result = false;
               Navigator.of(context).pop(false);
             },
           ),
           CupertinoDialogAction(
-            child: Text("Yes"),
+            child: const Text("Yes"),
             onPressed: (){
               result = true;
               Navigator.of(context).pop(true);

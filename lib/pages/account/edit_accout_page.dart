@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
@@ -55,7 +57,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
               var dataData = data!.data();
               Map<String, dynamic> getMap = dataData as Map<String, dynamic>;
               UserModel userModel = UserModel.fromMap(getMap);
-              namaController.text = userModel.nama_lengkap;
+              namaController.text = userModel.namaLengkap;
               emailController.text = userModel.email;
               return Column(
                   children: <Widget> [
@@ -73,8 +75,8 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                 width: double.infinity,
                                 height: coverHeight,
                                 fit: BoxFit.cover,
-                              ) : dataData.containsKey("img_cover_url") ? userModel.img_cover_url.isNotEmpty ? Image.network(
-                                userModel.img_cover_url,
+                              ) : dataData.containsKey("img_cover_url") ? userModel.imgCoverUrl.isNotEmpty ? Image.network(
+                                userModel.imgCoverUrl,
                                 width: double.infinity,
                                 height: coverHeight,
                                 fit: BoxFit.cover,
@@ -90,12 +92,12 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            dataData.containsKey("img_cover_url") ? userModel.img_cover_url.isNotEmpty ? Positioned(
+                            dataData.containsKey("img_cover_url") ? userModel.imgCoverUrl.isNotEmpty ? Positioned(
                               left: Dimentions.heightSize130,
                               top: Dimentions.height40,
                               child: Center(
                                 child: FutureBuilder(
-                                    future: precacheImage(NetworkImage(userModel.img_cover_url,), context),
+                                    future: precacheImage(NetworkImage(userModel.imgCoverUrl,), context),
                                     builder: (BuildContext context, AsyncSnapshot snapshot){
                                       if (snapshot.connectionState == ConnectionState.done) {
                                         return const SizedBox.shrink();
@@ -149,10 +151,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                   radius: profileSize,
                                   backgroundColor: Colors.grey.shade800,
                                   backgroundImage: FileImage(imageProfile!),
-                                ) : dataData.containsKey("img_profil_url") ? userModel.img_profil_url.isNotEmpty ? CircleAvatar(
+                                ) : dataData.containsKey("img_profil_url") ? userModel.imgProfilUrl.isNotEmpty ? CircleAvatar(
                                   radius: profileSize,
                                   backgroundColor: Colors.grey.shade800,
-                                  backgroundImage: NetworkImage(userModel.img_profil_url),
+                                  backgroundImage: NetworkImage(userModel.imgProfilUrl),
                                 ) : CircleAvatar(
                                   radius: profileSize,
                                   backgroundColor: Colors.grey.shade800,
@@ -237,7 +239,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                 onPressed: () {
                                   BuildContext dialogcontext = context;
                                   UserModel userMdl = UserModel(
-                                    nama_lengkap: namaController.text,
+                                    namaLengkap: namaController.text,
                                     email: emailController.text,
                                   );
                                   void execute() async {
@@ -256,10 +258,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                     String imgCoverUrl = imageCover != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageCover}/${widget.uid}", file: imageCover!, context: context) : dataData.containsKey("img_cover_url") ? data.get("img_cover_url") : "";
 
                                     if(imgProfileUrl.isNotEmpty){
-                                      userMdl.img_profil_url = imgProfileUrl;
+                                      userMdl.imgProfilUrl = imgProfileUrl;
                                     }
                                     if(imgCoverUrl.isNotEmpty){
-                                      userMdl.img_cover_url = imgCoverUrl;
+                                      userMdl.imgCoverUrl = imgCoverUrl;
                                     }
                                   }
 

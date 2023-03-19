@@ -6,6 +6,7 @@ import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -55,7 +56,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.only(left: Dimentions.height10, right: Dimentions.height10, top: Dimentions.height6),
+        padding: EdgeInsets.only(left: Dimentions.height10, right: Dimentions.height10, top: Dimentions.height2),
         child: StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
           stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: userId),
           builder: (context, snapshot) {
@@ -68,199 +69,213 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
               var data = snapshot.data;
               Map<String, dynamic> userMap = data!.data() as Map<String, dynamic>;
               UserModel getUser = UserModel.fromMap(userMap);
-              String userType = getUser.user_type.toLowerCase();
+              String userType = getUser.userType.toLowerCase();
               int setType = getHelp.checkStatusUser(userType);
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(Dimentions.height10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(Dimentions.radius12),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Flexible(child: BigText(text: getUser.nama_lengkap, size: Dimentions.font22,)),
-                                  SizedBox(width: Dimentions.width10,),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: Dimentions.height6, vertical: Dimentions.height2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue,
-                                      borderRadius: BorderRadius.circular(Dimentions.radius6),
-                                    ),
-                                    child: Text(
-                                      setType == 1 ? "M. Admin" : setType == 2 ? "Admin" : "User",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: Dimentions.font12,
-                                        fontWeight: FontWeight.bold,
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(Dimentions.height10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(Dimentions.radius12),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Flexible(child: BigText(text: getUser.namaLengkap, size: Dimentions.font22,)),
+                                    SizedBox(width: Dimentions.width10,),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: Dimentions.height6, vertical: Dimentions.height2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue,
+                                        borderRadius: BorderRadius.circular(Dimentions.radius6),
+                                      ),
+                                      child: Text(
+                                        setType == 1 ? "M. Admin" : setType == 2 ? "Admin" : "User",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: Dimentions.font12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: Dimentions.height10,),
-                              BigText(text: getUser.phone, size: Dimentions.font16,),
-                              SizedBox(height: Dimentions.height2,),
-                              BigText(text: getUser.email, size: Dimentions.font16,),
-                              SizedBox(height: Dimentions.height15,),
-                              Row(
-                                children: [
-                                  Flexible(child: BigText(text: "${getUser.id.substring(0, 18)}-****-***....", size: Dimentions.font14, fontWeight: FontWeight.bold,)),
-                                  SizedBox(width: Dimentions.width10,),
-                                  Icon(Icons.copy, size: Dimentions.iconSize20,),
-                                  SizedBox(width: Dimentions.width5,),
-                                  Icon(Icons.remove_red_eye, size: Dimentions.iconSize20,),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                                SizedBox(height: Dimentions.height10,),
+                                BigText(text: getUser.phone, size: Dimentions.font16,),
+                                SizedBox(height: Dimentions.height2,),
+                                BigText(text: getUser.email, size: Dimentions.font16,),
+                                SizedBox(height: Dimentions.height15,),
+                                Row(
+                                  children: [
+                                    Flexible(child: BigText(text: "${getUser.id.substring(0, 23)}-****....", size: Dimentions.font14, fontWeight: FontWeight.bold,)),
+                                    SizedBox(width: Dimentions.width10,),
+                                    InkWell(
+                                      onTap: (){
+                                        Clipboard.setData(ClipboardData(text: getUser.id));
+
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('ID user telah berhasil disalin'),
+                                          ),
+                                        );
+                                      },
+                                      child: Icon(Icons.copy, size: Dimentions.iconSize20,)
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Container(
-                          height: Dimentions.heightSize90,
-                          width: Dimentions.heightSize90,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(Dimentions.radius20),
-                            color: const Color(0xFF9294cc),
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl: getUser.img_profil_url,
-                            placeholder: (context, url) => LoadingProgress(size: Dimentions.height10,),
-                            errorWidget: (context, url, error){
-                              return Image.asset(
-                                Assets.imageBackgroundProfil,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              );
-                            },
-                            imageBuilder: (context, imageProvider) => Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(Dimentions.radius20),
-                                image: DecorationImage(
-                                  image: imageProvider,
+                          Container(
+                            height: Dimentions.heightSize90,
+                            width: Dimentions.heightSize90,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(Dimentions.radius20),
+                              color: const Color(0xFF9294cc),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl: getUser.imgProfilUrl,
+                              placeholder: (context, url) => LoadingProgress(size: Dimentions.height10,),
+                              errorWidget: (context, url, error){
+                                return Image.asset(
+                                  Assets.imageBackgroundProfil,
+                                  width: double.infinity,
                                   fit: BoxFit.cover,
+                                );
+                              },
+                              imageBuilder: (context, imageProvider) => Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(Dimentions.radius20),
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
 
-                  SizedBox(height: Dimentions.height12,),
-                  const Divider(height: 1, color: Colors.black87),
+                    SizedBox(height: Dimentions.height12,),
+                    const Divider(height: 1, color: Colors.black87),
 
-                  setInfos(
-                    desc: "Tanggal terdaftar   : ",
-                    text: "${getUser.create_date!.day} ${DateFormat('MMMM').format(getUser.create_date!)} ${getUser.create_date!.year}",
-                    icon: Icons.calendar_month_outlined
-                  ),
-                  StreamBuilder(
-                    stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: getUser.phone),
-                    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup) {
-                      if (snapshotGroup.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (!snapshotGroup.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }else{
-                        List<Map<String, dynamic>> groupArray = List.from(snapshotGroup.data!.get("group"));
-                        List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
-                          UserGroupModel getGroup = UserGroupModel.fromMap(res);
-                          return getGroup;
-                        }).toList();
-
-                        return setInfos(
-                            desc: "Group's terdaftar   : ",
-                            icon: Icons.group,
-                            column: toModelGroup.map((e) => e.nama_group).toList(),
-                        );
-                      }
-                    }
-                  ),
-
-                  SizedBox(height: Dimentions.height15,),
-                  SizedBox(
-                    height: Dimentions.heightSize420,
-                    child: FutureBuilder<List<PostingImageModel>>(
-                      future: getService.getAllDocImagePosting(context: context, phone: getUser.phone, userId: userId),
-                      builder: (BuildContext context, AsyncSnapshot<List<PostingImageModel>> snapshotImage) {
-                        if (snapshotImage.connectionState == ConnectionState.waiting) {
+                    setInfos(
+                      desc: "Tanggal terdaftar   : ",
+                      text: "${getUser.createDate!.day} ${DateFormat('MMMM').format(getUser.createDate!)} ${getUser.createDate!.year}",
+                      icon: Icons.calendar_month_outlined
+                    ),
+                    StreamBuilder(
+                      stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: getUser.phone),
+                      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup) {
+                        if (snapshotGroup.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
                         }
-                        if (snapshotImage.hasError) {
-                          return Center(child: DataNotFoundWidget(msgTop: 'Error: ${snapshotImage.error}'));
+                        if (!snapshotGroup.hasData) {
+                          return const Center(child: CircularProgressIndicator());
+                        }else{
+                          List<Map<String, dynamic>> groupArray = List.from(snapshotGroup.data!.get("group"));
+                          List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
+                            UserGroupModel getGroup = UserGroupModel.fromMap(res);
+                            return getGroup;
+                          }).toList();
+
+                          return setInfos(
+                              desc: "Group's terdaftar   : ",
+                              icon: Icons.group,
+                              column: toModelGroup.map((e) => e.namaGroup).toList(),
+                          );
                         }
-                        if (!snapshotImage.hasData) {
-                          return const Center(child: DataNotFoundWidget(msgTop: 'Data tidak ditemukan!'));
-                        } else {
-                          List<PostingImageModel> documents = snapshotImage.data!;
-                          if(documents.isEmpty){
-                            return const Center(
-                                child: DataNotFoundWidget(
-                                  msgTop: 'Belum pernah upload nichh...',
-                                  msgButton: 'Silahkan Upload gambar anda sekarang!',
-                                )
-                            );
-                          }else{
-                            return GridView.builder(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: Dimentions.height6,
-                                mainAxisSpacing: Dimentions.height6,
-                              ),
-                              itemCount: documents.length,
-                              itemBuilder: (context, index){
-                                PostingImageModel image = documents[index];
-                                return GestureDetector(
-                                  onTap: (){
-                                    Get.toNamed(RouteHalper.getDetailImage(image.imageId, image.imageGroup));
-                                  },
-                                  child: CachedNetworkImage(
-                                    imageUrl: image.imageUrl,
-                                    placeholder: (context, url) => LoadingProgress(size: Dimentions.height25,),
-                                    errorWidget: (context, url, error){
-                                      return Container(
+                      }
+                    ),
+
+                    SizedBox(height: Dimentions.height10,),
+                    BigText(text: "Postingan: ", size: Dimentions.font14,),
+                    SizedBox(height: Dimentions.height4,),
+                    SizedBox(
+                      height: Dimentions.heightSize420,
+                      child: FutureBuilder<List<PostingImageModel>>(
+                        future: getService.getAllDocImagePosting(context: context, phone: getUser.phone, userId: userId),
+                        builder: (BuildContext context, AsyncSnapshot<List<PostingImageModel>> snapshotImage) {
+                          if (snapshotImage.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          if (snapshotImage.hasError) {
+                            return Center(child: DataNotFoundWidget(msgTop: 'Error: ${snapshotImage.error}'));
+                          }
+                          if (!snapshotImage.hasData) {
+                            return const Center(child: DataNotFoundWidget(msgTop: 'Data tidak ditemukan!'));
+                          } else {
+                            List<PostingImageModel> documents = snapshotImage.data!;
+                            if(documents.isEmpty){
+                              return const Center(
+                                  child: DataNotFoundWidget(
+                                    msgTop: 'Belum pernah upload nichh...',
+                                    msgButton: 'Silahkan Upload gambar anda sekarang!',
+                                  )
+                              );
+                            }else{
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: Dimentions.height6,
+                                  mainAxisSpacing: Dimentions.height6,
+                                ),
+                                itemCount: documents.length,
+                                itemBuilder: (context, index){
+                                  PostingImageModel image = documents[index];
+                                  return GestureDetector(
+                                    onTap: (){
+                                      Get.toNamed(RouteHalper.getDetailImage(image.imageId, image.imageGroup));
+                                    },
+                                    child: CachedNetworkImage(
+                                      imageUrl: image.imageUrl,
+                                      placeholder: (context, url) => LoadingProgress(size: Dimentions.height25,),
+                                      errorWidget: (context, url, error){
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
+                                            image: const DecorationImage(
+                                              image: AssetImage(Assets.imageBackgroundProfil),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      imageBuilder: (context, imageProvider) => Container(
                                         decoration: BoxDecoration(
                                           color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
-                                          image: const DecorationImage(
-                                            image: AssetImage(Assets.imageBackgroundProfil),
+                                          image: DecorationImage(
+                                            image: imageProvider,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
-                                      );
-                                    },
-                                    imageBuilder: (context, imageProvider) => Container(
-                                      decoration: BoxDecoration(
-                                        color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
-                                        image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover,
-                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
+                                  );
+                                },
+                              );
+                            }
                           }
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }
           }
@@ -293,7 +308,10 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: column.map((e) =>
-                          BigText(text: "- $e", size: Dimentions.font14,),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: column.last != e ? Dimentions.height4 : 0.0),
+                            child: BigText(text: "- $e", size: Dimentions.font14,),
+                          ),
                       ).toList(),
                     ),
                 ],

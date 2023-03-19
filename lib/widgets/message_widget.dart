@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../utils/colors.dart';
 
@@ -21,7 +20,7 @@ class IconBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: color.isNull ? AppColors.buttonBackgroundColor : color,
+      color: color ?? AppColors.buttonBackgroundColor,
       borderRadius: BorderRadius.circular(Dimentions.radius6),
       child: InkWell(
         borderRadius: BorderRadius.circular(Dimentions.radius6),

@@ -148,7 +148,7 @@ class _ForgotChangePassPageState extends State<ForgotChangePassPage> {
                               await getService.fbStore.collection(Collections.users).doc(widget.userId).update({
                                 Collections.collColumnpassword : changePassword
                               });
-                              showAwsBar(context: context, contentType: ContentType.success, msg: 'Berhasil memperbaharui password. Selamat datang kembali "${setUser.nama_lengkap}"', title: "Welcome!");
+                              showAwsBar(context: context, contentType: ContentType.success, msg: 'Berhasil memperbaharui password. Selamat datang kembali "${setUser.namaLengkap}"', title: "Welcome!");
                             } on FirebaseAuthException catch (e) {
                               Navigator.of(context).pop();
                               showAwsBar(context: context, contentType: ContentType.help, msg: "Gagal memperbaharui password. Hubungi admin!", title: "Opss...");

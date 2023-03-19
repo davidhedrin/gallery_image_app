@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations
 
 import 'package:delivery_food_app/component/add_new_posting.dart';
+import 'package:delivery_food_app/component/search/home_search.dart';
 import 'package:delivery_food_app/pages/auth/forgot_change_pass.dart';
 import 'package:delivery_food_app/pages/auth/forgot_pass_number.dart';
 import 'package:delivery_food_app/pages/auth/forgot_pass_otp.dart';
@@ -48,6 +49,8 @@ class RouteHalper{
   static const String userChatPage = "/user-chat-page";
   static const String userPersonalInfoPage = "/user-personal-info-page";
 
+  static const String homeSearchComponent = "/home-search-component";
+
   static String getInitial({String? uid}) => '$initial?uid=$uid';
 
   static String getLoginPage() => '$loginPage';
@@ -70,10 +73,12 @@ class RouteHalper{
   static String getUserChatPage({String? userId}) => '$userChatPage?userId=$userId';
   static String getPersonalInfoPage({String? userId}) => '$userPersonalInfoPage?userId=$userId';
 
+  static String getHomeSearchComponent() => '$homeSearchComponent';
+
   static List<GetPage> routes = [
     GetPage(name: initial, transition: Transition.native, page: (){
       String? uid = Get.parameters['uid'].toString();
-      return MainAppPage(Userid: uid,);
+      return MainAppPage(userId: uid,);
     }),
 
     GetPage(name: splashScreen, page: () => SplashScerenApp(), transition: Transition.native),
@@ -95,7 +100,7 @@ class RouteHalper{
     GetPage(name: otpPage, page: () {
       String? verId = Get.parameters['verId'].toString();
       String? phone = Get.parameters['phone'].toString();
-      if(verId.isNotEmpty && verId != null){
+      if(verId.isNotEmpty){
         return OtpPage(verificationId: verId, phone: phone,);
       }else{
         return LoginPage();
@@ -130,5 +135,7 @@ class RouteHalper{
       String userId = Get.parameters["userId"].toString();
       return PersonalInfoPage(uid: userId,);
     }),
+
+    GetPage(name: homeSearchComponent, page: () => HomeSearchComponent()),
   ];
 }

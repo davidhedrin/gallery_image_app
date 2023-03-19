@@ -1,5 +1,4 @@
 import 'package:delivery_food_app/halper/route_halper.dart';
-import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -155,7 +154,7 @@ class _OnBoardScreenAppState extends State<OnBoardScreenApp> {
                             margin: EdgeInsets.only(right: Dimentions.width5),
                             child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
                           ),
-                          Text('5.0', style: TextStyle(color: Colors.white70),),
+                          const Text('5.0', style: TextStyle(color: Colors.white70),),
                         ],
                       )),
                       SizedBox(height: Dimentions.height10,),

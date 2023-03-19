@@ -88,16 +88,16 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                       if(MainAppPage.groupCodeId!.isNotEmpty){
                                         _selectedItem = MainAppPage.groupCodeId;
                                       }else{
-                                        _selectedItem = toModelGroup.first.group_id.toString();
+                                        _selectedItem = toModelGroup.first.groupId.toString();
                                       }
                                       MainAppPage.groupCodeId = _selectedItem;
                                     }
 
                                     if(MainAppPage.groupNameGet.isEmpty){
-                                      MainAppPage.groupNameGet = toModelGroup.first.nama_group.toLowerCase();
+                                      MainAppPage.groupNameGet = toModelGroup.first.namaGroup.toLowerCase();
                                     }else{
-                                      UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.group_id == _selectedItem);
-                                      MainAppPage.groupNameGet = getGroup.nama_group.toLowerCase();
+                                      UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.groupId == _selectedItem);
+                                      MainAppPage.groupNameGet = getGroup.namaGroup.toLowerCase();
                                     }
 
                                     return DropdownButtonHideUnderline(
@@ -106,18 +106,18 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                         value: _selectedItem,
                                         icon: Icon(Icons.arrow_drop_down),
                                         onChanged: (value) {
-                                          UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.group_id == _selectedItem);
+                                          UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.groupId == _selectedItem);
                                           setState(() {
                                             _selectedItem = value;
                                             _selectedItemChane = value;
                                             MainAppPage.groupCodeId = value;
-                                            MainAppPage.groupNameGet = getGroup.nama_group.toLowerCase();
+                                            MainAppPage.groupNameGet = getGroup.namaGroup.toLowerCase();
                                           });
                                         },
                                         items: toModelGroup.map((value) {
                                           return DropdownMenuItem(
-                                            value: value.group_id.toString(),
-                                            child: Text(value.nama_group.toString()),
+                                            value: value.groupId.toString(),
+                                            child: Text(value.namaGroup.toString()),
                                           );
                                         }).toList(),
                                       ),
@@ -131,11 +131,22 @@ class _HomePageMenuState extends State<HomePageMenu> {
                     }
                 ),
                 Center(
-                  child: GestureDetector(
-                      onTap: (){
-                        Get.toNamed(RouteHalper.getBookmarkPage());
-                      },
-                      child: Icon(Icons.bookmark, color: AppColors.mainColor, size: Dimentions.iconSize32,)
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: (){
+                          Get.toNamed(RouteHalper.getHomeSearchComponent());
+                        },
+                        child: Icon(Icons.search, color: Colors.black45, size: Dimentions.iconSize32,)
+                      ),
+                      SizedBox(width: Dimentions.width3,),
+                      GestureDetector(
+                          onTap: (){
+                            Get.toNamed(RouteHalper.getBookmarkPage());
+                          },
+                          child: Icon(Icons.bookmark, color: AppColors.mainColor, size: Dimentions.iconSize32,)
+                      ),
+                    ],
                   ),
                 )
               ],

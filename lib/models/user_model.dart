@@ -1,51 +1,51 @@
 class UserModel{
   String email;
-  String flag_active;
+  String flagActive;
   String id;
-  String nama_lengkap;
+  String namaLengkap;
   String password;
   String phone;
   String uidEmail;
   String uidPhone;
-  String user_type;
-  String img_profil_url;
-  String img_cover_url;
-  DateTime? create_date;
+  String userType;
+  String imgProfilUrl;
+  String imgCoverUrl;
+  DateTime? createDate;
   DateTime? lastOnline;
   String statusLog;
 
   UserModel({
     this.email = "",
-    this.flag_active = "",
+    this.flagActive = "",
     this.id = "",
-    this.nama_lengkap = "",
+    this.namaLengkap = "",
     this.password = "",
     this.phone = "",
     this.uidEmail = "",
     this.uidPhone = "",
-    this.user_type = "",
-    this.img_profil_url = "",
-    this.img_cover_url = "",
+    this.userType = "",
+    this.imgProfilUrl = "",
+    this.imgCoverUrl = "",
     this.statusLog = "",
-    this.create_date,
+    this.createDate,
     this.lastOnline,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map){
     return UserModel(
       email : map['email'] ?? '',
-      flag_active : map['flag_active'] ?? '',
+      flagActive : map['flag_active'] ?? '',
       id : map['id'] ?? '',
-      nama_lengkap : map['nama_lengkap'] ?? '',
+      namaLengkap : map['nama_lengkap'] ?? '',
       password : map['password'] ?? '',
       phone : map['phone'] ?? '',
       uidEmail : map['uidEmail'] ?? '',
       uidPhone : map['uidPhone'] ?? '',
-      user_type : map['user_type'] ?? '',
-      img_profil_url : map['img_profil_url'] ?? '',
-      img_cover_url : map['img_cover_url'] ?? '',
+      userType : map['user_type'] ?? '',
+      imgProfilUrl : map['img_profil_url'] ?? '',
+      imgCoverUrl : map['img_cover_url'] ?? '',
       statusLog : map['statusLog'] ?? '',
-      create_date: map['create_date'].toDate(),
+      createDate: map['create_date'].toDate(),
       lastOnline: map['lastOnline'].toDate(),
     );
   }
@@ -54,15 +54,15 @@ class UserModel{
     return {
       "id": id,
       "email": email,
-      "flag_active": flag_active,
-      "nama_lengkap": nama_lengkap,
+      "flag_active": flagActive,
+      "nama_lengkap": namaLengkap,
       "password": password,
       "phone": phone,
       "uidEmail": uidEmail,
       "uidPhone": uidPhone,
-      "user_type": user_type,
+      "user_type": userType,
       "statusLog": statusLog,
-      "create_date": create_date,
+      "create_date": createDate,
       "lastOnline": lastOnline,
     };
   }
@@ -70,9 +70,9 @@ class UserModel{
   Map<String, dynamic> toMapUpdate(){
     return {
       "email": email,
-      "nama_lengkap": nama_lengkap,
-      "img_profil_url": img_profil_url,
-      "img_cover_url": img_cover_url
+      "nama_lengkap": namaLengkap,
+      "img_profil_url": imgProfilUrl,
+      "img_cover_url": imgCoverUrl
       // "user_type": user_type,
       // "phone": phone,
     };

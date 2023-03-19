@@ -1,18 +1,18 @@
 class UserGroupModel{
-  String group_id;
+  String groupId;
   String status;
-  String nama_group;
+  String namaGroup;
 
   UserGroupModel({
     this.status = "",
-    this.nama_group = "",
-    this.group_id = "",
+    this.namaGroup = "",
+    this.groupId = "",
   });
 
   factory UserGroupModel.fromMap(Map<String, dynamic> map) {
     return UserGroupModel(
-      group_id: map['group_id'] ?? '',
-      nama_group: map['nama_group'] ?? '',
+      groupId: map['group_id'] ?? '',
+      namaGroup: map['nama_group'] ?? '',
       status: map['status'] ?? '',
     );
   }

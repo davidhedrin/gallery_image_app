@@ -10,21 +10,19 @@ class DataNotFoundWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        child: Padding(
-          padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(Assets.imageNotFound, width: Dimentions.imageSize190,),
-              SizedBox(height: Dimentions.height10,),
-              Text(
-                "$msgTop, \n ${msgButton!.isEmpty ? "Ulangi beberapa saat lagi!" : msgButton}",
-                style: TextStyle(fontSize: Dimentions.font16),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+      child: Padding(
+        padding: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(Assets.imageNotFound, width: Dimentions.imageSize190,),
+            SizedBox(height: Dimentions.height10,),
+            Text(
+              "$msgTop, \n ${msgButton!.isEmpty ? "Ulangi beberapa saat lagi!" : msgButton}",
+              style: TextStyle(fontSize: Dimentions.font16),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

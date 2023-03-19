@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, depend_on_referenced_packages
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
@@ -79,7 +79,7 @@ class _AppColumnState extends State<AppColumn> {
 
                             LikesModel likeData = LikesModel(
                               id: MainAppPage.setUserId,
-                              by: getUserClick.nama_lengkap,
+                              by: getUserClick.namaLengkap,
                             );
 
                             if(idLikeExists == true){

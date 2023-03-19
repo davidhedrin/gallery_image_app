@@ -76,7 +76,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                 var data = snapshot.data;
                 Map<String, dynamic> userMap = data!.data() as Map<String, dynamic>;
                 UserModel getUser = UserModel.fromMap(userMap);
-                String userType = getUser.user_type.toLowerCase();
+                String userType = getUser.userType.toLowerCase();
                 int setType = getHelp.checkStatusUser(userType);
 
                 lateCurrentUser = getUser;
@@ -87,7 +87,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                       contentPadding: EdgeInsets.only(top: Dimentions.height15, left: Dimentions.height20, right: Dimentions.height20),
                       leading: data.data()!.containsKey("img_cover_url") ? data.get("img_cover_url").toString().isNotEmpty ? CircleAvatar(
                         radius: Dimentions.radius30,
-                        backgroundImage: CachedNetworkImageProvider(getUser.img_profil_url),
+                        backgroundImage: CachedNetworkImageProvider(getUser.imgProfilUrl),
                       ) : CircleAvatar(
                         radius: Dimentions.radius30,
                         backgroundImage: const AssetImage(Assets.imageBackgroundProfil),
@@ -95,7 +95,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                         radius: Dimentions.radius30,
                         backgroundImage: const AssetImage(Assets.imageBackgroundProfil),
                       ),
-                      title: BigText(text: getUser.nama_lengkap, size: Dimentions.font20),
+                      title: BigText(text: getUser.namaLengkap, size: Dimentions.font20),
                       subtitle: Text(getUser.phone),
                       trailing: Container(
                         padding: EdgeInsets.symmetric(horizontal: Dimentions.width8, vertical: Dimentions.width5),
@@ -188,8 +188,8 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                         return Column(
                                           children: getListGroup.map((UserGroupMasterModel group) {
                                             UserGroupModel setGroupMaster = UserGroupModel(
-                                              group_id: group.group_id,
-                                              nama_group: group.nama_group,
+                                              groupId: group.groupId,
+                                              namaGroup: group.namaGroup,
                                               status: 'MDM'
                                             );
 
@@ -197,7 +197,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                                 icon: Icons.group,
                                                 iconColor: generateRandomColor(),
                                                 boxColor: generateRandomColor(),
-                                                text: setGroupMaster.nama_group,
+                                                text: setGroupMaster.namaGroup,
                                                 action: (){
                                                   Get.to(() => GroupPanelManage(groupModel: setGroupMaster, currentUser: getUser,));
                                                 }
@@ -230,7 +230,7 @@ class _SettingPageMenuState extends State<SettingPageMenu> {
                                             icon: Icons.group,
                                             iconColor: generateRandomColor(),
                                             boxColor: generateRandomColor(),
-                                            text: group.nama_group,
+                                            text: group.namaGroup,
                                             action: (){
                                               Get.to(() => GroupPanelManage(groupModel: group, currentUser: getUser));
                                             }

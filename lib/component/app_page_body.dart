@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages, use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/utils/collections.dart';
@@ -7,7 +9,6 @@ import 'package:delivery_food_app/widgets/app_column.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/icon_and_text_widget.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -153,7 +154,7 @@ class _AppPageBodyState extends State<AppPageBody> {
               if(getListImage.isNotEmpty){
                 return ListView.builder(
                   padding: EdgeInsets.only(top: Dimentions.height15),
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: getListImage.length,
                   itemBuilder: (context, index){
@@ -165,10 +166,10 @@ class _AppPageBodyState extends State<AppPageBody> {
                     var diffDayUpload = setDiffDate.inDays.toString() != "0" ? "${setDiffDate.inDays}h" : "";
                     var difference = "$diffDayUpload ${setDiffDate.inHours}j $diffMin";
 
-                    List<String> SplitByName = getData.userByName.split(" ");
-                    String firstChar2nd = SplitByName[1].substring(0, 1);
+                    List<String> splitByName = getData.userByName.split(" ");
+                    String firstChar2nd = splitByName[1].substring(0, 1);
 
-                    String fixByName = "${SplitByName[0]} $firstChar2nd";
+                    String fixByName = "${splitByName[0]} $firstChar2nd";
 
                     return GestureDetector(
                       onTap: (){
@@ -186,7 +187,7 @@ class _AppPageBodyState extends State<AppPageBody> {
                                   height: Dimentions.listViewImgSize,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(Dimentions.radius30),
-                                      color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                                      color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
                                       image: DecorationImage(
                                         fit: BoxFit.cover,
                                         image: NetworkImage(getData.imageUrl,),
@@ -199,7 +200,7 @@ class _AppPageBodyState extends State<AppPageBody> {
                                         future: precacheImage(NetworkImage(getListImage[index].imageUrl,), context),
                                         builder: (BuildContext context, AsyncSnapshot snapshot){
                                           if (snapshot.connectionState == ConnectionState.done) {
-                                            return SizedBox.shrink();
+                                            return const SizedBox.shrink();
                                           } else {
                                             return LoadingProgress(size: Dimentions.height25,);
                                           }
@@ -257,7 +258,7 @@ class _AppPageBodyState extends State<AppPageBody> {
 
                                                         LikesModel likeData = LikesModel(
                                                           id: MainAppPage.setUserId,
-                                                          by: getUserClick.nama_lengkap,
+                                                          by: getUserClick.namaLengkap,
                                                         );
 
                                                         if(idLikeExists == true){
@@ -330,7 +331,7 @@ class _AppPageBodyState extends State<AppPageBody> {
                 margin: EdgeInsets.only(left: Dimentions.width10, right: Dimentions.width10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(Dimentions.radius30),
-                  color: index.isEven ? Color(0xFF69c5df) : Color(0xFF9294cc),
+                  color: index.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: NetworkImage(docImage.imageUrl,),
@@ -343,9 +344,9 @@ class _AppPageBodyState extends State<AppPageBody> {
                     future: precacheImage(NetworkImage(docImage.imageUrl,), context),
                     builder: (BuildContext context, AsyncSnapshot snapshot){
                       if (snapshot.connectionState == ConnectionState.done) {
-                        return SizedBox.shrink();
+                        return const SizedBox.shrink();
                       } else {
-                        return LoadingProgress();
+                        return const LoadingProgress();
                       }
                     }
                   ),
@@ -454,7 +455,7 @@ class _AppPageBodyState extends State<AppPageBody> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(Dimentions.radius30),
                   color: Colors.white38,
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     fit: BoxFit.cover,
                     image: AssetImage(Assets.imageBackgroundProfil),
                   )

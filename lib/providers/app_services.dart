@@ -227,7 +227,7 @@ class AppServices{
 
       // Start delete posted image
       List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
-        return fbStore.collection(model.nama_group.toLowerCase()).get();
+        return fbStore.collection(model.namaGroup.toLowerCase()).get();
       }).toList();
 
       List<QuerySnapshot> snapshots = await Future.wait(futures);
@@ -255,7 +255,7 @@ class AppServices{
 
       // Start delete user chat
       List<Future<QuerySnapshot>> futuresChat = toModelGroup.map((model) {
-        return fbStore.collection("chat-${model.nama_group.toLowerCase()}").get();
+        return fbStore.collection("chat-${model.namaGroup.toLowerCase()}").get();
       }).toList();
 
       List<QuerySnapshot> snapshotsChat = await Future.wait(futuresChat);
@@ -496,7 +496,7 @@ class AppServices{
 
   Future<List<PostingImageModel>> getAllDocFromListColl(List<dynamic> models) async {
     List<Future<QuerySnapshot>> futures = models.map((model) {
-      return FirebaseFirestore.instance.collection(model.nama_group.toLowerCase()).get();
+      return FirebaseFirestore.instance.collection(model.namaGroup.toLowerCase()).get();
     }).toList();
 
     List<QuerySnapshot> snapshots = await Future.wait(futures);
@@ -586,7 +586,7 @@ class AppServices{
     }).toList();
 
     List<Future<QuerySnapshot>> futures = toModelGroup.map((model) {
-      return FirebaseFirestore.instance.collection(model.nama_group.toLowerCase()).get();
+      return FirebaseFirestore.instance.collection(model.namaGroup.toLowerCase()).get();
     }).toList();
 
     List<QuerySnapshot> snapshots = await Future.wait(futures);
@@ -600,5 +600,13 @@ class AppServices{
     }).toList();
 
     return documents.where((item) => item.userById == userId).toList();
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> streamSearchItemWithColumn({
+    required String collection,
+    required String column,
+    required String value
+  }) {
+    return  _fbStore.collection(collection).where(column, isGreaterThanOrEqualTo: value).where(column, isLessThan: '${value}z').snapshots();
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,12 +7,10 @@ import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/message/message_data.dart';
 import 'package:delivery_food_app/pages/message/chat_page.dart';
-import 'package:delivery_food_app/providers/notification_service.dart';
 import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
@@ -187,7 +187,7 @@ class _MessageTitleState extends State<_MessageTitle> {
                     var data = snapshot.data!.data();
                     Map<String, dynamic> getMap = data as Map<String, dynamic>;
                     UserModel getMainMsg =  UserModel.fromMap(getMap);
-                    return Avatar.medium(url: getMainMsg.img_profil_url,);
+                    return Avatar.medium(url: getMainMsg.imgProfilUrl,);
                   }
                 }
               ),
@@ -211,7 +211,7 @@ class _MessageTitleState extends State<_MessageTitle> {
                           var data = snapshot.data!.data();
                           Map<String, dynamic> getMap = data as Map<String, dynamic>;
                           UserModel getMainMsg =  UserModel.fromMap(getMap);
-                          return BigText(text: getMainMsg.nama_lengkap);
+                          return BigText(text: getMainMsg.namaLengkap);
                         }
                       }
                     ),
@@ -378,8 +378,8 @@ class _NewChatRoomState extends State<NewChatRoom> {
                               return images;
                             }).toList();
 
-                            List<UserMasterModel> getUser = getListGroup.expand((parent) => parent.group!).where((child) => child.group_id == MainAppPage.groupCodeId).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
-                            getUser.sort((a, b) => a.create_date!.compareTo(b.create_date!));
+                            List<UserMasterModel> getUser = getListGroup.expand((parent) => parent.group!).where((child) => child.groupId == MainAppPage.groupCodeId).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
+                            getUser.sort((a, b) => a.createDate!.compareTo(b.createDate!));
 
                             if(getUser.isEmpty){
                               return Padding(
@@ -389,7 +389,7 @@ class _NewChatRoomState extends State<NewChatRoom> {
                             }else{
                               return ListView.builder(
                                   padding: EdgeInsets.only(top: Dimentions.height15),
-                                  physics: BouncingScrollPhysics(),
+                                  physics: const BouncingScrollPhysics(),
                                   shrinkWrap: true,
                                   itemCount: getUser.length,
                                   itemBuilder: (context, index){
@@ -418,17 +418,16 @@ class _NewChatRoomState extends State<NewChatRoom> {
                                                     color: Colors.grey.withOpacity(0.08),
                                                   ),
                                                   child: ListTile(
-                                                    leading: Avatar.small(url: userModel.img_profil_url.isNotEmpty ? userModel.img_profil_url : ""),
+                                                    leading: Avatar.small(url: userModel.imgProfilUrl.isNotEmpty ? userModel.imgProfilUrl : ""),
                                                     title: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
-                                                        BigText(text: userModel.nama_lengkap, size: Dimentions.font15, fontWeight: FontWeight.w500,),
+                                                        BigText(text: userModel.namaLengkap, size: Dimentions.font15, fontWeight: FontWeight.w500,),
                                                         SmallText(text: "+6282110863133"),
                                                       ],
                                                     ),
                                                     trailing: Icon(Icons.circle, size: Dimentions.iconSize12,color: userModel.statusLog == "1" ? Colors.green : Colors.red,),
                                                     onTap: () async {
-                                                      String docIdChat = "${MainAppPage.setUserId}${userModel.id}";
                                                       var checkUserMsg = await getService.getAllDocuments(collectionMsg);
                                                       var allDoc = checkUserMsg.docs;
 

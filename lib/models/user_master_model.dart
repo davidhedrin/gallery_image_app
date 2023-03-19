@@ -3,13 +3,13 @@ class UserMasterModel{
   String phone;
   List<GroupModel>? group;
   List<Map<String, dynamic>>? groupMap;
-  DateTime? create_date;
+  DateTime? createDate;
 
   UserMasterModel({
     this.nama = "",
     this.phone = "",
     this.group,
-    this.create_date,
+    this.createDate,
     this.groupMap,
   });
 
@@ -25,7 +25,7 @@ class UserMasterModel{
       phone : map["phone"] ?? "",
       group : groupList,
       groupMap: data,
-      create_date : map["create_date"].toDate(),
+      createDate : map["create_date"].toDate(),
     );
   }
 
@@ -34,30 +34,30 @@ class UserMasterModel{
       "nama": nama,
       "phone": phone,
       "group": groupMap,
-      "create_date": create_date
+      "create_date": createDate
     };
   }
 }
 
 class GroupModel{
-  String group_id;
-  String nama_group;
+  String groupId;
+  String namaGroup;
   String status;
 
-  GroupModel({this.nama_group = "", this.group_id = "", this.status = ""});
+  GroupModel({this.namaGroup = "", this.groupId = "", this.status = ""});
 
   factory GroupModel.fromMap(Map<String, dynamic> map){
     return GroupModel(
-      group_id : map["group_id"] ?? "",
-      nama_group : map["nama_group"] ?? "",
+      groupId : map["group_id"] ?? "",
+      namaGroup : map["nama_group"] ?? "",
       status : map["status"] ?? "",
     );
   }
 
   Map<String, dynamic> toMapUpload(){
     return{
-      "group_id": group_id,
-      "nama_group": nama_group,
+      "group_id": groupId,
+      "nama_group": namaGroup,
       "status": status,
     };
   }

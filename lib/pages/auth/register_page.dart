@@ -1,4 +1,3 @@
-import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
@@ -19,14 +18,14 @@ class _RegisterPageState extends State<RegisterPage> {
   // text editing controllers
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  final co_passController = TextEditingController();
-  final no_phoneController = TextEditingController();
+  final coPassController = TextEditingController();
+  final noPhoneController = TextEditingController();
   final emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF181A20),
+      backgroundColor: const Color(0xFF181A20),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -41,7 +40,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(height: Dimentions.height25),
 
                 MyTextField(
-                  controller: no_phoneController,
+                  controller: noPhoneController,
                   hintText: 'Phone Number',
                   obscureText: false,
                   typeText: TextInputType.number,
@@ -76,7 +75,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(height: Dimentions.height15),
 
                 MyTextField(
-                  controller: co_passController,
+                  controller: coPassController,
                   hintText: 'Confirm Password',
                   obscureText: true,
                   typeText: TextInputType.visiblePassword,
@@ -99,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   padding:  EdgeInsets.symmetric(horizontal: Dimentions.height25),
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Divider(
                           thickness: 0.5,
                           color: Colors.white,
@@ -107,12 +106,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       Padding(
                         padding:  EdgeInsets.symmetric(horizontal: Dimentions.height10),
-                        child: Text(
+                        child: const Text(
                           'Already have account?',
                           style: TextStyle(color: Colors.white70),
                         ),
                       ),
-                      Expanded(
+                      const Expanded(
                         child: Divider(
                           thickness: 0.5,
                           color: Colors.white,

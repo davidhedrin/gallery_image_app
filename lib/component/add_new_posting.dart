@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages, use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -9,7 +11,6 @@ import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../models/user_group.dart';
@@ -74,7 +75,7 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
         children: <Widget>[
           Stack(
             children: [
-              Container(
+              SizedBox(
                 height: Dimentions.heightSize230,
                 child: image != null ? Image.file(
                   image!,
@@ -120,10 +121,10 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                         stream: getService.streamBuilderGetDoc(collection: "users", docId: widget.uid),
                         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                            return BigText(text: "-", color: AppColors.mainColor,);
                           }
                           if (!snapshot.hasData) {
-                            return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                            return BigText(text: "-", color: AppColors.mainColor,);
                           }else{
                             var document = snapshot.data;
                             Map<String, dynamic> userData = document!.data() as Map<String, dynamic>;
@@ -132,12 +133,11 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                                 stream: getService.streamBuilderGetDoc(collection: "user-master", docId: document.get("phone")),
                                 builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup){
                                   if (snapshotGroup.connectionState == ConnectionState.waiting) {
-                                    return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                                    return BigText(text: "-", color: AppColors.mainColor,);
                                   }
                                   if (!snapshotGroup.hasData) {
-                                    return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                                    return BigText(text: "-", color: AppColors.mainColor,);
                                   }else{
-                                    var dataGroup = snapshotGroup.data!.data();
                                     List<Map<String, dynamic>> groupArray = List.from(snapshotGroup.data!.get("group"));
                                     List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
                                       UserGroupModel getGroup = UserGroupModel.fromMap(res);
@@ -148,7 +148,7 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
 
                                     if(toModelGroup.length < 2){
                                       return BigText(
-                                        text: toModelGroup.first.nama_group.toString(),
+                                        text: toModelGroup.first.namaGroup.toString(),
                                         size: Dimentions.font20,
                                       );
                                     }else{
@@ -156,7 +156,7 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                                         child: DropdownButton(
                                           isDense: true,
                                           value: _selectedItem,
-                                          icon: Icon(Icons.arrow_drop_down),
+                                          icon: const Icon(Icons.arrow_drop_down),
                                           onChanged: (value) {
                                             setState(() {
                                               _selectedItem = value;
@@ -164,9 +164,9 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                                           },
                                           items: toModelGroup.map((value) {
                                             return DropdownMenuItem(
-                                                value: value.group_id.toString(),
+                                                value: value.groupId.toString(),
                                                 child: BigText(
-                                                  text: value.nama_group.toString(),
+                                                  text: value.namaGroup.toString(),
                                                   size: Dimentions.font20,
                                                 )
                                             );
@@ -215,8 +215,8 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                                 lastDate: DateTime(3000),
                                 initialEntryMode: DatePickerEntryMode.calendarOnly,
                               ).then((value) {
-                                if(!value.isNull){
-                                  var day = DateFormat('EEEE').format(value!);
+                                if(value != null){
+                                  var day = DateFormat('EEEE').format(value);
                                   var month = DateFormat('MMMM').format(value);
                                   setState(() {
                                     vdateImageController.text = "$day, ${value.day} $month ${value.year}";
@@ -228,7 +228,7 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                                 }
                               });
                             },
-                            child: Icon(Icons.calendar_month_outlined, color: Colors.lightBlue,)
+                            child: const Icon(Icons.calendar_month_outlined, color: Colors.lightBlue,)
                         ),
                         readOnly: true,
                         validator: (value){
@@ -295,13 +295,13 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                       child: DropdownButtonFormField(
                         value: _selectedContent,
                         isDense: true,
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.arrow_drop_down_circle,
                           color: Colors.cyan,
                         ),
                         decoration: InputDecoration(
                           prefixIcon: Icon(_selectedContent == "1" ? Icons.people_outline : Icons.lock),
-                          enabledBorder:  OutlineInputBorder(
+                          enabledBorder:  const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white),
                           ),
                           focusedBorder: OutlineInputBorder(
@@ -340,7 +340,7 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
             children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.cyan,
+                  backgroundColor: Colors.cyan,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(Dimentions.radius50))
                   ),
@@ -378,10 +378,9 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                         getService.loading(dialogcontext);
 
                         String guid = getService.generateGuid();
-                        UserGroupModel getGroup = toModelGroupList.firstWhere((group) => group.group_id == _selectedItem);
-                        String collectionImage = getGroup.nama_group.toLowerCase();
+                        UserGroupModel getGroup = toModelGroupList.firstWhere((group) => group.groupId == _selectedItem);
+                        String collectionImage = getGroup.namaGroup.toLowerCase();
 
-                        UserGroupModel getGroupFilter = toModelGroupList.firstWhere((group) => group.group_id == _selectedItem);
                         String imgUrl = await getService.uploadImageToStorage(ref: "$collectionImage/$guid", file: image!, context: context);
                         String getImgUrl = imgUrl;
 
@@ -393,7 +392,7 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                           pemirsa: _selectedContent,
                           tanggal: dateImage,
                           uploadDate: DateTime.now(),
-                          userByName: userModel.nama_lengkap,
+                          userByName: userModel.namaLengkap,
                           userById: userModel.id,
                           imageGroup: collectionImage,
                         );
@@ -410,8 +409,8 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.cyan,
-                  shape: CircleBorder(),
+                  backgroundColor: Colors.cyan,
+                  shape: const CircleBorder(),
                   padding: EdgeInsets.all(Dimentions.radius15),
                 ),
                 child: const Icon(Icons.save_rounded),

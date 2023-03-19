@@ -15,7 +15,6 @@ import 'package:get/get.dart';
 
 import '../../component/main_app_page.dart';
 import '../../models/posting_image.dart';
-import '../../models/user_group.dart';
 import '../../providers/app_services.dart';
 import '../../utils/utils.dart';
 import '../../widgets/app_icon.dart';
@@ -73,7 +72,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                         margin: EdgeInsets.only(bottom: profileSize + Dimentions.height15),
                         color: Colors.grey,
                         child: CachedNetworkImage(
-                          imageUrl: getUser.img_cover_url,
+                          imageUrl: getUser.imgCoverUrl,
                           placeholder: (context, url) => const LoadingProgress(),
                           errorWidget: (context, url, error){
                             return Image.asset(
@@ -119,10 +118,10 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                         child: CircleAvatar(
                           radius: profileSize + 5,
                           backgroundColor: Colors.white,
-                          child: data.data()!.containsKey("img_profil_url") ? getUser.img_profil_url.isNotEmpty ? CircleAvatar(
+                          child: data.data()!.containsKey("img_profil_url") ? getUser.imgProfilUrl.isNotEmpty ? CircleAvatar(
                             radius: profileSize,
                             backgroundColor: Colors.grey.shade800,
-                            backgroundImage: CachedNetworkImageProvider(getUser.img_profil_url),
+                            backgroundImage: CachedNetworkImageProvider(getUser.imgProfilUrl),
                           ) : CircleAvatar(
                             radius: profileSize,
                             backgroundColor: Colors.grey.shade800,
@@ -137,7 +136,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                     ],
                   ),
                   SizedBox(height: Dimentions.height10,),
-                  Text(getUser.nama_lengkap, style: TextStyle(fontSize: Dimentions.font22, fontWeight: FontWeight.bold)),
+                  Text(getUser.namaLengkap, style: TextStyle(fontSize: Dimentions.font22, fontWeight: FontWeight.bold)),
                   SmallText(text: getUser.phone, color: Colors.black87, size: Dimentions.font16,),
 
                   Expanded(

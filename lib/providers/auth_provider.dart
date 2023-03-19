@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
@@ -6,9 +8,9 @@ import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:uuid/uuid.dart';
 
 import '../widgets/loading_progres.dart';
 
@@ -23,7 +25,7 @@ class AuthProvider extends ChangeNotifier{
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-  bool _isValidPhone = false;
+  final bool _isValidPhone = false;
   bool get isValidPhone => _isValidPhone;
 
   Future<bool> verifyPhone({required BuildContext context, required String number, required UserModel data}) async {
@@ -70,6 +72,9 @@ class AuthProvider extends ChangeNotifier{
       showSnackBar(context, "ErrorVerifyPhone | Terjadi kesalahan, Ulangi beberapa saat lagi!");
       notifyListeners();
       Navigator.of(dialogcontext).pop();
+      if (kDebugMode) {
+        print("verifyPhone: $e");
+      }
     }
 
     return result;
@@ -111,7 +116,7 @@ class AuthProvider extends ChangeNotifier{
       );
 
       _fbStore.collection(Collections.usermaster).doc(_userModel.phone).update({
-        "nama" : _userModel.nama_lengkap,
+        "nama" : _userModel.namaLengkap,
       });
 
       await appProvider.getUserLoginModel(guid);
@@ -125,6 +130,9 @@ class AuthProvider extends ChangeNotifier{
       _isLoading = false;
       notifyListeners();
       Navigator.of(dialogcontext).pop();
+      if (kDebugMode) {
+        print("verifyOtp: $e");
+      }
     }
   }
 
@@ -137,8 +145,10 @@ class AuthProvider extends ChangeNotifier{
         result = true;
       }
     } on FirebaseException catch (e){
-      print(e.message);
       showSnackBar(context, "ErrorCheckNumberUser | Terjadi kesalahan, Ulangi beberapa saat lagi!");
+      if (kDebugMode) {
+        print("checkNumberUser: $e");
+      }
     }
 
     return result;
@@ -155,6 +165,9 @@ class AuthProvider extends ChangeNotifier{
       }
     } on FirebaseException catch (e){
       showSnackBar(context, "ErrorCheckExistsUser | Terjadi kesalahan, Ulangi beberapa saat lagi!");
+      if (kDebugMode) {
+        print("checkExistUser: $e");
+      }
     }
 
     return result;
@@ -174,6 +187,9 @@ class AuthProvider extends ChangeNotifier{
       }
     } on FirebaseException catch(e){
       showSnackBar(context, "ErrorGetDataByID | Terjadi kesalahan, Ulangi beberapa saat lagi!");
+      if (kDebugMode) {
+        print("getDataDocumentByColumn: $e");
+      }
     }
 
     return result;

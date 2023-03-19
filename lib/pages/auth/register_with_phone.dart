@@ -19,9 +19,7 @@ class RegisterWithPhoneNumber extends StatefulWidget {
   const RegisterWithPhoneNumber({ Key? key }) : super(key: key);
 
   @override
-  _RegisterWithPhoneNumberState createState() {
-    return _RegisterWithPhoneNumberState();
-  }
+  State<RegisterWithPhoneNumber> createState() => _RegisterWithPhoneNumberState();
 }
 
 class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
@@ -175,7 +173,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             },
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
-                                RegExp(r'[0-9]'),
+                                RegExp(r'\d'),
                               ),
                               FilteringTextInputFormatter.deny(
                                 RegExp(r'^0+'),
@@ -247,14 +245,14 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
 
                           String number = "+${selectCountry.phoneCode}${noPhoneController.text}";
                           var modelUser = UserModel(
-                            nama_lengkap: namaController.text,
+                            namaLengkap: namaController.text,
                             email: emailController.text,
                             password: passwordController.text,
                             phone: number,
-                            flag_active: "Y",
-                            user_type: "USR",
+                            flagActive: "Y",
+                            userType: "USR",
                             statusLog: "1",
-                            create_date: DateTime.now(),
+                            createDate: DateTime.now(),
                             lastOnline: DateTime.now(),
                           );
                           await auth.verifyPhone(

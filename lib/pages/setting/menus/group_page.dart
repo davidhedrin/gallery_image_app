@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages, use_build_context_synchronously
+
 import 'dart:math';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -5,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/data_not_found.dart';
-import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -103,7 +104,7 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
                         itemCount: getListGroup.length,
                         itemBuilder: (context, index){
                           UserGroupMasterModel getGroup = getListGroup[index];
-                          var month = DateFormat('MMMM').format(getGroup.create_date!);
+                          var month = DateFormat('MMMM').format(getGroup.createDate!);
                           return StreamBuilder<QuerySnapshot>(
                             stream: getService.streamObjGetCollection(collection: Collections.usermaster),
                             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
@@ -120,11 +121,11 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
                                   return images;
                                 }).toList();
 
-                                var getCount = getListGroup.expand((parent) => parent.group!).where((child) => child.group_id == getGroup.group_id).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
+                                var getCount = getListGroup.expand((parent) => parent.group!).where((child) => child.groupId == getGroup.groupId).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
 
                                 UserGroupModel groupModel = UserGroupModel(
-                                  group_id: getGroup.group_id,
-                                  nama_group: getGroup.nama_group,
+                                  groupId: getGroup.groupId,
+                                  namaGroup: getGroup.namaGroup,
                                   status: 'MDM'
                                 );
 
@@ -133,9 +134,9 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
                                   icon: Icons.supervised_user_circle_sharp,
                                   iconColor: generateRandomColor(),
                                   boxColor: generateRandomColor(),
-                                  text: getGroup.nama_group,
+                                  text: getGroup.namaGroup,
                                   count: getCount.length.toString(),
-                                  subText: "${getGroup.create_date!.day} $month ${getGroup.create_date!.year}",
+                                  subText: "${getGroup.createDate!.day} $month ${getGroup.createDate!.year}",
                                   action: (){
                                     Get.to(() => GroupPanelManage(groupModel: groupModel, currentUser: curUser,));
                                   }
@@ -196,7 +197,7 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
                 check = value;
               });
               if(check){
-                getService.deleteDocById(collection: Collections.usergroup, docId: groupModel.group_id);
+                getService.deleteDocById(collection: Collections.usergroup, docId: groupModel.groupId);
                 showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menghapus group", title: "Delete Group");
               }
             },
@@ -275,9 +276,9 @@ class _AddNewGroupState extends State<AddNewGroup> {
                         DateTime cretedDate = DateTime.now();
 
                         UserGroupMasterModel group = UserGroupMasterModel(
-                          nama_group: namaGroupController.text,
-                          group_id: getGuid,
-                          create_date: cretedDate,
+                          namaGroup: namaGroupController.text,
+                          groupId: getGuid,
+                          createDate: cretedDate,
                         );
 
                         getService.createDataToDb(data: group.toMapUpload(), context: context, collection: Collections.usergroup, guid: getGuid);
