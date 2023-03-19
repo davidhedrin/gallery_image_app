@@ -85,7 +85,7 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
         mainAxisAlignment: searchKey.isEmpty ? MainAxisAlignment.center : MainAxisAlignment.start,
         children: [
           StreamBuilder<QuerySnapshot>(
-            stream: getService.streamSearchItemWithColumn(collection: groupName, column: "title", value: searchKey),
+            stream: getService.streamObjGetCollection(collection: groupName),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -102,6 +102,12 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                   PostingImageModel images = PostingImageModel.fromMap(getImage);
                   return images;
                 }).toList();
+
+                getListImage = getListImage.where((PostingImageModel data) =>
+                  data.title.toLowerCase().contains(searchKey.toLowerCase()) ||
+                  data.title.toLowerCase().startsWith(searchKey.toLowerCase()) ||
+                  data.title.toLowerCase().endsWith(searchKey.toLowerCase())
+                ).toList();
 
                 if(getListImage.isNotEmpty){
                   return ListView.builder(

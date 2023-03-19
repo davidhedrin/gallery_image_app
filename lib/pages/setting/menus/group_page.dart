@@ -33,6 +33,7 @@ class GroupSettingPage extends StatefulWidget {
 class _GroupSettingPageState extends State<GroupSettingPage> {
   final AppServices getService = AppServices();
   final TextEditingController searchController = TextEditingController();
+  late String searchKey = "";
 
   Color generateRandomColor() {
     Random random = Random();
@@ -40,6 +41,20 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
     int g = random.nextInt(256);
     int b = random.nextInt(256);
     return Color.fromARGB(255, r, g, b);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -78,6 +93,11 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
               controller: searchController,
               hintText: "Temukan Group...",
               prefixIcon: const Icon(Icons.search),
+              onChanged: (value){
+                setState(() {
+                  searchKey = value;
+                });
+              },
             ),
           ),
 
@@ -97,6 +117,12 @@ class _GroupSettingPageState extends State<GroupSettingPage> {
                     UserGroupMasterModel group = UserGroupMasterModel.fromMap(getMap);
                     return group;
                   }).toList();
+
+                  getListGroup = getListGroup.where((UserGroupMasterModel data) =>
+                    data.namaGroup.toLowerCase().contains(searchKey.toLowerCase()) ||
+                    data.namaGroup.toLowerCase().startsWith(searchKey.toLowerCase()) ||
+                    data.namaGroup.toLowerCase().endsWith(searchKey.toLowerCase())
+                  ).toList();
 
                   if(getListGroup.isNotEmpty){
                     return ListView.builder(

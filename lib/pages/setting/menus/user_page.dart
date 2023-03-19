@@ -9,8 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../component/page/user_detail.dart';
-import '../../../models/user_group.dart';
+import '../../../halper/route_halper.dart';
 import '../../../providers/app_services.dart';
 import '../../../utils/collections.dart';
 import '../../../utils/colors.dart';
@@ -33,10 +32,24 @@ class _UserSettingPageState extends State<UserSettingPage> {
   final AppServices getService = AppServices();
   final FunHelp getHelp = FunHelp();
   final TextEditingController searchController = TextEditingController();
+  late String searchKey = "";
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    UserGroupModel getGroup = UserGroupModel();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -57,6 +70,11 @@ class _UserSettingPageState extends State<UserSettingPage> {
                 controller: searchController,
                 hintText: "Temukan User...",
                 prefixIcon: const Icon(Icons.search),
+                onChanged: (value){
+                  setState(() {
+                    searchKey = value;
+                  });
+                },
               ),
             ),
 
@@ -77,6 +95,12 @@ class _UserSettingPageState extends State<UserSettingPage> {
                       return group;
                     }).toList();
 
+                    getListUser = getListUser.where((UserModel data) =>
+                      data.namaLengkap.toLowerCase().contains(searchKey.toLowerCase()) ||
+                      data.namaLengkap.toLowerCase().startsWith(searchKey.toLowerCase()) ||
+                      data.namaLengkap.toLowerCase().endsWith(searchKey.toLowerCase())
+                    ).toList();
+
                     if(getListUser.isNotEmpty){
                       return ListView.builder(
                           shrinkWrap: true,
@@ -90,7 +114,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
 
                             return GestureDetector(
                               onTap: (){
-                                Get.to(() => UserDetailPage(userModel: getUser, userSee: 1, groupModel: getGroup,));
+                                Get.toNamed(RouteHalper.getPersonalInfoPage(userId: getUser.id));
                               },
                               child: Container(
                                 margin: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20, bottom: Dimentions.height15),

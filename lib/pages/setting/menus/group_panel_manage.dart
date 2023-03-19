@@ -41,8 +41,23 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
   final AppServices getService = AppServices();
   final FunHelp getHelp = FunHelp();
   final TextEditingController searchController = TextEditingController();
+  late String searchKey = "";
 
   late UserModel lateCurrentUser = UserModel();
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +97,13 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
               padding: EdgeInsets.only(left: Dimentions.width15, right: Dimentions.width15),
               child: MyTextFieldReg(
                 controller: searchController,
-                hintText: "Temukan Group...",
+                hintText: "Temukan User...",
                 prefixIcon: const Icon(Icons.search),
+                onChanged: (value){
+                  setState(() {
+                    searchKey = value;
+                  });
+                },
               ),
             ),
             Column(
@@ -104,13 +124,19 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                           return images;
                         }).toList();
 
+                        getListGroup = getListGroup.where((UserMasterModel data) =>
+                          data.nama.toLowerCase().contains(searchKey.toLowerCase()) ||
+                          data.nama.toLowerCase().startsWith(searchKey.toLowerCase()) ||
+                          data.nama.toLowerCase().endsWith(searchKey.toLowerCase())
+                        ).toList();
+
                         List<UserMasterModel> getUser = getListGroup.expand((parent) => parent.group!).where((child) => child.groupId == getGroup.groupId).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
                         getUser.sort((a, b) => a.createDate!.compareTo(b.createDate!));
 
                         if(getUser.isEmpty){
                           return Padding(
                             padding: EdgeInsets.only(top: Dimentions.height45),
-                            child: const DataNotFoundWidget(msgTop: "Belum ada user didaftarkan", msgButton: "Tambahkan user kedalam group anda!",),
+                            child: DataNotFoundWidget(msgTop: 'User "$searchKey" tidak ditemukan!', msgButton: "Keyword yang anda masukkan tidak ditemukan",),
                           );
                         }else{
                           return ListView.builder(

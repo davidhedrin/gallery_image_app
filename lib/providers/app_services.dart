@@ -602,11 +602,11 @@ class AppServices{
     return documents.where((item) => item.userById == userId).toList();
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> streamSearchItemWithColumn({
+  Stream<QuerySnapshot> streamSearchItemWithColumn({
     required String collection,
     required String column,
     required String value
   }) {
-    return  _fbStore.collection(collection).where(column, isGreaterThanOrEqualTo: value).where(column, isLessThan: '${value}z').snapshots();
+    return  _fbStore.collection(collection).where(column, isGreaterThanOrEqualTo: value).where(column, isLessThanOrEqualTo: '$value\uf8ff').snapshots();
   }
 }
