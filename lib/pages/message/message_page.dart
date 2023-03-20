@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 
+import '../../component/search/custom_search_delegate.dart';
 import '../../generated/assets.dart';
 import '../../models/message/main_message.dart';
 import '../../models/user_master_model.dart';
@@ -63,7 +64,10 @@ class _MessagePageMenuState extends State<MessagePageMenu> {
               child: IconBackground(
                 icon: Icons.search,
                 onTap: () {
-
+                  showSearch(
+                    context: context,
+                    delegate: CustomSearchDelegate(searchFor: Collections.collSearchForMsg),
+                  );
                 },
               ),
             ),
@@ -340,7 +344,23 @@ class NewChatRoom extends StatefulWidget {
 
 class _NewChatRoomState extends State<NewChatRoom> {
   final TextEditingController searchController = TextEditingController();
+  late String searchKey = "";
+
   late String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -349,6 +369,11 @@ class _NewChatRoomState extends State<NewChatRoom> {
         controller: searchController,
         hintText: "Temukan User...",
         prefixIcon: const Icon(Icons.search),
+        onChanged: (value){
+          setState(() {
+            searchKey = value;
+          });
+        },
       ),
       titlePadding: EdgeInsets.only(left: Dimentions.width15, right: Dimentions.width15, top: Dimentions.height12),
       contentPadding: EdgeInsets.only(bottom: Dimentions.height10),
@@ -380,6 +405,12 @@ class _NewChatRoomState extends State<NewChatRoom> {
 
                             List<UserMasterModel> getUser = getListGroup.expand((parent) => parent.group!).where((child) => child.groupId == MainAppPage.groupCodeId).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
                             getUser.sort((a, b) => a.createDate!.compareTo(b.createDate!));
+
+                            getUser = getUser.where((UserMasterModel data) =>
+                              data.nama.toLowerCase().contains(searchKey.toLowerCase()) ||
+                              data.nama.toLowerCase().startsWith(searchKey.toLowerCase()) ||
+                              data.nama.toLowerCase().endsWith(searchKey.toLowerCase())
+                            ).toList();
 
                             if(getUser.isEmpty){
                               return Padding(

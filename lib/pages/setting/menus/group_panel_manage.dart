@@ -106,82 +106,81 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
                 },
               ),
             ),
-            Column(
-              children: [
-                StreamBuilder<QuerySnapshot>(
-                    stream: getService.streamObjGetCollection(collection: Collections.usermaster),
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if(!snapshot.hasData){
-                        return const DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
+
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: getService.streamObjGetCollection(collection: Collections.usermaster),
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if(!snapshot.hasData){
+                      return const DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
+                    }else{
+                      var userGroup = snapshot.data!.docs;
+                      List<UserMasterModel> getListGroup = userGroup.map((e){
+                        Map<String, dynamic> getMap = e.data() as Map<String, dynamic>;
+                        UserMasterModel images = UserMasterModel.fromMap(getMap);
+                        return images;
+                      }).toList();
+
+                      getListGroup = getListGroup.where((UserMasterModel data) =>
+                        data.nama.toLowerCase().contains(searchKey.toLowerCase()) ||
+                        data.nama.toLowerCase().startsWith(searchKey.toLowerCase()) ||
+                        data.nama.toLowerCase().endsWith(searchKey.toLowerCase())
+                      ).toList();
+
+                      List<UserMasterModel> getUser = getListGroup.expand((parent) => parent.group!).where((child) => child.groupId == getGroup.groupId).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
+                      getUser.sort((a, b) => a.createDate!.compareTo(b.createDate!));
+
+                      if(getUser.isEmpty){
+                        return Padding(
+                          padding: EdgeInsets.only(top: Dimentions.height45),
+                          child: DataNotFoundWidget(msgTop: 'User "$searchKey" tidak ditemukan!', msgButton: "Keyword yang anda masukkan tidak ditemukan",),
+                        );
                       }else{
-                        var userGroup = snapshot.data!.docs;
-                        List<UserMasterModel> getListGroup = userGroup.map((e){
-                          Map<String, dynamic> getMap = e.data() as Map<String, dynamic>;
-                          UserMasterModel images = UserMasterModel.fromMap(getMap);
-                          return images;
-                        }).toList();
+                        return ListView.builder(
+                            padding: EdgeInsets.only(top: Dimentions.height15),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: getUser.length,
+                            itemBuilder: (context, index){
+                              UserMasterModel getDataUser = getUser[index];
+                              GroupModel getCurrentGroup = getDataUser.group!.firstWhere((group) => group.groupId == getGroup.groupId);
+                              return StreamBuilder<QuerySnapshot>(
+                                  stream: getService.streamGetDocByColumn(collection: Collections.users, collName: "phone", value: getDataUser.phone),
+                                  builder: (context, snapshotUser) {
+                                    if (snapshotUser.connectionState == ConnectionState.waiting) {
+                                      return const Center(child: CircularProgressIndicator());
+                                    }
+                                    if(!snapshotUser.hasData){
+                                      return const Text("Data tidak ditemukan!",);
+                                    }else{
+                                      var getDocs = snapshotUser.data!.docs;
+                                      if(getDocs.isNotEmpty){
+                                        var data = getDocs.first;
+                                        Map<String, dynamic> getMap = data.data() as Map<String, dynamic>;
+                                        UserModel userModel = UserModel.fromMap(getMap);
+                                        userModel.userType = getCurrentGroup.status;
 
-                        getListGroup = getListGroup.where((UserMasterModel data) =>
-                          data.nama.toLowerCase().contains(searchKey.toLowerCase()) ||
-                          data.nama.toLowerCase().startsWith(searchKey.toLowerCase()) ||
-                          data.nama.toLowerCase().endsWith(searchKey.toLowerCase())
-                        ).toList();
-
-                        List<UserMasterModel> getUser = getListGroup.expand((parent) => parent.group!).where((child) => child.groupId == getGroup.groupId).map((child) => getListGroup.firstWhere((parent) => parent.group!.contains(child))).toList();
-                        getUser.sort((a, b) => a.createDate!.compareTo(b.createDate!));
-
-                        if(getUser.isEmpty){
-                          return Padding(
-                            padding: EdgeInsets.only(top: Dimentions.height45),
-                            child: DataNotFoundWidget(msgTop: 'User "$searchKey" tidak ditemukan!', msgButton: "Keyword yang anda masukkan tidak ditemukan",),
-                          );
-                        }else{
-                          return ListView.builder(
-                              padding: EdgeInsets.only(top: Dimentions.height15),
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: getUser.length,
-                              itemBuilder: (context, index){
-                                UserMasterModel getDataUser = getUser[index];
-                                GroupModel getCurrentGroup = getDataUser.group!.firstWhere((group) => group.groupId == getGroup.groupId);
-                                return StreamBuilder<QuerySnapshot>(
-                                    stream: getService.streamGetDocByColumn(collection: Collections.users, collName: "phone", value: getDataUser.phone),
-                                    builder: (context, snapshotUser) {
-                                      if (snapshotUser.connectionState == ConnectionState.waiting) {
-                                        return const Center(child: CircularProgressIndicator());
-                                      }
-                                      if(!snapshotUser.hasData){
-                                        return const Text("Data tidak ditemukan!",);
+                                        return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
                                       }else{
-                                        var getDocs = snapshotUser.data!.docs;
-                                        if(getDocs.isNotEmpty){
-                                          var data = getDocs.first;
-                                          Map<String, dynamic> getMap = data.data() as Map<String, dynamic>;
-                                          UserModel userModel = UserModel.fromMap(getMap);
-                                          userModel.userType = getCurrentGroup.status;
-
-                                          return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
-                                        }else{
-                                          UserModel userModel = UserModel(
-                                            namaLengkap: getDataUser.nama,
-                                            phone: getDataUser.phone,
-                                            userType: getCurrentGroup.status
-                                          );
-                                          return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
-                                        }
+                                        UserModel userModel = UserModel(
+                                          namaLengkap: getDataUser.nama,
+                                          phone: getDataUser.phone,
+                                          userType: getCurrentGroup.status
+                                        );
+                                        return generateUserCard(index: index, usrModel: userModel, groupModel: getGroup);
                                       }
                                     }
-                                );
-                              }
-                          );
-                        }
+                                  }
+                              );
+                            }
+                        );
                       }
                     }
-                ),
-              ],
+                  }
+              ),
             ),
           ],
         ),

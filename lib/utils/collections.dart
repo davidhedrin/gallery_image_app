@@ -15,6 +15,7 @@ class Collections{
 
   static const String message = "message";
 
+  static const String collColumnnamaLengkap = "namaLengkap";
   static const String collColumnpassword = "password";
   static const String collColumngroup = "group";
   static const String collColumnuserById = "userById";
@@ -23,4 +24,7 @@ class Collections{
   static const String collColumnpushtoken = "pushToken";
   static const String collColumnphone = "phone";
   static const String collColumnuidphone = "uidPhone";
+
+  static const String collSearchForMsg = "msg";
+  static const String collSearchForPost = "post";
 }

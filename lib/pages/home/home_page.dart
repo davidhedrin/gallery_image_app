@@ -6,11 +6,11 @@ import 'package:delivery_food_app/models/user_group.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../component/app_page_body.dart';
+import '../../component/search/custom_search_delegate.dart';
 import '../../utils/colors.dart';
 import '../../utils/dimentions.dart';
 import '../../utils/utils.dart';
@@ -58,26 +58,25 @@ class _HomePageMenuState extends State<HomePageMenu> {
                     stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: _userId),
                     builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                        return BigText(text: "-", color: AppColors.mainColor,);
                       }
                       if (!snapshot.hasData) {
-                        return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                        return BigText(text: "-", color: AppColors.mainColor,);
                       }else{
                         var document = snapshot.data;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(child: BigText(text: document!.get('nama_lengkap'), color: AppColors.mainColor,)),
+                            BigText(text: document!.get('nama_lengkap'), color: AppColors.mainColor,),
                             StreamBuilder(
                                 stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: document.get("phone")),
                                 builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup){
                                   if (snapshotGroup.connectionState == ConnectionState.waiting) {
-                                    return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                                    return BigText(text: "-", color: AppColors.mainColor,);
                                   }
                                   if (!snapshotGroup.hasData) {
-                                    return Container(child: BigText(text: "-", color: AppColors.mainColor,));
+                                    return BigText(text: "-", color: AppColors.mainColor,);
                                   }else{
-                                    var dataGroup = snapshotGroup.data!.data();
                                     List<Map<String, dynamic>> groupArray = List.from(snapshotGroup.data!.get("group"));
                                     List<UserGroupModel> toModelGroup = groupArray.map((Map<String, dynamic> res){
                                       UserGroupModel getGroup = UserGroupModel.fromMap(res);
@@ -104,7 +103,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                       child: DropdownButton(
                                         isDense: true,
                                         value: _selectedItem,
-                                        icon: Icon(Icons.arrow_drop_down),
+                                        icon: const Icon(Icons.arrow_drop_down),
                                         onChanged: (value) {
                                           UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.groupId == _selectedItem);
                                           setState(() {
@@ -135,7 +134,10 @@ class _HomePageMenuState extends State<HomePageMenu> {
                     children: [
                       GestureDetector(
                         onTap: (){
-                          Get.toNamed(RouteHalper.getHomeSearchComponent());
+                          showSearch(
+                            context: context,
+                            delegate: CustomSearchDelegate(searchFor: Collections.collSearchForPost),
+                          );
                         },
                         child: Icon(Icons.search, color: Colors.black45, size: Dimentions.iconSize32,)
                       ),
@@ -160,7 +162,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                 stream: getService.streamBuilderGetDoc(collection: Collections.users, docId: _userId),
                 builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot){
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
                   if (!snapshot.hasData) {
                     return const DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);
@@ -170,7 +172,7 @@ class _HomePageMenuState extends State<HomePageMenu> {
                       stream: getService.streamBuilderGetDoc(collection: Collections.usermaster, docId: document!.get("phone")),
                       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotGroup){
                         if (snapshotGroup.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator();
+                          return const CircularProgressIndicator();
                         }
                         if (!snapshotGroup.hasData) {
                           return const DataNotFoundWidget(msgTop: "Data tidak ditemukan!",);

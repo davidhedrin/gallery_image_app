@@ -106,7 +106,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
                         onTap: (){
                           Navigator.of(context).pop();
                         },
-                        child: AppIcon(icon: Icons.arrow_back_ios_new),
+                        child: const AppIcon(icon: Icons.arrow_back_ios_new),
                       ),
                       StreamBuilder<QuerySnapshot>(
                           stream: getService.streamGetCollecInColect(collection1: Collections.users, collection2: Collections.bookmark, docId: MainAppPage.setUserId),
@@ -201,32 +201,84 @@ class _DetailImagePageState extends State<DetailImagePage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(
-              onTap: () async {
-                getService.loading(context);
+            Row(
+              children: [
+                StreamBuilder<DocumentSnapshot <Map <String, dynamic>>>(
+                    stream: getService.streamBuilderGetDoc(collection: widget.groupName!, docId: widget.imageId),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox();
+                      }
+                      if(!snapshot.hasData){
+                        return const SizedBox();
+                      }else{
+                        var data = snapshot.data;
+                        Map<String, dynamic> mapData = data!.data() as Map<String, dynamic>;
+                        PostingImageModel getData = PostingImageModel.fromMap(mapData);
 
-                Reference refStorage = storage.ref().child("${widget.groupName!.toLowerCase()}/${widget.imageId}");
-                bool finishDown = await getService.downloadFile(refStorage, "${widget.groupName!}-${DateTime.now().millisecond}", context);
+                        if(getData.userById == MainAppPage.setUserId){
+                          return Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: Dimentions.width10),
+                                child: GestureDetector(
+                                  onTap: () {
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(Dimentions.radius20),
+                                      color: Colors.white,
+                                    ),
+                                    child: Icon(Icons.edit, color: Colors.orangeAccent.shade200,),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(right: Dimentions.width10),
+                                child: GestureDetector(
+                                  onTap: () {
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(Dimentions.radius20),
+                                      color: Colors.white,
+                                    ),
+                                    child: Icon(Icons.delete_forever, color: Colors.redAccent.shade200,),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }else{
+                          return const SizedBox();
+                        }
+                      }
+                    }
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    getService.loading(context);
 
-                Navigator.of(context).pop();
-                if(finishDown == true){
-                  showAwsBar(context: context, contentType: ContentType.success, msg: "Gambar berhasil diUnduh!", title: "Download");
-                }
-              },
-              child: Container(
-                padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Dimentions.radius20),
-                  color: Colors.white,
+                    Reference refStorage = storage.ref().child("${widget.groupName!.toLowerCase()}/${widget.imageId}");
+                    bool finishDown = await getService.downloadFile(refStorage, "${widget.groupName!}-${DateTime.now().millisecond}", context);
+
+                    Navigator.of(context).pop();
+                    if(finishDown == true){
+                      showAwsBar(context: context, contentType: ContentType.success, msg: "Gambar berhasil diUnduh!", title: "Download");
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(Dimentions.radius20),
+                      color: Colors.white,
+                    ),
+                    child: Icon(Icons.cloud_download, color: AppColors.mainColor,),
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    BigText(text: "Unduh", color: Colors.black87,),
-                    SizedBox(width: Dimentions.width5,),
-                    Icon(Icons.cloud_download, color: AppColors.mainColor,),
-                  ],
-                ),
-              ),
+              ],
             ),
             Container(
               padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
