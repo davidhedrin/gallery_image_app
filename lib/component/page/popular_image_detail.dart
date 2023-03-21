@@ -3,15 +3,16 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delivery_food_app/component/edit_posting_page.dart';
 import 'package:delivery_food_app/models/posting_image.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/utils/utils.dart';
 import 'package:delivery_food_app/widgets/app_icon.dart';
-import 'package:delivery_food_app/widgets/expandable_text_widget.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../generated/assets.dart';
 import '../../models/likes_model.dart';
@@ -20,6 +21,7 @@ import '../../widgets/app_column.dart';
 import '../../widgets/big_text.dart';
 import '../../widgets/data_not_found.dart';
 import '../../widgets/loading_progres.dart';
+import '../../widgets/small_text.dart';
 import '../main_app_page.dart';
 
 class DetailImagePage extends StatefulWidget {
@@ -34,6 +36,14 @@ class DetailImagePage extends StatefulWidget {
 class _DetailImagePageState extends State<DetailImagePage> {
   final FirebaseStorage storage = FirebaseStorage.instance;
   final AppServices getService = AppServices();
+
+  late String firstHalf;
+  late String secoundHalf;
+
+  bool hiddenText = true;
+  double textHeight = Dimentions.screenHeight/5.63;
+
+  bool _isLoading = false;
 
   bool containsDocId(List<QueryDocumentSnapshot<Object?>> querySnapshot) {
     for (QueryDocumentSnapshot docSnapshot in querySnapshot) {
@@ -60,6 +70,15 @@ class _DetailImagePageState extends State<DetailImagePage> {
             var data = snapshot.data;
             Map<String, dynamic> mapData = data!.data() as Map<String, dynamic>;
             PostingImageModel getData = PostingImageModel.fromMap(mapData);
+
+            if(getData.keterangan!.length > textHeight){
+              firstHalf = getData.keterangan!.substring(0, textHeight.toInt());
+              secoundHalf = getData.keterangan!.substring(textHeight.toInt()+1, getData.keterangan!.length);
+            }else{
+              firstHalf = getData.keterangan!;
+              secoundHalf = "";
+            }
+
             return Stack(
               children: [
                 Positioned(
@@ -173,7 +192,28 @@ class _DetailImagePageState extends State<DetailImagePage> {
                         SizedBox(height: Dimentions.height20,),
                         Expanded(
                           child: SingleChildScrollView(
-                              child: ExpandableTextWidget(text: getData.keterangan!)
+                            child: getData.keterangan!.isNotEmpty? Container(
+                              child: secoundHalf.isEmpty ? SmallText(text: firstHalf, size: Dimentions.font16, color: AppColors.paraColor,) : Column(
+                                children: [
+                                  SmallText(text: hiddenText ? ("$firstHalf...") : (firstHalf + secoundHalf), size: Dimentions.font16, color: AppColors.paraColor, height: 1.8,),
+                                  InkWell(
+                                    onTap: (){
+                                      setState(() {
+                                        hiddenText = !hiddenText;
+                                      });
+                                    },
+                                    child: Row(
+                                      children: [
+                                        SmallText(text: "Show more", color: AppColors.mainColor,),
+                                        Icon(hiddenText ? Icons.arrow_drop_down : Icons.arrow_drop_up, color: AppColors.mainColor,)
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ) : Text("Keterangan gambar tidak dicantumkan",
+                              style: TextStyle(fontSize: Dimentions.font16, fontStyle: FontStyle.italic, color: AppColors.paraColor,),
+                            ),
                           ),
                         )
                       ],
@@ -188,7 +228,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
           }
         }
       ),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: _isLoading == false ? Container(
         height: Dimentions.heightSize85,
         padding: EdgeInsets.only(top: Dimentions.height10, bottom: Dimentions.height10, left: Dimentions.width20, right: Dimentions.width20),
         decoration: BoxDecoration(
@@ -222,8 +262,6 @@ class _DetailImagePageState extends State<DetailImagePage> {
                               Padding(
                                 padding: EdgeInsets.only(right: Dimentions.width10),
                                 child: GestureDetector(
-                                  onTap: () {
-                                  },
                                   child: Container(
                                     padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
                                     decoration: BoxDecoration(
@@ -232,13 +270,14 @@ class _DetailImagePageState extends State<DetailImagePage> {
                                     ),
                                     child: Icon(Icons.edit, color: Colors.orangeAccent.shade200,),
                                   ),
+                                  onTap: () {
+                                    Get.to(() => EditPostingPage(uid: getData.userById, groupId: MainAppPage.groupCodeId!, postData: getData,));
+                                  },
                                 ),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(right: Dimentions.width10),
                                 child: GestureDetector(
-                                  onTap: () {
-                                  },
                                   child: Container(
                                     padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
                                     decoration: BoxDecoration(
@@ -247,6 +286,29 @@ class _DetailImagePageState extends State<DetailImagePage> {
                                     ),
                                     child: Icon(Icons.delete_forever, color: Colors.redAccent.shade200,),
                                   ),
+                                  onTap: () async {
+                                    bool check = false;
+                                    await onBackButtonPressYesNo(context: context, text: "Hapus Posting!", desc: "Yakin ingin menghapus postingan ini?").then((value){
+                                      check = value;
+                                    });
+
+                                    if(check == true){
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
+
+                                      Navigator.pop(context);
+                                      getService.loading(context);
+
+                                      String namaPostingan = getData.title;
+                                      getService.deleteCollecInCollec(collection1: getData.imageGroup, collection2: Collections.likes, guid1: getData.imageId);
+
+                                      getService.deleteDocById(collection: getData.imageGroup, docId: getData.imageId);
+
+                                      Navigator.of(context).pop();
+                                      showAwsBar(context: context, contentType: ContentType.success, msg: 'Berhasil menghapus Postingan "$namaPostingan"', title: "Posting");
+                                    }
+                                  },
                                 ),
                               ),
                             ],
@@ -295,7 +357,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
             )
           ],
         ),
-      ),
+      ) : const LinearProgressIndicator(),
     );
   }
 }

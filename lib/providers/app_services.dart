@@ -489,6 +489,25 @@ class AppServices{
     }
   }
 
+  //delete coll in coll
+  void deleteCollecInCollec({
+    required String collection1,
+    required String collection2,
+    required String guid1,
+  }) async {
+    try{
+      await _fbStore.collection(collection1).doc(guid1).collection(collection2).get().then((querySnapshot){
+        for (var doc in querySnapshot.docs) {
+          doc.reference.delete();
+        }
+      });
+    } on FirebaseException catch (e){
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
   Future<QuerySnapshot<Object?>> getAllDocuments(String collection) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance.collection(collection).get();
     return snapshot;

@@ -52,4 +52,14 @@ class PostingImageModel{
       "imageGroup" : imageGroup,
     };
   }
+
+
+  Map<String, dynamic> toMapUpdate(){
+    return {
+      "title" : title,
+      "pemirsa" : pemirsa,
+      "tanggal" : tanggal,
+      "keterangan" : keterangan,
+    };
+  }
 }

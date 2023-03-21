@@ -1,49 +1,43 @@
 // ignore_for_file: depend_on_referenced_packages, use_build_context_synchronously
 
-import 'dart:io';
-
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:delivery_food_app/generated/assets.dart';
-import 'package:delivery_food_app/models/posting_image.dart';
-import 'package:delivery_food_app/utils/dimentions.dart';
-import 'package:delivery_food_app/widgets/big_text.dart';
-import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../generated/assets.dart';
+import '../models/posting_image.dart';
 import '../models/user_group.dart';
 import '../models/user_model.dart';
 import '../providers/app_services.dart';
 import '../utils/colors.dart';
+import '../utils/dimentions.dart';
 import '../utils/utils.dart';
 import '../widgets/app_icon.dart';
 import '../widgets/auth_widget/text_widget.dart';
+import '../widgets/big_text.dart';
+import '../widgets/loading_progres.dart';
+import '../widgets/small_text.dart';
+import 'add_new_posting.dart';
 
-class ModelPermirsa{
-  String value;
-  String id;
-
-  ModelPermirsa({this.value = "",  this.id = ""});
-}
-
-class AddNewPostingPage extends StatefulWidget {
+class EditPostingPage extends StatefulWidget {
   final String uid;
   final String groupId;
-  const AddNewPostingPage({Key? key, required this.uid, required this.groupId}) : super(key: key);
+  final PostingImageModel postData;
+  const EditPostingPage({Key? key, required this.uid, required this.groupId, required this.postData}) : super(key: key);
 
   @override
-  State<AddNewPostingPage> createState() => _AddNewPostingPageState();
+  State<EditPostingPage> createState() => _EditPostingPageState();
 }
 
-class _AddNewPostingPageState extends State<AddNewPostingPage> {
+class _EditPostingPageState extends State<EditPostingPage> {
   final FirebaseAuth userAuth = FirebaseAuth.instance;
   final AppServices getService = AppServices();
 
   final _formKey = GlobalKey<FormState>();
 
-  File? image;
   final TextEditingController titleImageController = TextEditingController();
   final TextEditingController vdateImageController = TextEditingController();
   final TextEditingController ketImageController = TextEditingController();
@@ -54,57 +48,89 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
   List<ModelPermirsa> contentFor = [];
   String _selectedContent = "";
 
-  _AddNewPostingPageState(){
+  UserModel userModel = UserModel();
+
+  PostingImageModel _postData = PostingImageModel();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _postData = widget.postData;
+
+    DateTime imageDate = _postData.tanggal!;
+    var day = DateFormat('EEEE').format(imageDate);
+    var month = DateFormat('MMMM').format(imageDate);
+    vdateImageController.text = "$day, ${imageDate.day} $month ${imageDate.year}";
+    dateImage = imageDate;
+    titleImageController.text = _postData.title;
+    ketImageController.text = _postData.keterangan ?? "";
+
     contentFor = [
       ModelPermirsa(id: "1", value: "Public"),
       ModelPermirsa(id: "2", value: "Private"),
     ];
-    _selectedContent = contentFor[0].id;
-  }
 
-  UserModel userModel = UserModel();
+    ModelPermirsa getContentFor = contentFor.firstWhere((item) => item.id == _postData.pemirsa);
+    _selectedContent = getContentFor.id;
+  }
 
   @override
   Widget build(BuildContext context) {
     if(_selectedItem!.isEmpty){
       _selectedItem = widget.groupId;
     }
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onBackground,
       body: Column(
         children: <Widget>[
           Stack(
-            children: [
-              SizedBox(
-                height: Dimentions.heightSize230,
-                child: image != null ? Image.file(
-                  image!,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ) : Image.asset(
-                  Assets.imageBackgroundProfil,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-
-              Positioned(
-                top: Dimentions.height45,
-                left: Dimentions.width20,
-                right: Dimentions.width20,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.of(context).pop();
-                      },
-                      child: const AppIcon(icon: Icons.close),
+              children: [
+                SizedBox(
+                  height: Dimentions.heightSize230,
+                  child: CachedNetworkImage(
+                    imageUrl: _postData.imageUrl,
+                    placeholder: (context, url) => LoadingProgress(size: Dimentions.height25,),
+                    errorWidget: (context, url, error){
+                      return Container(
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(Assets.imageBackgroundProfil),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF9294cc),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ]
+
+                Positioned(
+                  top: Dimentions.height45,
+                  left: Dimentions.width20,
+                  right: Dimentions.width20,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.of(context).pop();
+                        },
+                        child: const AppIcon(icon: Icons.close),
+                      ),
+                    ],
+                  ),
+                ),
+              ]
           ),
 
           SizedBox(height: Dimentions.height10,),
@@ -157,17 +183,14 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                                           isDense: true,
                                           value: _selectedItem,
                                           icon: const Icon(Icons.arrow_drop_down),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _selectedItem = value;
-                                            });
-                                          },
+                                          onChanged: null,
                                           items: toModelGroup.map((value) {
                                             return DropdownMenuItem(
                                                 value: value.groupId.toString(),
                                                 child: BigText(
                                                   text: value.namaGroup.toString(),
                                                   size: Dimentions.font20,
+                                                  color: Colors.black45,
                                                 )
                                             );
                                           }).toList(),
@@ -183,7 +206,7 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                   ],
                 ),
               ],
-            )
+            ),
           ),
           Divider(height: Dimentions.height15, thickness: 1.5),
           SizedBox(height: Dimentions.height10,),
@@ -222,9 +245,6 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                                     vdateImageController.text = "$day, ${value.day} $month ${value.year}";
                                     dateImage = value;
                                   });
-                                }else{
-                                  vdateImageController.clear();
-                                  dateImage = null;
                                 }
                               });
                             },
@@ -293,35 +313,35 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
                     Padding(
                       padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25, bottom: Dimentions.height2),
                       child: DropdownButtonFormField(
-                        value: _selectedContent,
-                        isDense: true,
-                        icon: const Icon(
-                          Icons.arrow_drop_down_circle,
-                          color: Colors.cyan,
-                        ),
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(_selectedContent == "1" ? Icons.people_outline : Icons.lock),
-                          enabledBorder:  const OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey.shade400),
-                          ),
-                          fillColor: Colors.grey.shade200,
-                          filled: true,
+                          value: _selectedContent,
                           isDense: true,
-                        ),
-                        items: contentFor.map((e) {
-                          return DropdownMenuItem(
-                            value: e.id,
-                            child: Text(e.value, style: TextStyle(fontSize: Dimentions.font20),),
-                          );
-                        }).toList(),
-                        onChanged: (value){
-                          setState(() {
-                            _selectedContent = value as String;
-                          });
-                        }
+                          icon: const Icon(
+                            Icons.arrow_drop_down_circle,
+                            color: Colors.cyan,
+                          ),
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(_selectedContent == "1" ? Icons.people_outline : Icons.lock),
+                            enabledBorder:  const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey.shade400),
+                            ),
+                            fillColor: Colors.grey.shade200,
+                            filled: true,
+                            isDense: true,
+                          ),
+                          items: contentFor.map((e) {
+                            return DropdownMenuItem(
+                              value: e.id,
+                              child: Text(e.value, style: TextStyle(fontSize: Dimentions.font20),),
+                            );
+                          }).toList(),
+                          onChanged: (value){
+                            setState(() {
+                              _selectedContent = value as String;
+                            });
+                          }
                       ),
                     ),
                   ],
@@ -336,76 +356,33 @@ class _AddNewPostingPageState extends State<AddNewPostingPage> {
         child: Padding(
           padding: EdgeInsets.only(left: Dimentions.width8, right: Dimentions.width15, bottom: Dimentions.height6),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.cyan,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(Dimentions.radius50))
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(Dimentions.height12),
-                  child: Row(
-                    children: [
-                      Text("Pilih ", style: TextStyle(color: Colors.white, fontSize: Dimentions.font17),),
-                      const Icon(
-                        Icons.image,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-                onPressed: () async {
-                  var isImage = await pickImageCrop(context);
-                  setState(() {
-                    image = isImage;
-                  });
-                },
-              ),
               ElevatedButton(
                 onPressed: () async {
                   BuildContext dialogcontext = context;
-                  if(image != null){
-                    if(_formKey.currentState!.validate()){
+                  if(_formKey.currentState!.validate()){
 
-                      bool check = false;
-                      await onBackButtonPressYesNo(context: context, text: "Upload Posting", desc: "Apakah postingan sudah sesuai?").then((value){
-                        check = value;
-                      });
-                      if(check){
-                        getService.loading(dialogcontext);
+                    bool check = false;
+                    await onBackButtonPressYesNo(context: context, text: "Update Posting", desc: "Apakah postingan sudah sesuai?").then((value){
+                      check = value;
+                    });
+                    if(check){
+                      getService.loading(dialogcontext);
 
-                        String guid = getService.generateGuid();
-                        UserGroupModel getGroup = toModelGroupList.firstWhere((group) => group.groupId == _selectedItem);
-                        String collectionImage = getGroup.namaGroup.toLowerCase();
+                      PostingImageModel setDataUpdate = PostingImageModel(
+                        title: titleImageController.text,
+                        tanggal: dateImage,
+                        keterangan: ketImageController.text,
+                        pemirsa: _selectedContent
+                      );
 
-                        String imgUrl = await getService.uploadImageToStorage(ref: "$collectionImage/$guid", file: image!, context: context);
-                        String getImgUrl = imgUrl;
+                      getService.updateDataDb(data: setDataUpdate.toMapUpdate(), context: context, collection: _postData.imageGroup, guid: _postData.imageId);
 
-                        PostingImageModel imageModel = PostingImageModel(
-                          title: titleImageController.text,
-                          imageUrl: getImgUrl,
-                          imageId: guid,
-                          keterangan: ketImageController.text,
-                          pemirsa: _selectedContent,
-                          tanggal: dateImage,
-                          uploadDate: DateTime.now(),
-                          userByName: userModel.namaLengkap,
-                          userById: userModel.id,
-                          imageGroup: collectionImage,
-                        );
-
-                        getService.createDataToDb(data: imageModel.toMapUpload(), context: context, collection: collectionImage, guid: guid);
-
-                        Navigator.of(dialogcontext).pop();
-                        Navigator.pop(context);
-                        showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil mengunggah postingan", title: "Posting");
-                      }
+                      Navigator.of(dialogcontext).pop();
+                      Navigator.pop(context);
+                      showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil mengubah postingan", title: "Posting");
                     }
-                  }else{
-                    showAwsBar(context: context, contentType: ContentType.warning, msg: "Pilih gambar terlebih dahulu", title: "Image!");
                   }
                 },
                 style: ElevatedButton.styleFrom(
