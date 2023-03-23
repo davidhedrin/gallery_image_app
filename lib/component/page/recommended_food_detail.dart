@@ -1,11 +1,9 @@
-import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:delivery_food_app/widgets/app_icon.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/expandable_text_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../generated/assets.dart';
 
@@ -29,17 +27,16 @@ class RecommendedFoodDetail extends StatelessWidget {
                   onTap: (){
                     Navigator.of(context).pop();
                   },
-                  child: AppIcon(icon: Icons.arrow_back_ios_new,)
+                  child: const AppIcon(icon: Icons.arrow_back_ios_new,)
                 ),
-                AppIcon(icon: Icons.shopping_cart_outlined)
+                const AppIcon(icon: Icons.shopping_cart_outlined)
               ],
             ),
             bottom: PreferredSize(
-              preferredSize: Size.fromHeight(20),
+              preferredSize: const Size.fromHeight(20),
               child: Container(
-                child: Center(child: BigText(text: "Silver App Bar", size: Dimentions.font26,)),
                 width: double.maxFinite,
-                padding: EdgeInsets.only(top: 5, bottom: 10),
+                padding: const EdgeInsets.only(top: 5, bottom: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -47,6 +44,7 @@ class RecommendedFoodDetail extends StatelessWidget {
                     topRight: Radius.circular(Dimentions.radius20),
                   )
                 ),
+                child: Center(child: BigText(text: "Silver App Bar", size: Dimentions.font26,)),
               ),
             ),
             pinned: true,
@@ -65,7 +63,7 @@ class RecommendedFoodDetail extends StatelessWidget {
               children: [
                 Container(
                   margin: EdgeInsets.only(left: Dimentions.width20, right: Dimentions.width20),
-                  child: ExpandableTextWidget(text: "On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains. On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains."),
+                  child: const ExpandableTextWidget(text: "On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains. On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains."),
                 )
               ],
             )
@@ -92,7 +90,7 @@ class RecommendedFoodDetail extends StatelessWidget {
                   AppColors.mainColor,
                   iconSize: Dimentions.iconSize24,
                 ),
-                BigText(text: "\Rp.5000 "+" x "+" 0", color: AppColors.mainBlackColor, size: Dimentions.font26,),
+                BigText(text: "Rp.5000  x  0", color: AppColors.mainBlackColor, size: Dimentions.font26,),
                 AppIcon(
                   icon: Icons.add,
                   iconColor: Colors.white,
@@ -130,7 +128,7 @@ class RecommendedFoodDetail extends StatelessWidget {
                     borderRadius: BorderRadius.circular(Dimentions.radius20),
                     color: AppColors.mainColor,
                   ),
-                  child: BigText(text: "\Rp. 5000/Unit", color: Colors.white,),
+                  child: BigText(text: "Rp. 5000/Unit", color: Colors.white,),
                 )
               ],
             ),

@@ -23,7 +23,6 @@ import '../../widgets/glowing_action_button.dart';
 
 late String idUserGet;
 final AppServices getService = AppServices();
-String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
 
 class ChatMessagePage extends StatefulWidget {
   final String? userId;
@@ -43,6 +42,7 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
 
   @override
   Widget build(BuildContext context) {
+    String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
     idUserGet = widget.userId!.isNotEmpty ? widget.userId! : "";
     chatRoomId = chatRoomId.isNotEmpty ? chatRoomId : widget.chatId != null ? widget.chatId! : "";
 
@@ -116,6 +116,7 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
   }
 
   Widget chatInput(BuildContext context) {
+    String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height10, horizontal: Dimentions.width10),
       child: Row(
@@ -191,6 +192,7 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
                   String chatId = "${MainAppPage.setUserId}$idUserGet";
                   MainMessage mainMsg = MainMessage(
                     chatId: chatId,
+                    chatGroup: collectionMsg,
                     userId: [MainAppPage.setUserId, idUserGet],
                   );
 
@@ -281,6 +283,7 @@ class _DemoMessageList extends StatefulWidget {
 }
 
 class _DemoMessageListState extends State<_DemoMessageList> {
+  String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
 
   void updateNotReadMsg(List<MessageData> listMsg, String chatId) {
     List<MessageData> allListMsg = listMsg.where((msg) => msg.toId == MainAppPage.setUserId && msg.read == "N").toList();

@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
@@ -34,12 +34,6 @@ class CustomSearchDelegate extends SearchDelegate{
   String searchFor;
 
   @override
-  Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    throw UnimplementedError();
-  }
-
-  @override
   List<Widget> buildActions(BuildContext context){
     return [
       IconButton(
@@ -61,6 +55,18 @@ class CustomSearchDelegate extends SearchDelegate{
     );
   }
 
+  @override
+  Widget buildResults(BuildContext context) {
+    if(searchFor == Collections.collSearchForMsg){
+      return SuggestionsResultMsg(query: query,);
+    }
+    else if(searchFor == Collections.collSearchForPost){
+      return SuggestionsResultPost(query: query);
+    }
+    else{
+      return const SuggestionsDefault();
+    }
+  }
 
   @override
   Widget buildSuggestions(BuildContext context){
@@ -305,11 +311,11 @@ class SuggestionsResultMsg extends StatelessWidget {
   final String query;
 
   Future<List<MainMessageSearch>> getCurrentChatGroup() async {
+    List<MainMessageSearch> allChatsResult = [];
+
     String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
     var chats = await getService.fbStore.collection(collectionMsg).where("userId", arrayContains: MainAppPage.setUserId).get();
     List<QueryDocumentSnapshot<Map<String, dynamic>>> allChatsMap = chats.docs;
-
-    List<MainMessageSearch> allChatsResult = [];
 
     for(var item in allChatsMap){
       Map<String, dynamic> chatMap = item.data();

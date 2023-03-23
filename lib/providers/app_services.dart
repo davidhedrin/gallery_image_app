@@ -11,7 +11,7 @@ import 'package:delivery_food_app/utils/collections.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' as getdart;
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,10 +20,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../component/main_app_page.dart';
 import '../halper/route_halper.dart';
 import '../models/user_group.dart';
+import '../models/user_group_master_model.dart';
 import '../widgets/loading_progres.dart';
 
 class AppServices{
@@ -58,7 +60,7 @@ class AppServices{
     setStatus(status: "2", userId: loginUser.id);
     _auth.signOut();
     loginUser = UserModel();
-    Get.toNamed(RouteHalper.getLoginPage());
+    getdart.Get.toNamed(RouteHalper.getLoginPage());
   }
 
   void setStatus({required String status, required String userId}) async {
@@ -627,5 +629,28 @@ class AppServices{
     required String value
   }) {
     return  _fbStore.collection(collection).where(column, isGreaterThanOrEqualTo: value).where(column, isLessThanOrEqualTo: '$value\uf8ff').snapshots();
+  }
+
+  Stream<List<dynamic>> getAllCollectionMessages(List<UserGroupMasterModel> groups) {
+    final List<Stream<List<dynamic>>> collectionStreams = [];
+
+    for (var item in groups) {
+      String collectionMsg = "chat-${item.namaGroup.toLowerCase()}";
+      final CollectionReference collectionRef = FirebaseFirestore.instance.collection(collectionMsg);
+      final stream = collectionRef.where("userId", arrayContains: MainAppPage.setUserId).snapshots().map((querySnapshot) {
+        return querySnapshot.docs.map((doc) => doc.data()).toList();
+      });
+      collectionStreams.add(stream);
+    }
+
+    var x = Rx.combineLatest(collectionStreams, (list) {
+      final List<dynamic> result = [];
+      for (List<dynamic> subList in list) {
+        result.addAll(subList);
+      }
+      return result;
+    });
+
+    return x;
   }
 }

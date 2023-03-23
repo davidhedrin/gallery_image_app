@@ -18,6 +18,7 @@ import 'package:jiffy/jiffy.dart';
 import '../../component/search/custom_search_delegate.dart';
 import '../../generated/assets.dart';
 import '../../models/message/main_message.dart';
+import '../../models/user_group_master_model.dart';
 import '../../models/user_master_model.dart';
 import '../../models/user_model.dart';
 import '../../providers/app_services.dart';
@@ -37,9 +38,28 @@ class MessagePageMenu extends StatefulWidget {
 }
 
 class _MessagePageMenuState extends State<MessagePageMenu> {
+  List<UserGroupMasterModel> allGroupMaster = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAllGroupMaster();
+  }
+
+  void getAllGroupMaster() async {
+    var allGroups = await getService.getAllDocuments(Collections.usergroup);
+    var allDocs = allGroups.docs;
+    allGroupMaster = allDocs.map((e){
+      Map<String, dynamic> getMap = e.data() as Map<String, dynamic>;
+      UserGroupMasterModel fromMap = UserGroupMasterModel.fromMap(getMap);
+      return fromMap;
+    }).toList();
+    allGroupMaster.sort((a, b) => a.namaGroup.compareTo(b.namaGroup));
+  }
+
   @override
   Widget build(BuildContext context) {
-    String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
     return WillPopScope(
       onWillPop: () async {
         bool check = false;
@@ -51,93 +71,91 @@ class _MessagePageMenuState extends State<MessagePageMenu> {
         }
         return check;
       },
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Message', style: TextStyle(color: Colors.black87),),
-            leadingWidth: Dimentions.height50,
-            centerTitle: true,
-            backgroundColor: Colors.white,
-            elevation: 2,
-            leading: Align(
-              alignment: Alignment.centerRight,
-              child: IconBackground(
-                icon: Icons.search,
-                onTap: () {
-                  showSearch(
-                    context: context,
-                    delegate: CustomSearchDelegate(searchFor: Collections.collSearchForMsg),
-                  );
-                },
-              ),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Message', style: TextStyle(color: Colors.black87),),
+          leadingWidth: Dimentions.height50,
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          elevation: 2,
+          leading: Align(
+            alignment: Alignment.centerRight,
+            child: IconBackground(
+              icon: Icons.search,
+              onTap: () {
+                showSearch(
+                  context: context,
+                  delegate: CustomSearchDelegate(searchFor: Collections.collSearchForMsg),
+                );
+              },
             ),
-            actions: [
-              Padding(
-                padding: EdgeInsets.only(right: Dimentions.width20),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: IconBackground(
-                    icon: Icons.more_vert,
-                    color: Colors.white,
-                    onTap: () {
+          ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: Dimentions.width20),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: IconBackground(
+                  icon: Icons.more_vert,
+                  color: Colors.white,
+                  onTap: () {
 
-                    },
-                  ),
+                  },
                 ),
               ),
-            ],
-          ),
-          body: StreamBuilder<QuerySnapshot>(
-            stream: getService.fbStore.collection(collectionMsg).where("userId", arrayContains: MainAppPage.setUserId).snapshots(),
-            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotMsg) {
-              if (snapshotMsg.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (!snapshotMsg.hasData) {
-                return const Center(
-                  child: Text("Data tidak ditemukan!",)
-                );
-              }else{
-                var getDocs = snapshotMsg.data!.docs;
-                if(getDocs.isEmpty){
-                  return Center(
-                    child: Column(
+            ),
+          ],
+        ),
+        body: StreamBuilder<List<dynamic>>(
+          stream: getService.getAllCollectionMessages(allGroupMaster),
+          // getService.fbStore.collection(collectionMsg).where("userId", arrayContains: MainAppPage.setUserId).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshotMsg) {
+            if (snapshotMsg.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (!snapshotMsg.hasData) {
+              return const Center(
+                child: Text("Data tidak ditemukan!",)
+              );
+            }else{
+              List<Map<String, dynamic>> mappedList = snapshotMsg.data!.map((item) => Map<String, dynamic>.from(item)).toList();
+              if(mappedList.isEmpty){
+                return Center(
+                  child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text("Selamat datang di",),
                         BigText(text: "We Gallery Chat 👋"),
                       ]
-                    ),
-                  );
-                }else{
-                  return ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: const BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: getDocs.length,
-                    itemBuilder: (context, index){
-                      Map<String, dynamic> getMap = getDocs[index].data() as Map<String, dynamic>;
-                      MainMessage getMainMsg =  MainMessage.fromMap(getMap);
-                      return _MessageTitle(getMainMsg: getMainMsg,);
-                    },
-                  );
-                }
+                  ),
+                );
+              }else{
+                return ListView.builder(
+                  padding: EdgeInsets.zero,
+                  physics: const BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: mappedList.length,
+                  itemBuilder: (context, index){
+                    MainMessage getMainMsg =  MainMessage.fromMap(mappedList[index]);
+                    return _MessageTitle(getMainMsg: getMainMsg,);
+                  },
+                );
               }
             }
-          ),
-          floatingActionButton: FloatingActionButton(
-            heroTag: "newChat",
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context){
-                    return const NewChatRoom();
-                  }
-              );
-            },
-            backgroundColor: Colors.blue,
-            child: const Icon(Icons.perm_contact_cal_sharp),
-          ),
+          }
+        ),
+        floatingActionButton: FloatingActionButton(
+          heroTag: "newChat",
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context){
+                  return const NewChatRoom();
+                }
+            );
+          },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.perm_contact_cal_sharp),
         ),
       ),
     );
@@ -153,12 +171,11 @@ class _MessageTitle extends StatefulWidget {
 }
 
 class _MessageTitleState extends State<_MessageTitle> {
-  late String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
-
   @override
   Widget build(BuildContext context) {
     MainMessage setMM = widget.getMainMsg;
     String idUserLoad = MainAppPage.setUserId == setMM.userId![0] ? setMM.userId![1] : setMM.userId![0];
+    String collectionMsg = setMM.chatGroup.toLowerCase();
 
     return InkWell(
       onTap: (){

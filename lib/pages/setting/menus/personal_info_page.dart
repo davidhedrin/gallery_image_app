@@ -148,10 +148,15 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                               imageUrl: getUser.imgProfilUrl,
                               placeholder: (context, url) => LoadingProgress(size: Dimentions.height10,),
                               errorWidget: (context, url, error){
-                                return Image.asset(
-                                  Assets.imageBackgroundProfil,
+                                return Container(
                                   width: double.infinity,
-                                  fit: BoxFit.cover,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(Dimentions.radius20),
+                                    image: const DecorationImage(
+                                      image: AssetImage(Assets.imageBackgroundProfil),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                 );
                               },
                               imageBuilder: (context, imageProvider) => Container(

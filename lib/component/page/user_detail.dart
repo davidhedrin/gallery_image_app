@@ -172,7 +172,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                               imageCover = image;
                             });
                           },
-                          child: AppIcon(icon: Icons.image),
+                          child: const AppIcon(icon: Icons.image),
                         ),
                       ],
                     ),
@@ -214,7 +214,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                                     imageProfile = image;
                                   });
                                 },
-                                child: AppIcon(icon: Icons.edit),
+                                child: const AppIcon(icon: Icons.edit),
                               ) : const Text(""),
                             ],
                           ),

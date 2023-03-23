@@ -107,7 +107,7 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                               onTap: (){
                                 Get.toNamed(RouteHalper.getEditAccountPage(uid: _userId));
                               },
-                              child: AppIcon(icon: Icons.edit),
+                              child: const AppIcon(icon: Icons.edit),
                             ),
                           ],
                         ),

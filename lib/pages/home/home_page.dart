@@ -30,7 +30,6 @@ class _HomePageMenuState extends State<HomePageMenu> {
   final AppServices getService = AppServices();
   final String _userId = MainAppPage.setUserId;
   String? _selectedItem = "";
-  String? _selectedItemChane = "";
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +107,6 @@ class _HomePageMenuState extends State<HomePageMenu> {
                                           UserGroupModel getGroup = toModelGroup.firstWhere((group) => group.groupId == _selectedItem);
                                           setState(() {
                                             _selectedItem = value;
-                                            _selectedItemChane = value;
                                             MainAppPage.groupCodeId = value;
                                             MainAppPage.groupNameGet = getGroup.namaGroup.toLowerCase();
                                           });

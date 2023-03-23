@@ -123,7 +123,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                 onTap: (){
                                   Navigator.of(context).pop();
                                 },
-                                child: AppIcon(icon: Icons.close),
+                                child: const AppIcon(icon: Icons.close),
                               ),
                               GestureDetector(
                                 onTap: () async {
@@ -132,7 +132,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                     imageCover = image;
                                   });
                                 },
-                                child: AppIcon(icon: Icons.image),
+                                child: const AppIcon(icon: Icons.image),
                               ),
                             ],
                           ),
@@ -178,7 +178,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                           imageProfile = image;
                                         });
                                       },
-                                      child: AppIcon(icon: Icons.edit),
+                                      child: const AppIcon(icon: Icons.edit),
                                     ),
                                   ],
                                 ),
