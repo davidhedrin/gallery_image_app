@@ -15,6 +15,7 @@ import '../../models/message/main_message.dart';
 import '../../models/message/main_message_search.dart';
 import '../../models/message/message_data.dart';
 import '../../models/posting_image.dart';
+import '../../models/user_group_master_model.dart';
 import '../../models/user_model.dart';
 import '../../pages/message/chat_page.dart';
 import '../../utils/collections.dart';
@@ -313,25 +314,35 @@ class SuggestionsResultMsg extends StatelessWidget {
   Future<List<MainMessageSearch>> getCurrentChatGroup() async {
     List<MainMessageSearch> allChatsResult = [];
 
-    String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
-    var chats = await getService.fbStore.collection(collectionMsg).where("userId", arrayContains: MainAppPage.setUserId).get();
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> allChatsMap = chats.docs;
+    var allGroups = await getService.getAllDocuments(Collections.usergroup);
+    var allDocs = allGroups.docs;
+    List<UserGroupMasterModel> allGroupMaster = allDocs.map((e){
+      Map<String, dynamic> getMap = e.data() as Map<String, dynamic>;
+      UserGroupMasterModel fromMap = UserGroupMasterModel.fromMap(getMap);
+      return fromMap;
+    }).toList();
+    allGroupMaster.sort((a, b) => a.namaGroup.compareTo(b.namaGroup));
 
-    for(var item in allChatsMap){
-      Map<String, dynamic> chatMap = item.data();
-      MainMessage setMM = MainMessage.fromMap(chatMap);
-      String idUserLoad = MainAppPage.setUserId == setMM.userId![0] ? setMM.userId![1] : setMM.userId![0];
+    for(var item in allGroupMaster){
+      String collectionMsg = "chat-${item.namaGroup.toLowerCase()}";
+      var getAllChatsUser = await getService.fbStore.collection(collectionMsg).where(Collections.collColumnuserId, arrayContains: MainAppPage.setUserId).get();
+      var docsAllChats = getAllChatsUser.docs;
+      for(var x in docsAllChats){
+        Map<String, dynamic> chatMap = x.data();
+        MainMessage setMM = MainMessage.fromMap(chatMap);
+        String idUserLoad = MainAppPage.setUserId == setMM.userId![0] ? setMM.userId![1] : setMM.userId![0];
 
-      var getUserMap = await getService.getDocDataByDocIdNoCon(collection: Collections.users, docId: idUserLoad);
-      UserModel getUser = UserModel.fromMap(getUserMap!.data() as Map<String, dynamic>);
+        var getUserMap = await getService.getDocDataByDocIdNoCon(collection: Collections.users, docId: idUserLoad);
+        UserModel getUser = UserModel.fromMap(getUserMap!.data() as Map<String, dynamic>);
 
-      MainMessageSearch setMsgSearch = MainMessageSearch(
-        chatId: setMM.chatId,
-        userId: setMM.userId,
-        namaLengkap: getUser.namaLengkap
-      );
-
-      allChatsResult.add(setMsgSearch);
+        MainMessageSearch setMsgSearch = MainMessageSearch(
+            chatId: setMM.chatId,
+            userId: setMM.userId,
+            chatGroup: setMM.chatGroup,
+            namaLengkap: getUser.namaLengkap
+        );
+        allChatsResult.add(setMsgSearch);
+      }
     }
 
     return allChatsResult;
@@ -394,17 +405,16 @@ class _MessageTitle extends StatefulWidget {
 }
 
 class _MessageTitleState extends State<_MessageTitle> {
-  late String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
-
   @override
   Widget build(BuildContext context) {
     MainMessageSearch setMM = widget.getMainMsg;
     String idUserLoad = MainAppPage.setUserId == setMM.userId![0] ? setMM.userId![1] : setMM.userId![0];
+    String collectionMsg = setMM.chatGroup.toLowerCase();
 
     return InkWell(
       onTap: (){
         Navigator.of(context).pop();
-        Get.to(() => ChatMessagePage(userId: idUserLoad, chatId: setMM.chatId,));
+        Get.to(() => ChatMessagePage(userId: idUserLoad, chatId: setMM.chatId, collectionMsg: setMM.chatGroup,));
       },
       child: Container(
         height: Dimentions.height80,

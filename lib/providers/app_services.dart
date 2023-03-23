@@ -637,7 +637,7 @@ class AppServices{
     for (var item in groups) {
       String collectionMsg = "chat-${item.namaGroup.toLowerCase()}";
       final CollectionReference collectionRef = FirebaseFirestore.instance.collection(collectionMsg);
-      final stream = collectionRef.where("userId", arrayContains: MainAppPage.setUserId).snapshots().map((querySnapshot) {
+      final stream = collectionRef.where(Collections.collColumnuserId, arrayContains: MainAppPage.setUserId).snapshots().map((querySnapshot) {
         return querySnapshot.docs.map((doc) => doc.data()).toList();
       });
       collectionStreams.add(stream);

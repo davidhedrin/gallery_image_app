@@ -179,7 +179,7 @@ class _MessageTitleState extends State<_MessageTitle> {
 
     return InkWell(
       onTap: (){
-        Get.to(() => ChatMessagePage(userId: idUserLoad, chatId: setMM.chatId,));
+        Get.to(() => ChatMessagePage(userId: idUserLoad, chatId: setMM.chatId, collectionMsg: collectionMsg,));
       },
       child: Container(
         height: Dimentions.height80,
@@ -495,7 +495,8 @@ class _NewChatRoomState extends State<NewChatRoom> {
                                                         Get.toNamed(RouteHalper.getUserChatPage(userId: userModel.id));
                                                       }else{
                                                         MainMessage mainMsg = getCurrentMainMsg;
-                                                        Get.to(() => ChatMessagePage(userId: userModel.id, chatId: mainMsg.chatId,));
+                                                        String chatGroup = mainMsg.chatGroup.toLowerCase();
+                                                        Get.to(() => ChatMessagePage(userId: userModel.id, chatId: mainMsg.chatId, collectionMsg: chatGroup,));
                                                       }
                                                     },
                                                   ),

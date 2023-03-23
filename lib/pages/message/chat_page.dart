@@ -27,8 +27,9 @@ final AppServices getService = AppServices();
 class ChatMessagePage extends StatefulWidget {
   final String? userId;
   final String? chatId;
+  final String? collectionMsg;
 
-  const ChatMessagePage({Key? key, this.userId, this.chatId}) : super(key: key);
+  const ChatMessagePage({Key? key, this.userId, this.chatId, this.collectionMsg}) : super(key: key);
 
   @override
   State<ChatMessagePage> createState() => _ChatMessagePageState();
@@ -42,7 +43,8 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
 
   @override
   Widget build(BuildContext context) {
-    String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
+    String collMsgMainApp = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
+    String collectionMsg = widget.collectionMsg != null ? widget.collectionMsg! : collMsgMainApp;
     idUserGet = widget.userId!.isNotEmpty ? widget.userId! : "";
     chatRoomId = chatRoomId.isNotEmpty ? chatRoomId : widget.chatId != null ? widget.chatId! : "";
 
