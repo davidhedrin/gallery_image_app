@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class LoadingProgress extends StatefulWidget {
   final double? size;
-  const LoadingProgress({Key? key, this.size}) : super(key: key);
+  final Color? color;
+  const LoadingProgress({Key? key, this.size, this.color = Colors.white}) : super(key: key);
 
   @override
   State<LoadingProgress> createState() => _LoadingProgressState();
@@ -22,7 +23,7 @@ class _LoadingProgressState extends State<LoadingProgress> {
         child: Stack(
           children: [
             SpinKitWave(
-              color: Colors.white,
+              color: widget.color,
               size: widget.size == null ? Dimentions.height40 : widget.size!,
             ),
           ],

@@ -96,10 +96,10 @@ class _MessagePageMenuState extends State<MessagePageMenu> {
               child: Align(
                 alignment: Alignment.centerRight,
                 child: IconBackground(
-                  icon: Icons.more_vert,
+                  icon: Icons.account_box_outlined,
                   color: Colors.white,
                   onTap: () {
-
+                    Get.toNamed(RouteHalper.getUserIdPersonalSerach());
                   },
                 ),
               ),

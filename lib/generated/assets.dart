@@ -18,6 +18,7 @@ class Assets {
   static const String imagePasswordChange = 'assets/image/password-change.png';
   static const String imagePrifil = 'assets/image/prifil.jpg';
   static const String imageRegister = 'assets/image/register.png';
+  static const String imageSearchUserChat = 'assets/image/searchUserChat.png';
   static const String imageSecurity = 'assets/image/security.png';
   static const String imageWelcomeCat = 'assets/image/welcome_cat.png';
   static const String onBoard1 = 'assets/image/on_board/1.jpg';

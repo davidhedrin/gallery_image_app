@@ -14,6 +14,7 @@ class Collections{
   static const String bookmark = "bookmark";
 
   static const String message = "message";
+  static const String chatrandom = "chat-random";
 
   static const String collColumnuserId = "userId";
   static const String collColumnnamaLengkap = "namaLengkap";

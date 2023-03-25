@@ -48,6 +48,8 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
     idUserGet = widget.userId!.isNotEmpty ? widget.userId! : "";
     chatRoomId = chatRoomId.isNotEmpty ? chatRoomId : widget.chatId != null ? widget.chatId! : "";
 
+    print(collMsgMainApp);
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
@@ -118,7 +120,8 @@ class _ChatMessagePageState extends State<ChatMessagePage> {
   }
 
   Widget chatInput(BuildContext context) {
-    String collectionMsg = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
+    String collMsgMainApp = "chat-${MainAppPage.groupNameGet.toLowerCase()}";
+    String collectionMsg = widget.collectionMsg != null ? widget.collectionMsg! : collMsgMainApp;
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height10, horizontal: Dimentions.width10),
       child: Row(

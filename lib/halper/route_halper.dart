@@ -13,6 +13,7 @@ import 'package:delivery_food_app/pages/auth/otp_page.dart';
 import 'package:delivery_food_app/pages/auth/register_page.dart';
 import 'package:delivery_food_app/pages/auth/register_with_phone.dart';
 import 'package:delivery_food_app/pages/message/chat_page.dart';
+import 'package:delivery_food_app/pages/message/search_userid_page.dart';
 import 'package:delivery_food_app/pages/setting/menus/personal_info_page.dart';
 import 'package:delivery_food_app/pages/setting/menus/user_page.dart';
 import 'package:delivery_food_app/splashScreen/on_board_screen.dart';
@@ -50,6 +51,7 @@ class RouteHalper{
   static const String userPersonalInfoPage = "/user-personal-info-page";
 
   static const String homeSearchComponent = "/home-search-component";
+  static const String userIdPersonalSerach = "/userid-personal-search";
 
   static String getInitial({String? uid}) => '$initial?uid=$uid';
 
@@ -74,6 +76,7 @@ class RouteHalper{
   static String getPersonalInfoPage({String? userId}) => '$userPersonalInfoPage?userId=$userId';
 
   static String getHomeSearchComponent() => '$homeSearchComponent';
+  static String getUserIdPersonalSerach() => '$userIdPersonalSerach';
 
   static List<GetPage> routes = [
     GetPage(name: initial, transition: Transition.native, page: (){
@@ -137,5 +140,6 @@ class RouteHalper{
     }),
 
     GetPage(name: homeSearchComponent, page: () => HomeSearchComponent()),
+    GetPage(name: userIdPersonalSerach, page: () => SearchUseridPage()),
   ];
 }
