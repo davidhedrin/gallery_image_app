@@ -234,8 +234,8 @@ class _DetailImagePageState extends State<DetailImagePage> {
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(Dimentions.radius20*2),
-            topRight: Radius.circular(Dimentions.radius20*2)
+            topLeft: Radius.circular(Dimentions.radius15*2),
+            topRight: Radius.circular(Dimentions.radius15*2)
           ),
         ),
         child: Row(
@@ -342,17 +342,70 @@ class _DetailImagePageState extends State<DetailImagePage> {
                 ),
               ],
             ),
-            Container(
-              padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Dimentions.radius20),
-                color: AppColors.mainColor,
-              ),
-              child: Row(
-                children: [
-                  BigText(text: "Share", color: Colors.white,),
-                  const Icon(Icons.share, color: Colors.white,)
-                ],
+            GestureDetector(
+              onTap: (){
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.grey.shade300,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(Dimentions.radius15*2), topRight: Radius.circular(Dimentions.radius15*2)),
+                  ),
+                  builder: (BuildContext context){
+                    return SizedBox(
+                      height: Dimentions.heightSize300,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: Dimentions.width10, right: Dimentions.width15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: (){},
+                              child: Container(
+                                padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(Dimentions.radius30),
+                                  color: Colors.white,
+                                ),
+                                child: Row(
+                                  children: [
+                                    BigText(text: "chat...", color: Colors.black45,),
+                                    SizedBox(width: Dimentions.width5,),
+                                    Image.asset(Assets.imageAppIcon, width: Dimentions.iconSize22,),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                            ElevatedButton(
+                              onPressed: () {
+                                // Add your onPressed logic here
+                              },
+                              child: Image.asset(Assets.imageWa, width: Dimentions.width30,),
+                              style: ElevatedButton.styleFrom(
+                                shape: CircleBorder(),
+                                padding: EdgeInsets.all(Dimentions.height12),
+                                backgroundColor: Colors.green
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(Dimentions.radius20),
+                  color: AppColors.mainColor,
+                ),
+                child: Row(
+                  children: [
+                    BigText(text: "Share", color: Colors.white,),
+                    const Icon(Icons.share, color: Colors.white,)
+                  ],
+                ),
               ),
             )
           ],
