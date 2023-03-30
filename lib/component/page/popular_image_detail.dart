@@ -4,6 +4,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/component/edit_posting_page.dart';
+import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/models/posting_image.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/utils/colors.dart';
@@ -17,6 +18,7 @@ import 'package:get/get.dart';
 import '../../generated/assets.dart';
 import '../../models/likes_model.dart';
 import '../../providers/app_services.dart';
+import '../../providers/firebase_dynamic_link.dart';
 import '../../widgets/app_column.dart';
 import '../../widgets/big_text.dart';
 import '../../widgets/data_not_found.dart';
@@ -376,8 +378,11 @@ class _DetailImagePageState extends State<DetailImagePage> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () {
-                                // Add your onPressed logic here
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                                String imageId = widget.imageId;
+                                String groupName = widget.groupName!;
+                                String generateLink = await DynamicLinkService.createDynamicLink(true, RouteHalper.getDetailImage(imageId, groupName));
                               },
                               style: ElevatedButton.styleFrom(
                                   shape: const CircleBorder(),

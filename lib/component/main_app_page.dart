@@ -5,6 +5,7 @@ import 'package:delivery_food_app/pages/account/account_page.dart';
 import 'package:delivery_food_app/pages/home/home_page.dart';
 import 'package:delivery_food_app/pages/message/message_page.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
+import 'package:delivery_food_app/providers/firebase_dynamic_link.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,6 +38,7 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
+    DynamicLinkService.initDynamicLink(context);
     WidgetsBinding.instance.addObserver(this);
   }
 

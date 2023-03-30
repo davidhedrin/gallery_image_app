@@ -4,6 +4,10 @@ class Collections{
   static const String androidChanId = "we_gallery";
   static const String androidChanName = "We Gallery";
 
+  static const String uriPrefix = "https://wegalleryapp.page.link";
+  static const String appPackageNameAndroid = "com.example.delivery_food_app";
+  static const String appPackageNameIos = "com.example.deliveryFoodApp";
+
   static const String strgImageCover = "imageCover";
   static const String strgImageProfile = "imageProfile";
 
