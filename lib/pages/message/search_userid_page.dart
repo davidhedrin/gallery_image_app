@@ -119,86 +119,93 @@ class _SearchUseridPageState extends State<SearchUseridPage> {
                     child: const Icon(Icons.search, color: Colors.white,),
                   ),
                   onTap: () async {
-                    setState(() {
-                      searchLoading = true;
-                    });
+                    if(userIdController.text.isNotEmpty){
+                      setState(() {
+                        searchLoading = true;
+                      });
 
-                    bool loopingGroup = false;
-                    bool userFound = false;
-                    String searchUid = userIdController.text;
-                    String currentUid = MainAppPage.setUserId;
-                    MainMessage setMM = MainMessage();
+                      bool loopingGroup = false;
+                      bool userFound = false;
+                      String searchUid = userIdController.text;
+                      String currentUid = MainAppPage.setUserId;
+                      MainMessage setMM = MainMessage();
 
-                    var allGroups = await getService.getAllDocuments(Collections.usergroup);
-                    var allDocs = allGroups.docs;
-                    List<UserGroupMasterModel> allGroupMaster = allDocs.map((e){
-                      Map<String, dynamic> getMap = e.data() as Map<String, dynamic>;
-                      UserGroupMasterModel fromMap = UserGroupMasterModel.fromMap(getMap);
-                      return fromMap;
-                    }).toList();
-                    allGroupMaster.sort((a, b) => a.namaGroup.compareTo(b.namaGroup));
-                    for(var item in allGroupMaster){
-                      String collectionMsg = "chat-${item.namaGroup.toLowerCase()}";
-                      var getAllChatsUser = getService.fbStore.collection(collectionMsg)
-                          .where(Collections.collColumnuserId, whereIn: [
-                            [searchUid, currentUid],
-                            [currentUid, searchUid],
-                          ]);
-                      var getQuery = await getAllChatsUser.get();
-                      var docsAllChats = getQuery.docs;
-                      if(docsAllChats.isNotEmpty){
-                        Map<String, dynamic> getMap = docsAllChats.first.data();
-                        setMM = MainMessage.fromMap(getMap);
-                        loopingGroup = true;
-                        break;
+                      var allGroups = await getService.getAllDocuments(Collections.usergroup);
+                      var allDocs = allGroups.docs;
+                      List<UserGroupMasterModel> allGroupMaster = allDocs.map((e){
+                        Map<String, dynamic> getMap = e.data() as Map<String, dynamic>;
+                        UserGroupMasterModel fromMap = UserGroupMasterModel.fromMap(getMap);
+                        return fromMap;
+                      }).toList();
+                      allGroupMaster.sort((a, b) => a.namaGroup.compareTo(b.namaGroup));
+                      for(var item in allGroupMaster){
+                        String collectionMsg = "chat-${item.namaGroup.toLowerCase()}";
+                        var getAllChatsUser = getService.fbStore.collection(collectionMsg)
+                            .where(Collections.collColumnuserId, whereIn: [
+                          [searchUid, currentUid],
+                          [currentUid, searchUid],
+                        ]);
+                        var getQuery = await getAllChatsUser.get();
+                        var docsAllChats = getQuery.docs;
+                        if(docsAllChats.isNotEmpty){
+                          Map<String, dynamic> getMap = docsAllChats.first.data();
+                          setMM = MainMessage.fromMap(getMap);
+                          loopingGroup = true;
+                          break;
+                        }
                       }
-                    }
 
-                    if(loopingGroup == false){
-                      var getCurrentUser = await getService.getDocDataByDocIdNoCon(collection: Collections.users, docId: currentUid);
-                      var getSearchUser = await getService.getDocDataByDocIdNoCon(collection: Collections.users, docId: searchUid);
+                      if(loopingGroup == false){
+                        var getCurrentUser = await getService.getDocDataByDocIdNoCon(collection: Collections.users, docId: currentUid);
+                        var getSearchUser = await getService.getDocDataByDocIdNoCon(collection: Collections.users, docId: searchUid);
 
-                      if(getSearchUser != null && getSearchUser.exists){
-                        UserModel modelCurrentUser = UserModel.fromMap(getCurrentUser!.data() as Map<String, dynamic>);
-                        UserModel modelSearchUser = UserModel.fromMap(getSearchUser.data() as Map<String, dynamic>);
+                        if(getSearchUser != null && getSearchUser.exists){
+                          UserModel modelCurrentUser = UserModel.fromMap(getCurrentUser!.data() as Map<String, dynamic>);
+                          UserModel modelSearchUser = UserModel.fromMap(getSearchUser.data() as Map<String, dynamic>);
 
-                        var getCurMaster = await getService.getDocDataByDocIdNoCon(collection: Collections.usermaster, docId: modelCurrentUser.phone);
-                        var getSerMaster = await getService.getDocDataByDocIdNoCon(collection: Collections.usermaster, docId: modelSearchUser.phone);
+                          var getCurMaster = await getService.getDocDataByDocIdNoCon(collection: Collections.usermaster, docId: modelCurrentUser.phone);
+                          var getSerMaster = await getService.getDocDataByDocIdNoCon(collection: Collections.usermaster, docId: modelSearchUser.phone);
 
-                        UserMasterModel modelCurUserMaster = UserMasterModel.fromMap(getCurMaster!.data() as Map<String, dynamic>);
-                        UserMasterModel modelSerUserMaster = UserMasterModel.fromMap(getSerMaster!.data() as Map<String, dynamic>);
+                          UserMasterModel modelCurUserMaster = UserMasterModel.fromMap(getCurMaster!.data() as Map<String, dynamic>);
+                          UserMasterModel modelSerUserMaster = UserMasterModel.fromMap(getSerMaster!.data() as Map<String, dynamic>);
 
-                        MainMessage setMMLoop = MainMessage();
-                        bool getSameGroup = false;
-                        for(var x in modelCurUserMaster.group!){
-                          for(var y in modelSerUserMaster.group!){
-                            if(x.groupId == y.groupId){
-                              String collectionMsg = "chat-${x.namaGroup.toLowerCase()}";
-                              setMMLoop.chatGroup = collectionMsg;
-                              getSameGroup = true;
-                              break;
+                          MainMessage setMMLoop = MainMessage();
+                          bool getSameGroup = false;
+                          for(var x in modelCurUserMaster.group!){
+                            for(var y in modelSerUserMaster.group!){
+                              if(x.groupId == y.groupId){
+                                String collectionMsg = "chat-${x.namaGroup.toLowerCase()}";
+                                setMMLoop.chatGroup = collectionMsg;
+                                getSameGroup = true;
+                                break;
+                              }
                             }
                           }
-                        }
 
-                        if(getSameGroup == false){
-                          String getGroupRandom = modelCurUserMaster.group!.first.namaGroup;
-                          String collectionMsg = "chat-${getGroupRandom.toLowerCase()}";
-                          setMMLoop.chatGroup = collectionMsg;
+                          if(getSameGroup == false){
+                            String getGroupRandom = modelCurUserMaster.group!.first.namaGroup;
+                            String collectionMsg = "chat-${getGroupRandom.toLowerCase()}";
+                            setMMLoop.chatGroup = collectionMsg;
+                          }
+                          userFound = true;
+                          setMM = setMMLoop;
+                        }else{
+                          userFound = false;
+                          showAwsBar(context: context, contentType: ContentType.help, msg: "User id tidak terdaftar", title: "Not Found!");
                         }
-                        userFound = true;
-                        setMM = setMMLoop;
-                      }else{
-                        userFound = false;
-                        showAwsBar(context: context, contentType: ContentType.help, msg: "User id tidak terdaftar", title: "Not Found!");
                       }
-                    }
 
-                    setState(() {
-                      setForMainMsg = setMM;
-                      searchLoading = false;
-                      searchFound = userFound;
-                    });
+                      setState(() {
+                        setForMainMsg = setMM;
+                        searchLoading = false;
+                        searchFound = userFound;
+                      });
+                    }else{
+                      setState(() {
+                        searchLoading = false;
+                      });
+                      showAwsBar(context: context, contentType: ContentType.warning, msg: "Masukkan user id untuk mencari", title: "User Id");
+                    }
                   },
                 )
               ],

@@ -352,9 +352,9 @@ class _DetailImagePageState extends State<DetailImagePage> {
                   ),
                   builder: (BuildContext context){
                     return SizedBox(
-                      height: Dimentions.heightSize300,
+                      height: Dimentions.heightSize90,
                       child: Padding(
-                        padding: EdgeInsets.only(left: Dimentions.width10, right: Dimentions.width15),
+                        padding: EdgeInsets.only(left: Dimentions.width10, right: Dimentions.width10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -375,17 +375,28 @@ class _DetailImagePageState extends State<DetailImagePage> {
                                 ),
                               ),
                             ),
-
                             ElevatedButton(
                               onPressed: () {
                                 // Add your onPressed logic here
                               },
-                              child: Image.asset(Assets.imageWa, width: Dimentions.width30,),
                               style: ElevatedButton.styleFrom(
-                                shape: CircleBorder(),
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.all(Dimentions.height12),
+                                  backgroundColor: Colors.white
+                              ),
+                              child: const Icon(Icons.copy, color: Colors.black45,),
+                            ),
+                            SizedBox(width: Dimentions.heightSize130,),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Add your onPressed logic here
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: const CircleBorder(),
                                 padding: EdgeInsets.all(Dimentions.height12),
                                 backgroundColor: Colors.green
                               ),
+                              child: Image.asset(Assets.imageWa, width: Dimentions.width30,),
                             ),
                           ],
                         ),
