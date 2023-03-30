@@ -66,7 +66,7 @@ class RouteHalper{
   static String getAddNewPostingPage({String? uid, String? groupId}) => '$addNewPostingPage?uid=$uid&groupId=$groupId';
   static String getBookmarkPage() => '$bookmarkPage';
 
-  static String getDetailImage(String imageId, String groupName) => '$detailImage?imageId=$imageId&group=$groupName';
+  static String getDetailImage(String imageId, String groupName) => '$detailImage?imageId=$imageId&groupName=$groupName';
   static String getRecommendedFood() => '$recommendedFood';
   static String getOnBoardScreen() => '$onBoardScreen';
   static String getsplashScreen() => '$splashScreen';
@@ -122,8 +122,8 @@ class RouteHalper{
 
     GetPage(name: detailImage, transition: Transition.fadeIn, page: (){
       String id = Get.parameters['imageId'].toString() ;
-      String group = Get.parameters['group'].toString() ;
-      return DetailImagePage(imageId: id, groupName: group,);
+      String groupName = Get.parameters['groupName'].toString() ;
+      return DetailImagePage(imageId: id, groupName: groupName,);
     }),
     GetPage(name: recommendedFood, transition: Transition.fadeIn, page: (){
       return RecommendedFoodDetail();

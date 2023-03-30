@@ -6,6 +6,7 @@ class Assets {
   static const String image2 = 'assets/image/2.png';
   static const String image3 = 'assets/image/3.png';
   static const String image4 = 'assets/image/4.png';
+  static const String imageAppIcon = 'assets/image/appIcon.png';
   static const String imageBackgroundProfil = 'assets/image/backgroundProfil.png';
   static const String imageBg = 'assets/image/bg.jpg';
   static const String imageChangePassword = 'assets/image/changePassword.png';
@@ -20,6 +21,7 @@ class Assets {
   static const String imageRegister = 'assets/image/register.png';
   static const String imageSearchUserChat = 'assets/image/searchUserChat.png';
   static const String imageSecurity = 'assets/image/security.png';
+  static const String imageWa = 'assets/image/wa.png';
   static const String imageWelcomeCat = 'assets/image/welcome_cat.png';
   static const String onBoard1 = 'assets/image/on_board/1.jpg';
   static const String onBoard2 = 'assets/image/on_board/2.jpg';
