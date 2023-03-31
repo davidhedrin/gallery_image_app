@@ -73,4 +73,11 @@ class DynamicLinkService{
       }
     }
   }
+
+  static Future<String> getLongLink(String shortLink) async {
+    Uri uriShort = Uri.parse(shortLink);
+    final PendingDynamicLinkData? data = await dynamicLinks.getDynamicLink(uriShort);
+    final Uri longLink = data!.link;
+    return longLink.toString();
+  }
 }

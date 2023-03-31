@@ -67,6 +67,7 @@ dependencies:
   rxdart: ^0.27.7
   firebase_dynamic_links: ^5.0.17
 #  url_launcher: ^6.1.10
+  share_plus:
 
 dev_dependencies:
   flutter_test:

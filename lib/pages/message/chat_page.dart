@@ -5,15 +5,19 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/component/main_app_page.dart';
 import 'package:delivery_food_app/models/message/message_data.dart';
+import 'package:delivery_food_app/providers/firebase_dynamic_link.dart';
 import 'package:delivery_food_app/utils/colors.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/message_widget.dart';
 import 'package:delivery_food_app/widgets/small_text.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 
+import '../../halper/route_halper.dart';
 import '../../models/message/main_message.dart';
 import '../../models/user_model.dart';
 import '../../providers/app_services.dart';
@@ -399,6 +403,14 @@ class _MessageTile extends StatelessWidget {
     DateTime dt = msgData.messageDate!;
     String msgTime = DateFormat('HH:mm').format(dt);
 
+    bool isUri = false;
+    Uri? uri = Uri.tryParse(msgData.msg);
+    if(uri != null && uri.hasScheme && uri.hasAuthority){
+      isUri = true;
+    }else{
+      isUri = false;
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height4),
       child: Align(
@@ -418,10 +430,34 @@ class _MessageTile extends StatelessWidget {
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: Dimentions.height15, horizontal: Dimentions.width12),
-                child: Text(
-                  msgData.msg,
-                  style: TextStyle(
-                      color: AppColors.textLigth
+                child: InkWell(
+                  onTap: isUri == true ? () async {
+                    getService.loading(context);
+
+                    String longUrl = await DynamicLinkService.getLongLink(msgData.msg);
+                    Uri uriLong = Uri.parse(longUrl);
+                    String? imageId = uriLong.queryParameters['imageId'];
+                    String? groupName = uriLong.queryParameters['groupName'];
+
+                    Navigator.of(context).pop();
+                    if(imageId != null && groupName != null){
+                      Get.toNamed(RouteHalper.getDetailImage(imageId, groupName));
+                    }
+                  } : null,
+                  onLongPress: isUri == true ? (){
+                    Clipboard.setData(ClipboardData(text: msgData.msg));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Alamat posting telah berhasil disalin'),
+                      ),
+                    );
+                  } : null,
+                  child: Text(
+                    msgData.msg,
+                    style: TextStyle(
+                      color: isUri == true ? Colors.blue[200] : AppColors.textLigth,
+                      decoration: isUri == true ? TextDecoration.underline : TextDecoration.none,
+                    ),
                   ),
                 ),
               ),
@@ -456,6 +492,14 @@ class _MessageOwnTile extends StatelessWidget {
     DateTime dt = msgData.messageDate!;
     String msgTime = DateFormat('HH:mm').format(dt);
 
+    bool isUri = false;
+    Uri? uri = Uri.tryParse(msgData.msg);
+    if(uri != null && uri.hasScheme && uri.hasAuthority){
+      isUri = true;
+    }else{
+      isUri = false;
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Dimentions.height4),
       child: Align(
@@ -475,10 +519,34 @@ class _MessageOwnTile extends StatelessWidget {
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: Dimentions.height15, horizontal: Dimentions.width12),
-                child: Text(
-                  msgData.msg,
-                  style: TextStyle(
-                    color: AppColors.textLigth
+                child: InkWell(
+                  onTap: isUri == true ? () async {
+                    getService.loading(context);
+
+                    // String longUrl = await DynamicLinkService.getLongLink(msgData.msg);
+                    // Uri uriLong = Uri.parse(longUrl);
+                    // String? imageId = uriLong.queryParameters['imageId'];
+                    // String? groupName = uriLong.queryParameters['groupName'];
+                    //
+                    // Navigator.of(context).pop();
+                    // if(imageId != null && groupName != null){
+                    //   Get.toNamed(RouteHalper.getDetailImage(imageId, groupName));
+                    // }
+                  } : null,
+                  onLongPress: isUri == true ? (){
+                    Clipboard.setData(ClipboardData(text: msgData.msg));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Alamat posting telah berhasil disalin'),
+                      ),
+                    );
+                  } : null,
+                  child: Text(
+                    msgData.msg,
+                    style: TextStyle(
+                      color: AppColors.textLigth,
+                      decoration: isUri == true ? TextDecoration.underline : TextDecoration.none,
+                    ),
                   ),
                 ),
               ),

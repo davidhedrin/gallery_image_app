@@ -39,13 +39,16 @@ class _SplashScerenAppState extends State<SplashScerenApp> {
           Get.toNamed(RouteHalper.getOnBoardScreen());
         }else{
           getService.fbAuth.authStateChanges().listen((User? user) async {
+            getService.loading(context);
             if (user != null && user.uid.isNotEmpty) {
               DocumentSnapshot? docUser = await getService.getDocumentByColumn("users", "uidEmail", user.uid);
               String uid = docUser!.id;
               await setLoginUser(uid);
 
+              Navigator.of(context).pop();
               Get.toNamed(RouteHalper.getInitial(uid: uid));
             } else {
+              Navigator.of(context).pop();
               Get.toNamed(RouteHalper.getLoginPage());
             }
           });

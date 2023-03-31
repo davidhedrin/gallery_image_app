@@ -13,7 +13,9 @@ import 'package:delivery_food_app/utils/utils.dart';
 import 'package:delivery_food_app/widgets/app_icon.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../generated/assets.dart';
 import '../../models/likes_model.dart';
@@ -352,56 +354,78 @@ class _DetailImagePageState extends State<DetailImagePage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(Dimentions.radius15*2), topRight: Radius.circular(Dimentions.radius15*2)),
                   ),
-                  builder: (BuildContext context){
+                  builder: (BuildContext contextX){
                     return SizedBox(
                       height: Dimentions.heightSize90,
                       child: Padding(
-                        padding: EdgeInsets.only(left: Dimentions.width10, right: Dimentions.width10),
+                        padding: EdgeInsets.only(left: Dimentions.width12, right: Dimentions.width10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            // Share for chat we gallery
+                            // GestureDetector(
+                            //   onTap: (){},
+                            //   child: Container(
+                            //     padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
+                            //     decoration: BoxDecoration(
+                            //       borderRadius: BorderRadius.circular(Dimentions.radius30),
+                            //       color: Colors.white,
+                            //     ),
+                            //     child: Row(
+                            //       children: [
+                            //         BigText(text: "Chat", color: Colors.black45,),
+                            //         SizedBox(width: Dimentions.width5,),
+                            //         Image.asset(Assets.imageAppIcon, width: Dimentions.iconSize22,),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
                             GestureDetector(
-                              onTap: (){},
+                              onTap: () async {
+                                String imageId = widget.imageId;
+                                String groupName = widget.groupName!;
+                                String generateLink = await DynamicLinkService.createDynamicLink(true, RouteHalper.getDetailImage(imageId, groupName));
+
+                                Clipboard.setData(ClipboardData(text: generateLink));
+
+                                Navigator.of(context).pop();
+                                ScaffoldMessenger.of(contextX).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Alamat posting telah berhasil disalin'),
+                                  ),
+                                );
+                              },
                               child: Container(
-                                padding: EdgeInsets.only(top: Dimentions.height12, bottom: Dimentions.height12, left: Dimentions.height12, right: Dimentions.height12),
+                                padding: EdgeInsets.only(top: Dimentions.font11, bottom: Dimentions.font11, left: Dimentions.font11, right: Dimentions.font11),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(Dimentions.radius30),
                                   color: Colors.white,
                                 ),
                                 child: Row(
                                   children: [
-                                    BigText(text: "chat...", color: Colors.black45,),
+                                    BigText(text: "Copy", color: Colors.black45,),
                                     SizedBox(width: Dimentions.width5,),
-                                    Image.asset(Assets.imageAppIcon, width: Dimentions.iconSize22,),
+                                    const Icon(Icons.copy, color: Colors.black45,),
                                   ],
                                 ),
                               ),
                             ),
+                            SizedBox(width: Dimentions.heightSize130,),
                             ElevatedButton(
                               onPressed: () async {
                                 Navigator.of(context).pop();
                                 String imageId = widget.imageId;
                                 String groupName = widget.groupName!;
                                 String generateLink = await DynamicLinkService.createDynamicLink(true, RouteHalper.getDetailImage(imageId, groupName));
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  padding: EdgeInsets.all(Dimentions.height12),
-                                  backgroundColor: Colors.white
-                              ),
-                              child: const Icon(Icons.copy, color: Colors.black45,),
-                            ),
-                            SizedBox(width: Dimentions.heightSize130,),
-                            ElevatedButton(
-                              onPressed: () {
-                                // Add your onPressed logic here
+
+                                await Share.share(generateLink);
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: const CircleBorder(),
                                 padding: EdgeInsets.all(Dimentions.height12),
-                                backgroundColor: Colors.green
+                                backgroundColor: Colors.blue
                               ),
-                              child: Image.asset(Assets.imageWa, width: Dimentions.width30,),
+                              child: const Icon(Icons.share, color: Colors.white,)
                             ),
                           ],
                         ),
@@ -419,7 +443,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
                 child: Row(
                   children: [
                     BigText(text: "Share", color: Colors.white,),
-                    const Icon(Icons.share, color: Colors.white,)
+                    Image.asset(Assets.imageForwardIcon, width: Dimentions.font22, color: Colors.white,),
                   ],
                 ),
               ),
