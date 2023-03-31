@@ -523,15 +523,15 @@ class _MessageOwnTile extends StatelessWidget {
                   onTap: isUri == true ? () async {
                     getService.loading(context);
 
-                    // String longUrl = await DynamicLinkService.getLongLink(msgData.msg);
-                    // Uri uriLong = Uri.parse(longUrl);
-                    // String? imageId = uriLong.queryParameters['imageId'];
-                    // String? groupName = uriLong.queryParameters['groupName'];
-                    //
-                    // Navigator.of(context).pop();
-                    // if(imageId != null && groupName != null){
-                    //   Get.toNamed(RouteHalper.getDetailImage(imageId, groupName));
-                    // }
+                    String longUrl = await DynamicLinkService.getLongLink(msgData.msg);
+                    Uri uriLong = Uri.parse(longUrl);
+                    String? imageId = uriLong.queryParameters['imageId'];
+                    String? groupName = uriLong.queryParameters['groupName'];
+
+                    Navigator.of(context).pop();
+                    if(imageId != null && groupName != null){
+                      Get.toNamed(RouteHalper.getDetailImage(imageId, groupName));
+                    }
                   } : null,
                   onLongPress: isUri == true ? (){
                     Clipboard.setData(ClipboardData(text: msgData.msg));
