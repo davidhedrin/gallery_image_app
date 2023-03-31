@@ -6,6 +6,7 @@ import 'package:delivery_food_app/generated/assets.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
@@ -41,12 +42,20 @@ class _SplashScerenAppState extends State<SplashScerenApp> {
           getService.fbAuth.authStateChanges().listen((User? user) async {
             getService.loading(context);
             if (user != null && user.uid.isNotEmpty) {
-              DocumentSnapshot? docUser = await getService.getDocumentByColumn("users", "uidEmail", user.uid);
-              String uid = docUser!.id;
-              await setLoginUser(uid);
+              try{
+                DocumentSnapshot? docUser = await getService.getDocumentByColumn("users", "uidEmail", user.uid);
+                String uid = docUser!.id;
+                await setLoginUser(uid);
 
-              Navigator.of(context).pop();
-              Get.toNamed(RouteHalper.getInitial(uid: uid));
+                Navigator.of(context).pop();
+                Get.toNamed(RouteHalper.getInitial(uid: uid));
+              }catch(e){
+                Navigator.of(context).pop();
+                if (kDebugMode) {
+                  print("Error checkUserLogin Splash Screen");
+                  print(e);
+                }
+              }
             } else {
               Navigator.of(context).pop();
               Get.toNamed(RouteHalper.getLoginPage());

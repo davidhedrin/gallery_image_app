@@ -33,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   final noPhoneController = TextEditingController();
   final passwordController = TextEditingController();
   final AppServices services = AppServices();
+  bool obscureText = true;
 
   Country selectCountry = Country(
       phoneCode: "62",
@@ -158,7 +159,18 @@ class _LoginPageState extends State<LoginPage> {
                     MyTextField(
                       controller: passwordController,
                       hintText: 'Password',
-                      obscureText: true,
+                      obscureText: obscureText,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscureText ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            obscureText = !obscureText;
+                          });
+                        },
+                      ),
                     ),
 
                      SizedBox(height: Dimentions.height20),

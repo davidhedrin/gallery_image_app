@@ -31,6 +31,8 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
   final TextEditingController coPasswordController = TextEditingController();
   final bool _isLoading = false;
   bool _isIcon = false;
+  bool obscureText1 = true;
+  bool obscureText2 = true;
 
   void setFormatNumber(){
     if(noPhoneController.text.length >= 10){
@@ -125,7 +127,18 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             controller: passwordController,
                             hintText: "Masukkan Password",
                             typeInput: TextInputType.visiblePassword,
-                            obscureText: true,
+                            obscureText: obscureText1,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                obscureText1 ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  obscureText1 = !obscureText1;
+                                });
+                              },
+                            ),
                             validator: (value){
                               if(value!.isEmpty){
                                 return '*masukkan password';
@@ -143,7 +156,18 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             controller: coPasswordController,
                             hintText: "Konfirmasi Password",
                             typeInput: TextInputType.visiblePassword,
-                            obscureText: true,
+                            obscureText: obscureText2,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                obscureText2 ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  obscureText2 = !obscureText2;
+                                });
+                              },
+                            ),
                             validator: (value){
                               if(value!.isEmpty){
                                 return '*masukkan konfri password';

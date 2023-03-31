@@ -29,6 +29,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController newpasswordController = TextEditingController();
   final TextEditingController newCoPasswordController = TextEditingController();
+  bool obscureText = true;
+  bool obscureText1 = true;
+  bool obscureText2 = true;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +71,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     child: MyTextFieldReg(
                       controller: passwordController,
                       hintText: "Masukkan Password Lama",
-                      obscureText: true,
+                      obscureText: obscureText,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscureText ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            obscureText = !obscureText;
+                          });
+                        },
+                      ),
                       validator: (value){
                         if(value!.isEmpty){
                           return '*masukkan password lama';
@@ -85,7 +99,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     child: MyTextFieldReg(
                       controller: newpasswordController,
                       hintText: "Masukkan Password Baru",
-                      obscureText: true,
+                      obscureText: obscureText1,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscureText1 ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            obscureText1 = !obscureText1;
+                          });
+                        },
+                      ),
                       validator: (value){
                         if(value!.isEmpty){
                           return '*masukkan password baru';
@@ -102,7 +127,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     child: MyTextFieldReg(
                       controller: newCoPasswordController,
                       hintText: "Konfirmasi Password Baru",
-                      obscureText: true,
+                      obscureText: obscureText2,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscureText2 ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            obscureText2 = !obscureText2;
+                          });
+                        },
+                      ),
                       validator: (value){
                         if(value!.isEmpty){
                           return '*masukkan konfrimasi baru';

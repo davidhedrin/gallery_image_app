@@ -6,6 +6,7 @@ class MyTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final TextInputType? typeText;
+  final Widget? suffixIcon;
 
   const MyTextField({
     super.key,
@@ -13,6 +14,7 @@ class MyTextField extends StatelessWidget {
     required this.hintText,
     required this.obscureText,
     this.typeText = TextInputType.text,
+    this.suffixIcon,
   });
 
   @override
@@ -35,7 +37,8 @@ class MyTextField extends StatelessWidget {
           fillColor: Colors.grey.shade200,
           filled: true,
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.grey[500], fontSize: Dimentions.font20)
+          hintStyle: TextStyle(color: Colors.grey[500], fontSize: Dimentions.font20),
+          suffixIcon: suffixIcon
         ),
       ),
     );
@@ -101,7 +104,7 @@ class MyTextFieldReg extends StatelessWidget {
         filled: true,
         hintText: hintText,
         hintStyle: TextStyle(color: Colors.grey[500], fontSize: Dimentions.font20),
-        suffix: suffixIcon,
+        suffixIcon: suffixIcon,
         prefixIcon: prefixIcon,
         isDense: true,
       ),

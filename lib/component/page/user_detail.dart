@@ -17,6 +17,7 @@ import '../../generated/assets.dart';
 import '../../halper/route_halper.dart';
 import '../../models/posting_image.dart';
 import '../../models/user_group.dart';
+import '../../models/user_master_model.dart';
 import '../../models/user_model.dart';
 import '../../providers/app_services.dart';
 import '../../utils/dimentions.dart';
@@ -386,6 +387,40 @@ class _UserDetailPageState extends State<UserDetailPage> {
               ),
             ]
         ),
+        floatingActionButton: getService.getUserLogin.id != widget.userModel.id ? widget.userSee < 3 ? FloatingActionButton(
+          onPressed: () async {
+            bool check = false;
+            await onBackButtonPressYesNo(context: context, text: "Keluarkan User", desc: "Yakin ingin mengeluarkan user dari group ini?").then((value){
+              check = value;
+            });
+            if(check == true){
+              getService.loading(context);
+
+              var getUserInGroup = await getService.getDocDataByDocIdNoCon(collection: Collections.usermaster, docId: widget.userModel.phone);
+              Map<String, dynamic> getMap = getUserInGroup!.data() as Map<String, dynamic>;
+              UserMasterModel userMasterMdl = UserMasterModel.fromMap(getMap);
+
+              List<Map<String, dynamic>> getCurrentGroupUsr = userMasterMdl.group!.map((g){
+                Map<String, dynamic> toMap = {};
+                if(g.groupId != widget.groupModel!.groupId){
+                  toMap = g.toMapUpload();
+                }
+                return toMap;
+              }).toList();
+
+              var collectionUser = getService.fbStore.collection(Collections.usermaster);
+              await collectionUser.doc(widget.userModel.phone).update({
+                Collections.collColumngroup: getCurrentGroupUsr,
+              });
+
+              Navigator.of(context).pop();
+              Navigator.pop(context);
+              showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menghapus user dari group", title: "Group");
+            }
+          },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.output),
+        ) : const SizedBox() : const SizedBox(),
       ),
     );
   }

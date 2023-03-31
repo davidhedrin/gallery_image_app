@@ -30,6 +30,8 @@ class _ForgotChangePassPageState extends State<ForgotChangePassPage> {
   final FirebaseAuth authLog = FirebaseAuth.instance;
   final TextEditingController newpasswordController = TextEditingController();
   final TextEditingController newCoPasswordController = TextEditingController();
+  bool obscureText1 = true;
+  bool obscureText2 = true;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +90,18 @@ class _ForgotChangePassPageState extends State<ForgotChangePassPage> {
                       child: MyTextFieldReg(
                         controller: newpasswordController,
                         hintText: "Masukkan Password Baru",
-                        obscureText: true,
+                        obscureText: obscureText1,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscureText1 ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              obscureText1 = !obscureText1;
+                            });
+                          },
+                        ),
                         validator: (value){
                           if(newpasswordController.text != newCoPasswordController.text){
                             return '*password tidak cocok';
@@ -105,7 +118,18 @@ class _ForgotChangePassPageState extends State<ForgotChangePassPage> {
                       child: MyTextFieldReg(
                         controller: newCoPasswordController,
                         hintText: "Konfirmasi Password Baru",
-                        obscureText: true,
+                        obscureText: obscureText2,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscureText2 ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              obscureText2 = !obscureText2;
+                            });
+                          },
+                        ),
                         validator: (value){
                           if(newCoPasswordController.text != newpasswordController.text){
                             return '*password tidak cocok';

@@ -44,10 +44,12 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
   late String searchKey = "";
 
   late UserModel lateCurrentUser = UserModel();
+  late int currentUser = 0;
 
   @override
   void initState() {
     super.initState();
+    getUserStatusInGroup();
     searchController.addListener(() {
       setState(() {});
     });
@@ -57,6 +59,21 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
   void dispose() {
     searchController.dispose();
     super.dispose();
+  }
+  
+  void getUserStatusInGroup() async {
+    UserModel aUser = widget.currentUser;
+    UserGroupModel agroupModel = widget.groupModel;
+    var getUserInGroup = await getService.getDocDataByDocIdNoCon(collection: Collections.usermaster, docId: aUser.phone);
+    Map<String, dynamic> getMap = getUserInGroup!.data() as Map<String, dynamic>;
+    UserMasterModel userMasterMdl = UserMasterModel.fromMap(getMap);
+    GroupModel getCurrentGroupUsr = userMasterMdl.group!.firstWhere((g) => g.groupId == agroupModel.groupId);
+
+    final int curUserType = getHelp.checkStatusUser(aUser.userType);
+    currentUser = curUserType;
+    if(curUserType != 1){
+      currentUser =  getHelp.checkStatusUser(getCurrentGroupUsr.status);
+    }
   }
 
   @override
@@ -193,8 +210,6 @@ class _GroupPanelManagState extends State<GroupPanelManage> {
     String? userType = userModel.userType.isNotEmpty ? userModel.userType.toLowerCase() : "";
     int? setType = userType.isNotEmpty ? getHelp.checkStatusUser(userType) : 0;
     String? month = userModel.createDate != null ? DateFormat('MMMM').format(userModel.createDate!) : "";
-
-    int currentUser = getHelp.checkStatusUser(lateCurrentUser.userType);
 
     return GestureDetector(
       onTap: (){
