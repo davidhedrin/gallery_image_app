@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 
 import '../generated/assets.dart';
-import '../splashScreen//fade_animation.dart';
 
 class OnBoardScreenApp extends StatefulWidget {
   const OnBoardScreenApp({Key? key}) : super(key: key);
@@ -117,7 +117,7 @@ class _OnBoardScreenAppState extends State<OnBoardScreenApp> {
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
                       children: <Widget>[
-                        FadeAnimation(0.3, Text(page.toString(), style: TextStyle(color: Colors.white, fontSize: Dimentions.font30, fontWeight: FontWeight.bold),)),
+                        FadeInDown(child: Text(page.toString(), style: TextStyle(color: Colors.white, fontSize: Dimentions.font30, fontWeight: FontWeight.bold),)),
                         Text('/$totalPage', style: TextStyle(color: Colors.white, fontSize: Dimentions.font15),)
                       ],
                     ),
@@ -128,40 +128,42 @@ class _OnBoardScreenAppState extends State<OnBoardScreenApp> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      FadeAnimation(1,
-                          Text(title, style: TextStyle(color: Colors.white, fontSize: Dimentions.font50, height: Dimentions.height1kom2, fontWeight: FontWeight.bold),)
-                      ),
+                      FadeInDown(child: Text(title, style: TextStyle(color: Colors.white, fontSize: Dimentions.font50, height: Dimentions.height1kom2, fontWeight: FontWeight.bold),)),
                       SizedBox(height: Dimentions.height20,),
-                      FadeAnimation(1.5, Row(
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(right: Dimentions.width3),
-                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(right: Dimentions.width3),
-                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(right: Dimentions.width3),
-                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(right: Dimentions.width3),
-                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(right: Dimentions.width5),
-                            child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
-                          ),
-                          const Text('5.0', style: TextStyle(color: Colors.white70),),
-                        ],
-                      )),
+                      FadeInUp(
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(right: Dimentions.width3),
+                              child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: Dimentions.width3),
+                              child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: Dimentions.width3),
+                              child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: Dimentions.width3),
+                              child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: Dimentions.width5),
+                              child: Icon(Icons.star, color: Colors.yellow, size: Dimentions.iconSize15,),
+                            ),
+                            const Text('5.0', style: TextStyle(color: Colors.white70),),
+                          ],
+                        ),
+                      ),
                       SizedBox(height: Dimentions.height10,),
-                      FadeAnimation(2, Padding(
-                        padding: const EdgeInsets.only(right: 50),
-                        child: Text(description, style: TextStyle(color: Colors.white.withOpacity(.7), height: Dimentions.height1kom9, fontSize: Dimentions.font15),),
-                      )),
+                      FadeInUp(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 50),
+                          child: Text(description, style: TextStyle(color: Colors.white.withOpacity(.7), height: Dimentions.height1kom9, fontSize: Dimentions.font15),),
+                        ),
+                      ),
                       SizedBox(height: Dimentions.height15,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
