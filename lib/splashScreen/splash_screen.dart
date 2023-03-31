@@ -76,9 +76,10 @@ class _SplashScerenAppState extends State<SplashScerenApp> {
             children: [
               Bounce(
                 infinite: true,
-                child: Image.asset(Assets.imageCika, width: Dimentions.screenHeight/3.9,)
+                child: Image.asset(Assets.imageAppIcon, width: Dimentions.height70,)
               ),
-              Text('Cips.Jeis Gallery', style: TextStyle(fontSize: Dimentions.screenHeight/43.39, fontWeight: FontWeight.bold),),
+              SizedBox(height: Dimentions.height4,),
+              Text("We Gallery's", style: TextStyle(fontSize: Dimentions.screenHeight/43.39, fontWeight: FontWeight.bold),),
             ],
           ),
         ),
