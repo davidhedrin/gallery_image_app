@@ -9,6 +9,7 @@ import 'package:delivery_food_app/models/user_master_model.dart';
 import 'package:delivery_food_app/models/user_model.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart' as getdart;
@@ -67,6 +68,10 @@ class AppServices{
     Map<String, dynamic> setUpdate = {
       Collections.collColumnstatus : status,
     };
+    if(status == "1"){
+      String? pushToken = await FirebaseMessaging.instance.getToken();
+      setUpdate[Collections.collColumnpushtoken] = pushToken;
+    }
     if(status == "2"){
       setUpdate[Collections.collColumnlastonline] = DateTime.now();
     }
@@ -74,10 +79,10 @@ class AppServices{
     await _fbStore.collection(Collections.users).doc(userId).update(setUpdate);
   }
 
-  static Future<void> sendPushNotif({required UserModel getUser, required String from, required String msg, required String roomId}) async {
+  static Future<void> sendPushNotif({required String token, required String from, required String msg, required String roomId}) async {
     try{
       final body = <String, dynamic>{
-        // "to": getUser.pushToken,
+        "to": token,
         "priority": "high",
         "notification": <String, dynamic>{
           "title": from,
@@ -103,9 +108,10 @@ class AppServices{
           headers: header,
           body: jsonEncode(body)
       );
-      
+
+      String responseStat = 'Response status: ${res.statusCode}';
       if (kDebugMode) {
-        print('Response status: ${res.statusCode}');
+        print(responseStat);
         print('Response body: ${res.body}');
       }
     }catch(e){
@@ -563,7 +569,11 @@ class AppServices{
     try{
       await _fbStore.collection(collection).doc(chatId).set(data); //Add Master Chat
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
-      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg);
+      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg).then((value){
+        String from = loginUser.namaLengkap;
+        String msg = dataMsg["msg"];
+        sendPushNotif(token: forUser.pushToken, from: from, msg: msg, roomId: chatId);
+      });
     }catch(e){
       if (kDebugMode) {
         print("sendMessage: $e");
@@ -580,7 +590,11 @@ class AppServices{
   }) async {
     try{
       final DocumentReference setMessage = FirebaseFirestore.instance.collection(collection).doc(chatId); //Add message chat
-      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg);
+      setMessage.collection(Collections.message).doc(docIdMsg).set(dataMsg).then((value){
+        String from = loginUser.namaLengkap;
+        String msg = dataMsg["msg"];
+        sendPushNotif(token: forUser.pushToken, from: from, msg: msg, roomId: chatId);
+      });
     }catch(e){
       if (kDebugMode) {
         print("saveMessage: $e");

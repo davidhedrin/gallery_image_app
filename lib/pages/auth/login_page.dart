@@ -216,10 +216,13 @@ class _LoginPageState extends State<LoginPage> {
                               if(password == pass){
                                 await services.loginWithEmailRetMap(context, email, password).then((Map<String, dynamic> status){
                                   if(status["status"] == "200"){
+                                    String userId = status["uid"];
+
                                     noPhoneController.clear();
                                     passwordController.clear();
+                                    services.setStatus(status: "1", userId: userId);
                                     Navigator.of(dialogcontext).pop();
-                                    Get.toNamed(RouteHalper.getInitial(uid: status["uid"]));
+                                    Get.toNamed(RouteHalper.getInitial(uid: userId));
                                   }else{
                                     Navigator.of(dialogcontext).pop();
                                     showAwsBar(context: context, contentType: ContentType.warning, msg: "Terjadi kesalahan. Ulangi beberapa saat lagi", title: "Login");

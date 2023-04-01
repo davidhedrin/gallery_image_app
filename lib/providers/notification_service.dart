@@ -12,7 +12,7 @@ import '../pages/message/chat_page.dart';
 class HalperNotification{
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  initialize() async {
+  void initialize() async {
     var androidInit = const AndroidInitializationSettings("@mipmap/ic_launcher");
     var iosInit = DarwinInitializationSettings(
       onDidReceiveLocalNotification: onDidRecivNotifIos
@@ -40,7 +40,7 @@ class HalperNotification{
   }
 
 
-  static void showNotification({required String title, required String body, required String payload}) async {
+  void showNotification({required String title, required String body, required String payload}) async {
     BigTextStyleInformation bigTextStyleInfo = BigTextStyleInformation(
       body,
       htmlFormatBigText: true,

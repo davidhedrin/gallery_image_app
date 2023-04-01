@@ -278,6 +278,7 @@ class _RegisterWithPhoneNumberState extends State<RegisterWithPhoneNumber> {
                             statusLog: "1",
                             createDate: DateTime.now(),
                             lastOnline: DateTime.now(),
+                            pushToken: "-"
                           );
                           await auth.verifyPhone(
                             context: context,
