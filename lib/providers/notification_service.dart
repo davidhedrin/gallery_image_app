@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
 import 'dart:math';
 
-import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -28,17 +28,18 @@ class HalperNotification{
 
   void onDidRecivNotifAndroid(NotificationResponse response) async {
       final String payload = response.payload.toString();
+      Map<String, dynamic> decodedMap = jsonDecode(payload);
       if(response.payload != null && response.payload.toString().isNotEmpty){
-        await  Get.to(() => ChatMessagePage(userId: AppServices().getUserLogin.id, chatId: payload,));
+        await Get.to(() => ChatMessagePage(userId: decodedMap["from_id"], chatId: decodedMap["room_id"],));
       }
     }
 
   void onDidRecivNotifIos(id, title, body, payload) async {
     if(payload != null && payload.toString().isNotEmpty){
-      await  Get.to(() => ChatMessagePage(userId: AppServices().getUserLogin.id, chatId: payload,));
+      Map<String, dynamic> decodedMap = jsonDecode(payload);
+      await Get.to(() => ChatMessagePage(userId: decodedMap["from_id"], chatId: decodedMap["room_id"],));
     }
   }
-
 
   void showNotification({required String title, required String body, required String payload}) async {
     BigTextStyleInformation bigTextStyleInfo = BigTextStyleInformation(

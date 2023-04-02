@@ -53,11 +53,14 @@ class AppServices{
     );
   }
 
-  void logout(){
+  void logout() async {
     MainAppPage.groupNameGet = "";
     MainAppPage.groupCodeId = "";
     MainAppPage.setUserId = "";
 
+
+    Map<String, dynamic> setUpdate = {Collections.collColumnpushtoken : "-"};
+    await _fbStore.collection(Collections.users).doc(loginUser.id).update(setUpdate);
     setStatus(status: "2", userId: loginUser.id);
     _auth.signOut();
     loginUser = UserModel();
@@ -94,7 +97,10 @@ class AppServices{
           "status": "done",
           "title": from,
           "body": msg,
-          "some_data" : roomId,
+          "some_data" : <String, dynamic> {
+            "room_id" : roomId,
+            "from_id" : AppServices().getUserLogin.id
+          },
         },
       };
       Map<String, String> header = {

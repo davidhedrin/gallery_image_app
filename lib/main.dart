@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:delivery_food_app/halper/route_halper.dart';
+import 'package:delivery_food_app/pages/message/chat_page.dart';
 import 'package:delivery_food_app/providers/auth_provider.dart';
 import 'package:delivery_food_app/providers/notification_service.dart';
 import 'package:delivery_food_app/utils/collections.dart';
@@ -13,7 +16,9 @@ import 'package:provider/provider.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print('Handling a background message ${message.messageId}');
+  if (kDebugMode) {
+    print('Handling a background message ${message.messageId}');
+  }
 }
 
 late AndroidNotificationChannel channel;
@@ -70,16 +75,17 @@ class _MyAppState extends State<MyApp> {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if(notification != null && android != null && !kIsWeb){
-        helpNotif.showNotification(title: "Nama", body: "Pesan Notification", payload: "id");
-        print("Foreground Bos");
+        String? title = message.notification!.title;
+        String? body = message.notification!.body;
+        String payload = message.data["some_data"];
+        helpNotif.showNotification(title: title!, body: body!, payload: payload);
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
-      print("Bacground Bos");
-      print(message.notification!.title);
-      print(message.notification!.body);
-      print(message.data["some_data"]);
+      Map<String, dynamic> decodedMap = jsonDecode(message.data["some_data"]);
+
+      Get.to(() => ChatMessagePage(userId: decodedMap["from_id"], chatId: decodedMap["room_id"],));
     });
 
     super.initState();
