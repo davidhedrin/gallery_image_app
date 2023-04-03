@@ -66,6 +66,8 @@ dependencies:
   firebase_messaging: ^14.4.0
   rxdart: ^0.27.7
   firebase_dynamic_links: ^5.0.17
+  connectivity_plus: ^3.0.3
+  restart_app: ^1.1.2
 #  url_launcher: ^6.1.10
   share_plus:
 

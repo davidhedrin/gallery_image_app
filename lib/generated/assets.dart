@@ -12,6 +12,7 @@ class Assets {
   static const String imageBg = 'assets/image/bg.jpg';
   static const String imageChangePassword = 'assets/image/changePassword.png';
   static const String imageCika = 'assets/image/cika.png';
+  static const String imageCloudLighning = 'assets/image/cloudLighning.png';
   static const String imageFacebook = 'assets/image/Facebook.png';
   static const String imageForwardIcon = 'assets/image/forwardIcon.png';
   static const String imageGoogle = 'assets/image/Google.png';

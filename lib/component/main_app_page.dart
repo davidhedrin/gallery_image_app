@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:delivery_food_app/halper/route_halper.dart';
 import 'package:delivery_food_app/pages/account/account_page.dart';
 import 'package:delivery_food_app/pages/home/home_page.dart';
@@ -7,6 +10,7 @@ import 'package:delivery_food_app/pages/message/message_page.dart';
 import 'package:delivery_food_app/providers/app_services.dart';
 import 'package:delivery_food_app/providers/firebase_dynamic_link.dart';
 import 'package:delivery_food_app/utils/dimentions.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -28,6 +32,10 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
   final AppServices getServ = AppServices();
   int index = 0;
 
+  late ConnectivityResult resultCon;
+  late StreamSubscription subscription;
+  bool isConnected = false;
+
   void onChangeTab(int index){
     setState(() {
       this.index = index;
@@ -38,8 +46,54 @@ class _MainAppPageState extends State<MainAppPage> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
+    startStreaming();
+
     DynamicLinkService.initDynamicLink(context);
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  void checkInternet() async {
+    resultCon = await Connectivity().checkConnectivity();
+    if(resultCon != ConnectivityResult.none){
+      isConnected = true;
+    }else{
+      isConnected = false;
+      showDialogBox();
+    }
+
+    setState(() {});
+  }
+
+  void showDialogBox(){
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Column(
+            children: [
+              Icon(Icons.wifi, size: Dimentions.iconSize32,),
+              SizedBox(height: Dimentions.height6,),
+              Text("Tidak ada Internet"),
+            ],
+          ),
+          content: Text("Mohon periksa sambungan koneksi internet"),
+          actions: [
+            CupertinoButton(
+              onPressed: (){
+                Navigator.pop(context);
+                checkInternet();
+              },
+              child: Text("Coba Ulang"),
+            )
+          ],
+        )
+    );
+  }
+
+  void startStreaming(){
+    subscription = Connectivity().onConnectivityChanged.listen((event) async {
+      checkInternet();
+    });
   }
 
   @override

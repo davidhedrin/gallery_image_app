@@ -545,7 +545,7 @@ class _AddNewUserState extends State<AddNewUser> {
                           );
 
                           var checkUserExist = await getService.checkExistDocById(collection: Collections.usermaster, uid: number);
-                          if(checkUserExist){
+                          if(!checkUserExist){
                             getService.createDataToDb(data: setUser.toMapUpload(), context: context, collection: Collections.usermaster, guid: number);
                           }
 
@@ -865,7 +865,7 @@ class _AddNewUserState extends State<AddNewUser> {
                       );
 
                       var checkUserExist = await getService.checkExistDocById(collection: Collections.usermaster, uid: number);
-                      if(checkUserExist){
+                      if(!checkUserExist){
                         getService.createDataToDb(data: setUser.toMapUpload(), context: context, collection: Collections.usermaster, guid: number);
                       }
 
