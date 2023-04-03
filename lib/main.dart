@@ -85,7 +85,10 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
       Map<String, dynamic> decodedMap = jsonDecode(message.data["some_data"]);
 
-      Get.to(() => ChatMessagePage(userId: decodedMap["from_id"], chatId: decodedMap["room_id"],));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ChatMessagePage(userId: decodedMap["from_id"], chatId: decodedMap["room_id"],))
+      );
     });
 
     super.initState();

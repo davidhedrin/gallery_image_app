@@ -214,12 +214,14 @@ class _LoginPageState extends State<LoginPage> {
                               final String pass = snap.docs.first.get('password').trim();
 
                               if(password == pass){
-                                await services.loginWithEmailRetMap(context, email, password).then((Map<String, dynamic> status){
+                                await services.loginWithEmailRetMap(context, email, password).then((Map<String, dynamic> status) async {
                                   if(status["status"] == "200"){
                                     String userId = status["uid"];
 
                                     noPhoneController.clear();
                                     passwordController.clear();
+
+                                    await services.getUserLoginModel(userId);
                                     services.setStatus(status: "1", userId: userId);
                                     Navigator.of(dialogcontext).pop();
                                     Get.toNamed(RouteHalper.getInitial(uid: userId));
