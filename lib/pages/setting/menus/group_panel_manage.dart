@@ -527,7 +527,7 @@ class _AddNewUserState extends State<AddNewUser> {
                     width: double.infinity,
                     height: Dimentions.height40,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if(_formKey.currentState!.validate()){
                           getService.loading(context);
 
@@ -544,11 +544,16 @@ class _AddNewUserState extends State<AddNewUser> {
                             groupMap: listGroupUser,
                           );
 
-                          getService.createDataToDb(data: setUser.toMapUpload(), context: context, collection: Collections.usermaster, guid: number);
+                          var checkUserExist = await getService.checkExistDocById(collection: Collections.usermaster, uid: number);
+                          if(checkUserExist){
+                            getService.createDataToDb(data: setUser.toMapUpload(), context: context, collection: Collections.usermaster, guid: number);
+                          }
 
                           Navigator.of(context).pop();
                           Navigator.pop(context);
-                          showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menambahkan user", title: "New User");
+                          checkUserExist == true ?
+                          showAwsBar(context: context, contentType: ContentType.warning, msg: "User terlah terdaftar dalam group", title: "Info User")
+                              : showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menambahkan user", title: "New User");
                         }
                       },
                       child: BigText(text: "Tambah", color: Colors.white,),
@@ -842,7 +847,7 @@ class _AddNewUserState extends State<AddNewUser> {
                 width: double.infinity,
                 height: Dimentions.height40,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if(_formKey.currentState!.validate()){
                       getService.loading(context);
 
@@ -859,11 +864,16 @@ class _AddNewUserState extends State<AddNewUser> {
                         groupMap: listGroupUser,
                       );
 
-                      getService.createDataToDb(data: setUser.toMapUpload(), context: context, collection: Collections.usermaster, guid: number);
+                      var checkUserExist = await getService.checkExistDocById(collection: Collections.usermaster, uid: number);
+                      if(checkUserExist){
+                        getService.createDataToDb(data: setUser.toMapUpload(), context: context, collection: Collections.usermaster, guid: number);
+                      }
 
                       Navigator.of(context).pop();
                       Navigator.pop(context);
-                      showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menambahkan user", title: "New User");
+                      checkUserExist == true ?
+                      showAwsBar(context: context, contentType: ContentType.warning, msg: "User terlah terdaftar dalam group", title: "Info User")
+                          : showAwsBar(context: context, contentType: ContentType.success, msg: "Berhasil menambahkan user", title: "New User");
                     }
                   },
                   child: BigText(text: "Tambah", color: Colors.white,),
