@@ -101,7 +101,10 @@ class _BookmarkPageState extends State<BookmarkPage> {
                                 var difference = "$diffDayUpload ${setDiffDate.inHours}j $diffMin";
 
                                 List<String> splitByName = getData.userByName.split(" ");
-                                String firstChar2nd = splitByName[1].substring(0, 1);
+                                String firstChar2nd = "";
+                                if(splitByName.length > 1){
+                                  firstChar2nd = splitByName[1].substring(0, 1);
+                                }
 
                                 String fixByName = "${splitByName[0]} $firstChar2nd";
                                 return Container(

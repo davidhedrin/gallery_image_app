@@ -268,11 +268,13 @@ class _MessageTitleState extends State<_MessageTitle> {
                               children: [
                                 MainAppPage.setUserId == latestMsg.fromId ? Icon(Icons.done_all, size: Dimentions.iconSize15, color: msgNotReadStatus > 0 ? const Color(0xFFccc7c5) : Colors.green,) : const SizedBox(),
                                 SizedBox(width: MainAppPage.setUserId == latestMsg.fromId ? msgNotReadStatus > 0 ? Dimentions.width5 : Dimentions.width5 : 0.0,),
-                                SmallTextOvr(
-                                  text: latestMsg.msg,
-                                  size: Dimentions.font13,
-                                  color:  MainAppPage.setUserId == latestMsg.toId ? msgNotRead > 0 ? Colors.black : const Color(0xFFccc7c5) : const Color(0xFFccc7c5),
-                                  fontWeight: MainAppPage.setUserId == latestMsg.toId ? msgNotRead > 0 ? FontWeight.bold : FontWeight.normal : FontWeight.normal,
+                                Expanded(
+                                  child: SmallTextOvr(
+                                    text: latestMsg.msg,
+                                    size: Dimentions.font13,
+                                    color:  MainAppPage.setUserId == latestMsg.toId ? msgNotRead > 0 ? Colors.black : const Color(0xFFccc7c5) : const Color(0xFFccc7c5),
+                                    fontWeight: MainAppPage.setUserId == latestMsg.toId ? msgNotRead > 0 ? FontWeight.bold : FontWeight.normal : FontWeight.normal,
+                                  ),
                                 ),
                               ],
                             );

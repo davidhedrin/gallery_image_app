@@ -418,67 +418,67 @@ class _SearchUseridPageState extends State<SearchUseridPage> {
               ),
             ),
           ),
-          if(searchFound == false && userIdController.text.isNotEmpty && searchLoading == false)
-            Container(
-              height: Dimentions.height80,
-              margin: EdgeInsets.symmetric(horizontal: Dimentions.width8),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Theme.of(context).dividerColor,
-                    width: 0.5,
-                  ),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(Dimentions.height10),
-                    child: Avatar.medium(),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: Dimentions.height4),
-                          child: BigText(text: '"${userIdController.text}"'),
-                        ),
-                        SizedBox(
-                          height: Dimentions.height15,
-                          child: SmallText(
-                              text: 'UserId "${userIdController.text}" tidak ditemukan...',
-                              size: Dimentions.font13,
-                              color:  const Color(0xFFccc7c5),
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.normal
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: Dimentions.width20),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: Dimentions.height6, vertical: Dimentions.height2),
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent,
-                        borderRadius: BorderRadius.circular(Dimentions.radius6),
-                      ),
-                      child: Text(
-                        "!",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Dimentions.font12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          // if(searchFound == false && userIdController.text.isNotEmpty && searchLoading == false && setForMainMsg.chatGroup.isEmpty)
+          //   Container(
+          //     height: Dimentions.height80,
+          //     margin: EdgeInsets.symmetric(horizontal: Dimentions.width8),
+          //     decoration: BoxDecoration(
+          //       border: Border(
+          //         bottom: BorderSide(
+          //           color: Theme.of(context).dividerColor,
+          //           width: 0.5,
+          //         ),
+          //       ),
+          //     ),
+          //     child: Row(
+          //       children: [
+          //         Padding(
+          //           padding: EdgeInsets.all(Dimentions.height10),
+          //           child: Avatar.medium(),
+          //         ),
+          //         Expanded(
+          //           child: Column(
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               Padding(
+          //                 padding: EdgeInsets.symmetric(vertical: Dimentions.height4),
+          //                 child: BigText(text: '"${userIdController.text}"'),
+          //               ),
+          //               SizedBox(
+          //                 height: Dimentions.height15,
+          //                 child: SmallText(
+          //                     text: 'UserId "${userIdController.text}" tidak ditemukan...',
+          //                     size: Dimentions.font13,
+          //                     color:  const Color(0xFFccc7c5),
+          //                     fontStyle: FontStyle.italic,
+          //                     fontWeight: FontWeight.normal
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //         Padding(
+          //           padding: EdgeInsets.only(right: Dimentions.width20),
+          //           child: Container(
+          //             padding: EdgeInsets.symmetric(horizontal: Dimentions.height6, vertical: Dimentions.height2),
+          //             decoration: BoxDecoration(
+          //               color: Colors.orangeAccent,
+          //               borderRadius: BorderRadius.circular(Dimentions.radius6),
+          //             ),
+          //             child: Text(
+          //               "!",
+          //               style: TextStyle(
+          //                 color: Colors.white,
+          //                 fontSize: Dimentions.font12,
+          //                 fontWeight: FontWeight.bold,
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
         ],
       ),
     );
