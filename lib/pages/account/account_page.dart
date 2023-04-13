@@ -13,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../component/full_screen_image_page.dart';
 import '../../component/main_app_page.dart';
 import '../../models/posting_image.dart';
 import '../../providers/app_services.dart';
@@ -82,13 +83,18 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                               fit: BoxFit.cover,
                             );
                           },
-                          imageBuilder: (context, imageProvider) => Container(
-                            width: double.infinity,
-                            height: coverHeight,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
+                          imageBuilder: (context, imageProvider) => GestureDetector(
+                            onTap: () {
+                              RouteHalper().redirectMaterialPage(context, FullScreenImagePage(imgUrl: getUser.imgCoverUrl,));
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              height: coverHeight,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
@@ -118,10 +124,15 @@ class _AccountPageMenuState extends State<AccountPageMenu> {
                         child: CircleAvatar(
                           radius: profileSize + 5,
                           backgroundColor: Colors.white,
-                          child: data.data()!.containsKey("img_profil_url") ? getUser.imgProfilUrl.isNotEmpty ? CircleAvatar(
-                            radius: profileSize,
-                            backgroundColor: Colors.grey.shade800,
-                            backgroundImage: CachedNetworkImageProvider(getUser.imgProfilUrl),
+                          child: data.data()!.containsKey("img_profil_url") ? getUser.imgProfilUrl.isNotEmpty ? GestureDetector(
+                            onTap: () {
+                              RouteHalper().redirectMaterialPage(context, FullScreenImagePage(imgUrl: getUser.imgProfilUrl,));
+                            },
+                            child: CircleAvatar(
+                              radius: profileSize,
+                              backgroundColor: Colors.grey.shade800,
+                              backgroundImage: CachedNetworkImageProvider(getUser.imgProfilUrl),
+                            ),
                           ) : CircleAvatar(
                             radius: profileSize,
                             backgroundColor: Colors.grey.shade800,

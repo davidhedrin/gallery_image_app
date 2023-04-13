@@ -17,6 +17,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 
+import '../../component/full_screen_image_page.dart';
 import '../../halper/route_halper.dart';
 import '../../models/message/main_message.dart';
 import '../../models/user_model.dart';
@@ -262,7 +263,12 @@ class _AppBarTitleState extends State<_AppBarTitle> {
 
           return Row(
             children: [
-              Avatar.small(url: getUser.imgProfilUrl,),
+              GestureDetector(
+                onTap: getUser.imgProfilUrl.isNotEmpty ? () {
+                  RouteHalper().redirectMaterialPage(context, FullScreenImagePage(imgUrl: getUser.imgProfilUrl,));
+                } : null,
+                child: Avatar.small(url: getUser.imgProfilUrl,)
+              ),
               SizedBox(width: Dimentions.width15,),
               Expanded(
                 child: Column(

@@ -26,6 +26,7 @@ import '../../widgets/big_text.dart';
 import '../../widgets/data_not_found.dart';
 import '../../widgets/loading_progres.dart';
 import '../../widgets/small_text.dart';
+import '../full_screen_image_page.dart';
 import '../main_app_page.dart';
 
 class DetailImagePage extends StatefulWidget {
@@ -104,14 +105,19 @@ class _DetailImagePageState extends State<DetailImagePage> {
                         ),
                       );
                     },
-                    imageBuilder: (context, imageProvider) => Container(
-                      width: double.maxFinite,
-                      height: Dimentions.popularFoodImgSize,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF69c5df),
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
+                    imageBuilder: (context, imageProvider) => GestureDetector(
+                      onTap: () {
+                        RouteHalper().redirectMaterialPage(context, FullScreenImagePage(imgUrl: getData.imageUrl,));
+                      },
+                      child: Container(
+                        width: double.maxFinite,
+                        height: Dimentions.popularFoodImgSize,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF69c5df),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),

@@ -19,6 +19,7 @@ import 'package:delivery_food_app/pages/setting/menus/user_page.dart';
 import 'package:delivery_food_app/splashScreen/no_internet_screen.dart';
 import 'package:delivery_food_app/splashScreen/on_board_screen.dart';
 import 'package:delivery_food_app/splashScreen/splash_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../component/page/popular_image_detail.dart';
@@ -27,6 +28,15 @@ import '../component/page/recommended_food_detail.dart';
 class RouteHalper{
   static int intId(String id){
     return int.parse(id);
+  }
+
+  void redirectMaterialPage(BuildContext context, Widget  toPage) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => toPage,
+      ),
+    );
   }
 
   static const String initial = "/";

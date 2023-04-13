@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../component/full_screen_image_page.dart';
 import '../../../generated/assets.dart';
 import '../../../halper/function_halpers.dart';
 import '../../../halper/route_halper.dart';
@@ -159,13 +160,18 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                                   ),
                                 );
                               },
-                              imageBuilder: (context, imageProvider) => Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(Dimentions.radius20),
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
+                              imageBuilder: (context, imageProvider) => GestureDetector(
+                                onTap: () {
+                                  RouteHalper().redirectMaterialPage(context, FullScreenImagePage(imgUrl: getUser.imgProfilUrl,));
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(Dimentions.radius20),
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),

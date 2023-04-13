@@ -236,13 +236,16 @@ class _EditAccountPageState extends State<EditAccountPage> {
                               padding: EdgeInsets.only(left: Dimentions.width25, right: Dimentions.width25),
                               child: MaterialButton(
                                 minWidth: double.infinity,
-                                onPressed: () {
+                                onPressed: () async {
                                   BuildContext dialogcontext = context;
                                   UserModel userMdl = UserModel(
                                     namaLengkap: namaController.text,
                                     email: emailController.text,
                                   );
-                                  void execute() async {
+
+                                  if(_formKey.currentState!.validate()){
+                                    getService.loading(dialogcontext);
+
                                     if(imageProfile != null){
                                       if(dataData.containsKey("img_profil_url")){
                                         getService.deleteFileStorage(context: context, imagePath: "${Collections.strgImageProfile}/${widget.uid}");
@@ -255,20 +258,10 @@ class _EditAccountPageState extends State<EditAccountPage> {
                                     }
 
                                     String imgProfileUrl = imageProfile != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageProfile}/${widget.uid}", file: imageProfile!, context: context) : dataData.containsKey("img_profil_url") ? data.get("img_profil_url") : "";
-                                    String imgCoverUrl = imageCover != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageCover}/${widget.uid}", file: imageCover!, context: context) : dataData.containsKey("img_cover_url") ? data.get("img_cover_url") : "";
+                                  String imgCoverUrl = imageCover != null ? await getService.uploadImageToStorage(ref: "${Collections.strgImageCover}/${widget.uid}", file: imageCover!, context: context) : dataData.containsKey("img_cover_url") ? data.get("img_cover_url") : "";
 
-                                    if(imgProfileUrl.isNotEmpty){
-                                      userMdl.imgProfilUrl = imgProfileUrl;
-                                    }
-                                    if(imgCoverUrl.isNotEmpty){
-                                      userMdl.imgCoverUrl = imgCoverUrl;
-                                    }
-                                  }
-
-                                  if(_formKey.currentState!.validate()){
-                                    getService.loading(dialogcontext);
-
-                                    execute();
+                                  userMdl.imgProfilUrl = imgProfileUrl;
+                                  userMdl.imgCoverUrl = imgCoverUrl;
 
                                     getService.updateDataDb(data: userMdl.toMapUpdate(), context: context, collection: Collections.users, guid: widget.uid);
 
