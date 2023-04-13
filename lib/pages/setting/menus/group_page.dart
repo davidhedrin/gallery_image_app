@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_food_app/utils/collections.dart';
 import 'package:delivery_food_app/widgets/big_text.dart';
 import 'package:delivery_food_app/widgets/data_not_found.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -264,6 +265,29 @@ class _AddNewGroupState extends State<AddNewGroup> {
     return Color.fromARGB(255, r, g, b);
   }
 
+  bool isStringValid(String input) {
+    bool result = true;
+    RegExp regex = RegExp(r'^\b\w+\b$');
+
+    try{
+      if (input.contains(' ')) {
+        result = false;
+      }
+
+      if (!regex.hasMatch(input)) {
+        result = false;
+      }
+    }catch(e){
+      if (kDebugMode) {
+        print("Error: Check valid string function isStringValid");
+        print(e);
+      }
+      result = false;
+    }
+
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -285,6 +309,9 @@ class _AddNewGroupState extends State<AddNewGroup> {
                   validator: (value){
                     if(value!.isEmpty){
                       return "*masukkan nama group";
+                    }
+                    if(isStringValid(value) == false){
+                      return "*nama group tidak menggunakan spasi";
                     }
                     return null;
                   },
